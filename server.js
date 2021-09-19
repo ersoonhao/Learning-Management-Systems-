@@ -72,7 +72,9 @@ app.get('/', function (req,res) {
 require("./app/routes/turorial.routes")(app);
 
 
-// figure the ports 
+app.get("/test", (req, res) => {
+    res.json({ message: "Test working @ port 8080" });
+  });
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
