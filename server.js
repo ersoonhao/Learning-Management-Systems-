@@ -69,6 +69,10 @@ app.get('/', function (req,res) {
   res.sendFile(path + "index.html");
 });
 
+app.get('/quiz',async(req,res)=>{
+  res.sendFile(path+"quiz.html")
+})
+
 require("./app/routes/turorial.routes")(app);
 
 
