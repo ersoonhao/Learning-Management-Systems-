@@ -3,8 +3,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = __dirname + '/app/views/';
 const app = express();
-require("./routes/accounts.routes")(app);
 
+require("./app/routes/accounts.routes")(app)
+require("./app/routes/turorial.routes")(app);
 app.use(express.static(path));
 
 
@@ -24,7 +25,13 @@ app.use(cors({
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }));
 
-
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Access-Control-Allow-Credentials', true)
+    res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+    next()
+})
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
@@ -44,19 +51,6 @@ const db = require("./app/models");
 //   });
 
 
-
-app.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Credentials', true)
-    res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-    next()
-})
-
-
-
-
-
 db.sequelize.sync();
 // // drop the table if it already exists
 // db.sequelize.sync({ force: true }).then(() => {
@@ -68,11 +62,11 @@ app.get('/', function (req,res) {
   res.sendFile(path + "index.html");
 });
 
+
+
 app.get('/quiz',async(req,res)=>{
   res.sendFile(path+"quiz.html")
 })
-
-require("./app/routes/turorial.routes")(app);
 
 
 app.get("/test", (req, res) => {
