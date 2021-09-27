@@ -8,8 +8,8 @@ module.exports = app => {
     // cognito initialization
 
 
-    const AmazonCognitoIdentity= require('amazon-cognito-identity-js');
-    const config = require('../config/cognito.config.json');
+    // const AmazonCognitoIdentity= require('amazon-cognito-identity-js');
+    // const config = require('../config/cognito.config.json');
 
     // something wrong with the UserPoolId hmm
 
