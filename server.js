@@ -11,16 +11,16 @@ app.use(express.static(path));
 
 
 // Cross-origin resource sharing (CORS) defines a way for client web applications that are loaded in one domain to interact with resources in a different domain. 
-var corsOptions = {
-  origin: "*"
-};
+// var corsOptions = {
+//   origin: "*"
+// };
 
 // var corsOptions = {
 //     origin: "api.akashic.technology/#/"
 //   };
 
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 app.use(cors({
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
