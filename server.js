@@ -1,10 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
 const path = __dirname + '/app/views/';
-
 const app = express();
+require("./routes/accounts.routes")(app);
 
 app.use(express.static(path));
 
