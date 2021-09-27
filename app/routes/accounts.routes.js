@@ -6,25 +6,24 @@ module.exports = app => {
     const accounts = require("../controllers/accounts.controller.js");
     // const accounts = require("../controllers/accounts.controller");
     var router = require("express").Router();
-    // cognito initialization
+    
+    //Create new account
+    router.post("/", accounts.create);
 
-
-    router.post("/accounts", accounts.create);
-  
-    // Retrieve all Customers
-    // router.get("/accounts", accounts.findAll);
+    //Retrieve all accounts
+    router.get("/", accounts.findAll);
   
     // Retrieve a single Customer with customerId
-    router.get("/accounts/:customerId", accounts.findOne);
+    router.get("/:customerId", accounts.findOne);
   
     // Update a Customer with customerId
     // router.put("/accounts/:customerId", accounts.update);
   
     // Delete a Customer with customerId
-    router.delete("/accounts/:customerId", accounts.delete);
+    router.delete("/:customerId", accounts.delete);
   
     // Create a new Customer
-    router.delete("/accounts", accounts.deleteAll);
+    router.delete("/", accounts.deleteAll);
 
     app.use('/api/accounts', router);
   };

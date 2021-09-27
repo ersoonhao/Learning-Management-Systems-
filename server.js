@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = __dirname + '/app/views/';
 const app = express();
+app.use(express.json())
 
 require("./app/routes/accounts.routes")(app)
 require("./app/routes/turorial.routes")(app);
@@ -34,7 +35,7 @@ app.use(function(req, res, next) {
 })
 
 // parse requests of content-type - application/json
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -70,7 +71,7 @@ app.get('/quiz',async(req,res)=>{
 
 
 app.get("/test", (req, res) => {
-    res.json({ message: "Test working @ port 8080" });
+    res.json({ message: "Test working @ port 8081" });
   });
 
 // set port, listen for requests

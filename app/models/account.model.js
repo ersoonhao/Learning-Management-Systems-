@@ -16,15 +16,6 @@ module.exports = (sequelize, Sequelize) => {
     password:{
         type:Sequelize.STRING
     },
-    // title: {
-    //   type: Sequelize.STRING
-    // }, 
-    // firstName: {
-    //   type: Sequelize.STRING
-    // },
-    // lastName: {
-    //     type: Sequelize.STRING
-    //   },
     isAdmin: {
         type: Sequelize.BOOLEAN
     },
@@ -33,12 +24,6 @@ module.exports = (sequelize, Sequelize) => {
     },
     isLearner: {
         type: Sequelize.BOOLEAN
-    },
-    dateCreated: {
-        type: Sequelize.DATE
-    },
-    dateUpdated: {
-        type: Sequelize.DATE
     }
     
   });

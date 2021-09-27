@@ -1,7 +1,7 @@
 const db = require("../models");
 
 // need to create an account table
-const Accounts = db.Account; // must declare this in index.js of model
+const Accounts = db.Accounts; // must declare this in index.js of model
 const Op = db.Sequelize.Op;
 
 // helper function to hash. Not used yet.Use if required.
@@ -22,7 +22,7 @@ exports.create = (req, res) => {
   // Create a Tutorial
   const account = {
     username: req.body.username,
-    email: req.body.description,
+    email: req.body.email,
     password: req.body.password,
     isAdmin: req.body.isAdmin ? req.body.isAdmin : false, // if empty will be false.
     isTrainer: req.body.isTrainer ? req.body.isTrainer : false,
@@ -30,7 +30,7 @@ exports.create = (req, res) => {
     dateCreated: req.body.dateCreated,
     dateUpdated: req.body.dateUpdated
   };
-
+  console.log(account)
   // Save Tutorial in the database
   Accounts.create(account)
     .then(data => {
