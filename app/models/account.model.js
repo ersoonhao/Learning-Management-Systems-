@@ -1,7 +1,7 @@
 
 // title is Mr / Ms. Gotta be polite yo. 
 module.exports = (sequelize, Sequelize) => {
-  const Account = sequelize.define("account", {
+  const Account = sequelize.define("Account", {
     accountId: {
         type: Sequelize.INTEGER,
         autoIncrement: true,

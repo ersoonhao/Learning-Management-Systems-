@@ -1,7 +1,7 @@
 const db = require("../models");
 
 // need to create an account table
-const Accounts = db.Accounts; // must declare this in index.js of model
+const Accounts = db.Account; // must declare this in index.js of model
 const Op = db.Sequelize.Op;
 
 // helper function to hash. Not used yet.Use if required.
@@ -78,65 +78,80 @@ exports.findOne = (req, res) => {
 
 
 // Promote an account to admin by the username. 
-// half done  
+// come back to this to check or admin.
 exports.updateAddAdmin = (req, res) => {
 //   const id = req.params.id; 
   const username= req.params.username; 
+  const senderUsername=req.params.senderUsername;
+  // need to check if sender is username. do the endpoint after this? 
+  if (username == null){
+    res.send({
+        status: 401, 
+        message: `username is null`
+      });
+  }
 
+  // returns an object on successful return 
+  //  first element is always the number of affected rows
+  //  second element is the actual affected rows (only supported in postgres with options.returning true.)
   Accounts.update({isAdmin: 1}, {
     where: { username:username }
   })
-    .then(num => {
-      if (num == 1) {
+    .then(result => {
+      if (result == 1) {  
         res.send({
-          message: "Tutorial was updated successfully."
+            status: 200,
+            message: "Account was updated successfully."
         });
       } else {
         res.send({
-          message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`
+          status: 401, 
+          message: `Cannot update Account to admin with username=${username}. This is probably due to the lack of access level to promote.`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error updating Tutorial with id=" + id
+        message: "Error updating Account to admin with username=" + id
       });
     });
 };
 
-// Delete a Tutorial with the specified id in the request
+// Delete an account with the specified username in the request
 exports.delete = (req, res) => {
-  const id = req.params.id;
-
-  Tutorial.destroy({
-    where: { id: id }
+//   const id = req.params.id;
+  const username= req.params.username; 
+  Accounts.destroy({
+    where: { username: username }
   })
-    .then(num => {
-      if (num == 1) {
+    .then(result => { 
+      if (result == 1) {
         res.send({
-          message: "Tutorial was deleted successfully!"
+          status: 200,  
+          message: "Accounts deleted successfully"
         });
       } else {
         res.send({
-          message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
+          status: 401,  
+          message: `Cannot delete Account with username=${username}. Account not found`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Could not delete Tutorial with id=" + id
+        message: "Could not Account with username=" + username
       });
     });
 };
 
 // Delete all Tutorials from the database.
 exports.deleteAll = (req, res) => {
-  Tutorial.destroy({
+    Accounts.destroy({
     where: {},
     truncate: false
   })
     .then(nums => {
-      res.send({ message: `${nums} Tutorials were deleted successfully!` });
+      res.send({ message: `${nums} Accounts were deleted successfully!` });
     })
     .catch(err => {
       res.status(500).send({
@@ -147,15 +162,15 @@ exports.deleteAll = (req, res) => {
 };
 
 // find all published Tutorial
-exports.findAllPublished = (req, res) => {
-  Tutorial.findAll({ where: { published: true } })
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials."
-      });
-    });
-};
+// exports.findAllPublished = (req, res) => {
+//   Tutorial.findAll({ where: { published: true } })
+//     .then(data => {
+//       res.send(data);
+//     })
+//     .catch(err => {
+//       res.status(500).send({
+//         message:
+//           err.message || "Some error occurred while retrieving tutorials."
+//       });
+//     });
+// };
