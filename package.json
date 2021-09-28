@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "stop": "pkill --signal SIGINT myApp",
+    "stop": "fuser -k 8081",
     "test": "mocha"
   },
   "keywords": [
