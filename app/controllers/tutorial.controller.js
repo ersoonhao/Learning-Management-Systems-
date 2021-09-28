@@ -22,7 +22,7 @@ exports.create = (req, res) => {
   // Save Tutorial in the database
   Tutorial.create(tutorial)
     .then(data => {
-      res.send(data);
+      res.send(data); //change this to render
     })
     .catch(err => {
       res.status(500).send({
@@ -39,7 +39,7 @@ exports.findAll = (req, res) => {
 
   Tutorial.findAll({ where: condition })
     .then(data => {
-      res.send(data);
+      res.send(data); //change this to render
     })
     .catch(err => {
       res.status(500).send({
