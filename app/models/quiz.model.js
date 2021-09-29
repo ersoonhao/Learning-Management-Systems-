@@ -1,5 +1,3 @@
-
-// title is Mr / Ms. Gotta be polite yo. 
 module.exports = (sequelize, Sequelize) => {
     const Quiz = sequelize.define("Quiz", {
       quizId: {

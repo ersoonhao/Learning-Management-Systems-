@@ -1,11 +1,9 @@
 module.exports = app => {
-
-
-    // ignore this first i am using cognito-express to verify tokens 
-    // account routes. This is like writing a normal routing function except the logic is abstracted away
-    const accounts = require("../controllers/accounts.controller.js");
-    // const accounts = require("../controllers/accounts.controller");
+    ROUTE_PATH = "/api/accounts"
     var router = require("express").Router();
+
+    //======== START: CONTROLLER LOGIC ========
+    const accounts = require("../../controllers/accounts.controller.js");
     
     //Create new account
     router.post("/", accounts.create);
@@ -25,5 +23,7 @@ module.exports = app => {
     // Create a new Customer
     router.delete("/", accounts.deleteAll);
 
-    app.use('/api/accounts', router);
+    //======== END: CONTROLLER LOGIC ========
+    
+    app.use(ROUTE_PATH, router);
   };
