@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "mocha",
-    "dev": "nodemon server.js"
+    "test": "mocha"
   },
   "keywords": [
     "react",
@@ -28,7 +27,6 @@
   },
   "devDependencies": {
     "mocha": "^5.0.0",
-    "nodemon": "^2.0.13",
     "supertest": "3.0.0",
     "unit.js": "2.0.0"
   }
