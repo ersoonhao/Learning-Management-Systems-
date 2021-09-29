@@ -7,6 +7,10 @@ app.use(express.json())
 
 require("./app/routes/accounts.routes")(app)
 require("./app/routes/turorial.routes")(app);
+require("./app/routes/quiz.routes")(app);
+require("./app/routes/question.routes")(app);
+require("./app/routes/questionOption.routes")(app);
+
 app.use(express.static(path));
 
 
@@ -41,6 +45,9 @@ app.use(function(req, res, next) {
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const db = require("./app/models");
+const { Quizzes } = require("./app/models");
+const { Questions } = require("./app/models");
+const { QuestionOptions } = require("./app/models");
 
 // added cors for aws?? 
 // app.use((req, res, next) => {
@@ -52,21 +59,49 @@ const db = require("./app/models");
 //   });
 
 
-db.sequelize.sync();
+// db.sequelize.sync();
 // // drop the table if it already exists
-// db.sequelize.sync({ force: true }).then(() => {
-//   console.log("Drop and re-sync db.");
-// });
+var initial_quizzes = [
+  {type:'graded', title: 'Demand Quiz', instructions: 'For the demand quiz', durationInMins: '10',courseId:'1',sectionId:'2',passScoreRequirement:'5'},
+  {type:'graded', title: 'Supply Quiz', instructions: 'For the supply quiz', durationInMins: '10',courseId:'1',sectionId:'2',passScoreRequirement:'5'}
+]
 
-app.get('/', function (req,res) {
-  console.log(path);
-  res.sendFile(path + "index.html");
+var initial_questions = [
+  {question: "Are we awesome?", autoGraded: true,type:0, quizId: 1},
+  {question: "John is fucked up", autoGraded: true,type:1, quizId: 1}
+]
+
+var initial_question_options = [
+  {option: "Yes we are awesome",isCorrect:false, questionId:1},
+  {option: "No we are fucking lame",isCorrect:true, questionId:1},
+  {option: "True",isCorrect:true, questionId:2},
+  {option: "False",isCorrect:false, questionId:2}
+]
+ 
+db.sequelize.sync({ force: true }).then(() => {
+
+  for(var i=0; i<initial_quizzes.length;i++){
+    Quizzes.create(initial_quizzes[i])
+  }
+
+  for(var j=0; j<initial_questions.length;j++){
+    Questions.create(initial_questions[j])
+  }
+
+  for(var j=0; j<initial_question_options.length;j++){
+    QuestionOptions.create(initial_question_options[j])
+  }
+
+  console.log("Drop and re-sync db.");
 });
 
-
+// app.get('/', function (req,res) {
+//   console.log(path);
+//   res.sendFile(path + "index.html");
+// });
 
 app.get('/quiz',async(req,res)=>{
-  res.sendFile(path+"quiz.html")
+  res.sendFile(path+"/quiz/quiz.html")
 })
 
 

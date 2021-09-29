@@ -1,6 +1,6 @@
 CREATE TABLE `Quiz` (
   `quizId` int NOT NULL,
-  `type` varchar(2) NOT NULL,
+  `type` varchar(20) NOT NULL,
   `title` varchar(100) NOT NULL,
   `instructions` varchar(500) DEFAULT NULL,
   `durationInMins` int NOT NULL,

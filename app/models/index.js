@@ -21,5 +21,8 @@ db.sequelize = sequelize;
 
 db.Accounts = require("./account.model.js")(sequelize, Sequelize);
 db.tutorials = require("./tutorial.model.js")(sequelize, Sequelize);
+db.Quizzes = require("./quiz.model")(sequelize, Sequelize);
+db.Questions = require("./question.model")(sequelize, Sequelize);
+db.QuestionOptions = require("./questionOption.model")(sequelize, Sequelize);
 
 module.exports = db;
