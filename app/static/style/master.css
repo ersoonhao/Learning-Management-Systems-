@@ -1,0 +1,320 @@
+/*Font*/
+@font-face { font-family: "OpenSans"; src: url("./Open_Sans/OpenSans-Regular.ttf"); }
+@font-face { font-family: "OpenSansSemiBold"; src: url("./Open_Sans/OpenSans-SemiBold.ttf"); }
+@font-face { font-family: "OpenSansBold"; src: url("./Open_Sans/OpenSans-Bold.ttf"); }
+@font-face { font-family: "OpenSansExtraBold"; src: url("./Open_Sans/OpenSans-ExtraBold.ttf"); }
+
+.lms-font{
+    font-family: 'OpenSans', sans-serif;
+}
+.lms-font-semibold{
+    font-family: 'OpenSansSemiBold', sans-serif;
+}
+b, .lms-font-bold{
+    font-family: 'OpenSansBold', sans-serif;
+}
+.lms-font-extrabold{
+    font-family: 'OpenSansExtraBold', sans-serif;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'OpenSans', sans-serif;
+    font-size: 0.9em;
+}
+header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 100px;
+    z-index: 10;
+    background: #4d83f7;
+    -webkit-box-shadow: 0 4px 8px rgba(2,2,2,0.10);
+    -moz-box-shadow: 0 4px 8px rgba(2,2,2,0.10);
+    box-shadow: 0 4px 8px rgba(2,2,2,0.10);
+}
+header .logo{
+    position: relative;
+    font-size: 1.5em;
+    font-family: 'OpenSansBold', sans-serif;
+    color: #FFF;
+    text-decoration: none;
+}
+header .navigation{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0px;
+}
+header .navigation li{
+    list-style: none;
+    margin: 0 17px;
+}
+header .navigation li a{
+    color: #FFF;
+    text-decoration: none;
+    font-family: 'OpenSansSemiBold', sans-serif;
+    opacity: 0.85;
+}
+header .navigation li a:hover{
+    opacity: 1.0;
+}
+header .navigation .user{
+    border: none;
+    background-color: transparent;
+    color: white;
+}
+
+header .search{
+    position: relative;
+    width: 50%;
+    height: 40px;
+}
+header .search input{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: #FFF;
+    background-color: transparent;
+    outline: none;
+    border: 3px solid rgba(255, 255, 255, 0.341);
+    border-radius: 20px;
+    padding: 0px 10px 0px 45px;
+}
+header .search input::placeholder{
+    color: #FFF;
+}
+header .search .fa-search {
+    position: absolute;
+    top: 52%;
+    transform: translateY(-50%);
+    left: 15px;
+    color: #FFF;
+    padding-right: 10px;
+    border-right: 2px solid rgba(255, 255, 255, 0.4);
+}
+.content{
+    margin-top: 110px;
+    margin-bottom: 50px;
+}
+.text-highlight{
+    color: #4d83f7;
+}
+.bg-highlight{
+    background-color: #4d83f7;
+}
+.bg-contrast{
+    background-color: #434343ff;
+}
+
+.btn-clear, .btn-clear:active, .btn-clear:focus{
+    border: 4px solid #ECECEC !important;
+    outline: 0 !important;
+    outline-color: transparent !important;
+}
+
+@media(max-width: 991px){
+    header{
+        padding: 10px 20px;
+        flex-direction: column;
+    }
+    header .search{
+        margin-top: 12px;
+        margin-bottom: 10px;
+    }
+    .content{
+        margin-top: 195px;
+    }
+}
+@media(max-width: 768px){
+    header .search {
+        width: 100%;
+    }
+}
+
+.lms-wrapper {
+    border-radius: 5px;
+    background: #FFF;
+    -webkit-box-shadow: 0 4px 8px rgba(2,2,2,0.10);
+    -moz-box-shadow: 0 4px 8px rgba(2,2,2,0.10);
+    box-shadow: 0 4px 8px rgba(2,2,2,0.10);
+}
+
+.lms-form-title{
+    font-family: 'OpenSansSemiBold', sans-serif;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+.lms-form-input{
+
+}
+
+/* ================== Zingo Horizontal Scroll ================== */
+@media(min-width: 768px) {
+    /* Desktop - Zingo HS*/
+    .ctnZingoHS{
+        position: relative;
+    }
+    .ctnZingoHSFade{
+        position: absolute;
+        z-index: 2;
+        left: -2px;
+        top: 0;
+        pointer-events: none;
+        height: calc(100% - 37px);
+    }
+    .ctnZingoHSFade::after{
+        clear: both;
+    }
+    .ctnZingoHSFade-block{
+        background-color: white;
+        height: 100%;
+        width: 30px; /* Official Content Padding: 30px */
+        float: left;
+    }
+    .ctnZingoHSFade-fade{
+        margin-left: -2px;
+        background-image: linear-gradient(to right, white, rgba(255,255,255, 0) 100%);
+        height: 100%;
+        width: 80px;
+        float: left;
+    }
+}
+
+/* ------------ Zingo - Content Block (Wrapper) ------------ */
+.ctnZingoContentBlock, .ctnZingoContentSafeBlock{
+    margin: 10px 0px 40px;
+}
+.ctnZingoContentSafeBlock{
+    padding: 0px 30px; /* Official Content Padding: 30px */
+}
+.zingo-gutter{
+    padding-left: 30px; /* Official Content Padding: 30px */
+    padding-right: 30px;
+}
+.zingo-gutter-left{
+    padding-left: 30px; /* Official Content Padding: 30px */
+}
+.zingo-gutter-right{
+    padding-right: 30px; /* Official Content Padding: 30px */
+}
+/*------------ Zingo Headers ------------*/
+.zingoHeader{
+    padding-left: 30px; /* Official Content Padding: 30px */
+    margin-bottom: 14px;
+}
+.zhTitle{
+    font-family: "OpenSansBold";
+    margin-bottom: 10px;
+}
+.zhSubtitle{ }
+
+/*------------ Zingo Content ------------*/
+.zingoContent{
+    padding-left: 30px; /* Official Content Padding: 30px */
+    margin-bottom: 14px;
+}
+
+/*------------ ZingoHorizontalScroll - Main */
+.zingoHS {
+    overflow: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.zingoHS::-webkit-scrollbar{ display: none; }
+.zingoHS::-webkit-scrollbar-button{ display: none; }
+
+.zingoHS > .zingoHSItem {
+    display: inline-block;
+    margin-right: 7px; /* Spacing */
+}
+.zingoHS label {
+    cursor: pointer;
+}
+.zingoHSItem:first-child {
+    margin-left: 30px; /* Official Content Padding: 30px */
+}
+.zingoHSItem{
+    text-decoration: none;
+}
+
+/* ------------ ZingoHorizontalScroll - Controllers ------------ */
+.zingoHSController{
+    margin-left: 30px; /* Official Content Padding: 30px */
+    margin-top: 10px;
+}
+.zingoHSController > .zhscItem{
+    border: none;
+    background-color: white;
+    -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.19);
+    -moz-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.19);
+    box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.19);
+    outline: none;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    margin-right: 7px;
+    text-align: center;
+    padding: 0px;
+}
+.zingoHSController > .zhscItem > img { /* Arrows */
+    width: 18px;
+}
+
+a.zingoWidgetLink, a.zingoWidgetLink:hover, a.zingoWidgetLink:link, a.zingoWidgetLink:active{
+    text-decoration: none;
+    color: black;
+}
+
+/* Listing */
+.listing-item-head{
+    position: relative; 
+}
+.listing-item-head .image{
+    object-fit: cover; 
+    border-radius: 5px;
+}
+.listing-item-tag{
+    position: absolute; 
+    background-color: white; 
+    top: 10px; 
+    right: 10px; 
+    padding: 1px 4px 2px 7px;
+}
+.listing-item-tag span{
+    font-size: 0.7em;
+}
+.listing-item-tag img:first-of-type{
+    margin-right: 3px !important;
+}
+.listing-item-tag img{
+    width: 10px; opacity: 0.95; margin: 0px 5px;
+}
+
+.listing-info-wrapper{
+    width: 50%;
+    min-width: 200px;
+    float: left;
+    margin: 10px 0px;
+}
+.listing-info-title{
+    font-size: 0.8em;
+}
+.listing-info-value{
+    font-family: 'OpenSansSemiBold', sans-serif;
+    font-size: 0.9em;
+}
+.li-muted{
+    color: #8b8a8a !important;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
