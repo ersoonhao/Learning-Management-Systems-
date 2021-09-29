@@ -6,9 +6,10 @@ const app = express();
 app.use(express.json())
 
 // ================ Routes ================
-app.use(express.static(__dirname + "/app/static/"));
 app._FRONT_END_PATH = __dirname + '/app/views/';
-app.use(express.static(app._FRONT_END_PATH));
+//app.use(express.static(app._FRONT_END_PATH));
+
+app.use(express.static(__dirname + "/app/static/"));
 
 app.get("/test", (req, res) => {
   res.json({ message: "Test working @ port 8081" });
@@ -22,6 +23,7 @@ require("./app/routes/backend/question.routes")(app);
 require("./app/routes/backend/questionOption.routes")(app);
 
 //Front-end
+require("./app/routes/frontend/main.froutes")(app);
 require("./app/routes/frontend/quiz.froutes")(app);
 
 
@@ -29,7 +31,7 @@ require("./app/routes/frontend/quiz.froutes")(app);
 // ================ CORS ================
 // Cross-origin resource sharing (CORS) defines a way for client web applications that are loaded in one domain to interact with resources in a different domain. 
 app.use(cors({
-    //origin: "*"
+    //origin: "*",
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }));
 
