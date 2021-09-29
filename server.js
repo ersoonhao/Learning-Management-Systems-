@@ -101,7 +101,7 @@ db.sequelize.sync({ force: true }).then(() => {
 // });
 
 app.get('/quiz',async(req,res)=>{
-  res.sendFile(path+"/quiz/quiz.html")
+  res.sendFile(path+"/quiz/create_quiz.html")
 })
 
 
