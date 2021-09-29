@@ -4,7 +4,7 @@ const cors = require("cors");
 const path = __dirname + '/app/views/';
 const app = express();
 app.use(express.json())
-
+// test 
 require("./app/routes/accounts.routes")(app)
 require("./app/routes/turorial.routes")(app);
 require("./app/routes/quiz.routes")(app);
