@@ -12,7 +12,8 @@ require("./app/routes/question.routes")(app);
 require("./app/routes/questionOption.routes")(app);
 
 app.use(express.static(path));
-
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 // Cross-origin resource sharing (CORS) defines a way for client web applications that are loaded in one domain to interact with resources in a different domain. 
 // var corsOptions = {
@@ -95,13 +96,14 @@ db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and re-sync db.");
 });
 
-// app.get('/', function (req,res) {
-//   console.log(path);
-//   res.sendFile(path + "index.html");
-// });
 
 app.get('/quiz',async(req,res)=>{
-  res.sendFile(path+"/quiz/create_quiz.html")
+  // res.sendFile(path+"/quiz/create_quiz.html")
+  res.render(__dirname + '/app/views/quiz/create_quiz.html')
+})
+
+app.get('/viewquiz',async(req,res)=>{
+  res.render(__dirname + '/app/views/quiz/view_quiz.html')
 })
 
 
