@@ -7,16 +7,15 @@
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     
-        <title>Create a Quiz</title>
+        <title>View Quiz</title>
         <script src="https://unpkg.com/vue@3"></script>
         <script src="https://unpkg.com/vue-router@4"></script>
       </head>
       <body>
         <div class="container-fluid">
 
-            <div id='quiz'>
-                <title-quiz></title-quiz>
-                <form-component></form-component>
+            <div id='quizzes'>
+                <quizzes-component></quizzes-component>
             </div>
             
       
@@ -26,17 +25,17 @@
         
       </body>
 
-      <script src='form.js'></script>
+      <script src='../quiz/quiz.js'></script>
       <script>
 
         // Create a Vue application
         const app = Vue.createApp({
             components:{
-                'form-component':Form
+                'quizzes-component':quiz
             }
         })
         
-        app.mount('#quiz')
+        app.mount('#quizzes')
 
       </script>
         
