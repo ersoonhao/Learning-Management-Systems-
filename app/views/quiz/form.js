@@ -1,4 +1,5 @@
 const Form = {template:`
+            <h1>{{formTitle}}</h1>
             <div id="v-model-multiple-checkboxes">
             <input type="checkbox" id="jack" value="Jack" v-model="checkedNames" />
             <label for="jack">Jack</label>
@@ -12,7 +13,8 @@ const Form = {template:`
     
         data() {
             return {
-                checkedNames : []
+                checkedNames : [],
+                formTitle : "Create a quiz"
             }
         }
         
