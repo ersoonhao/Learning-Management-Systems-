@@ -1,5 +1,5 @@
 module.exports = app => {
-    const quizzes = require("../controllers/quiz.controller");
+    const quizzes = require("../../controllers/quiz.controller");
 
     var router = require("express").Router();
 
