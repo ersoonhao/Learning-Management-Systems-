@@ -157,6 +157,55 @@ header .search .fa-search {
 
 }
 
+/* Listings */
+.horizontal-wrapper{
+    padding: 20px 0px;
+    margin-bottom: 40px;
+}
+.horizontal-wrapper .title{
+    float: left;
+    margin-left: 20px;
+}
+.horizontal-wrapper .action{
+    float: right;
+    margin-right: 20px;
+}
+.horizontal-wrapper .action a{
+    text-decoration: none;
+}
+.horizontal-wrapper .content{
+    margin: 15px 0px 5px;
+}
+
+/* Listing */
+.listing-item-head{
+    width: 200px;
+}
+.listing-item-wrapper .image{
+    width: 200px; 
+    height: 140px;
+}
+.listing-item-body{
+    margin-top: 5px;
+}
+
+.listing-item-body .li-title, .listing-item-body .li-location{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 200px;
+}
+.listing-item-body .li-title{
+    margin-top: 7px;
+}
+.listing-item-body .li-location{
+    font-size: 0.8em;
+    color: #8b8a8a;
+}
+.listing-item-body .li-proptype{
+    font-size: 0.8em; color: #19B5FE;
+}
+
 /* ================== Zingo Horizontal Scroll ================== */
 @media(min-width: 768px) {
     /* Desktop - Zingo HS*/

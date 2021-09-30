@@ -11,31 +11,145 @@
             <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
         <title>LMS</title>
         <link rel="stylesheet" href="/style/master.css">
-        <link rel="stylesheet" href="/style/index.css">
+        <!-- <link rel="stylesheet" href="/style/index.css"> -->
     </head>
     
     <body>
-        <header>
-            <a href="/" class="logo">LMS</a>
-            <div class="search">
-                <input type="text" placeholder="Search" /> <!--onkeypress="searchQuery(event)"-->
-                <i class="fa fa-search"></i>
-            </div>
-            <ul class="navigation">
-                <li><a href="/chat">Chat</a></li>
-                <li><a href="/mycourses">My Courses</a></li>
-                <li><a href="javascript: loadUserProfile();"><i class="fa fa-user"></i></a></li>
-            </ul>
-        </header>
-        <div class="content">
-            <div class=container>
-                <h3 class="lms-font-semibold">Welcome back Robin, ready to continue?</h3>
+        <div id="app">
+            <lms-head :session="session"></lms-head>
+            <div class="content">
+                <div class=container>
+                    <h3 class="lms-font-semibold">Welcome back Robin, ready to continue?</h3>
+
+                    <zingo-hs>
+                        <course-item v-for="cdata in dataList" :key="cdata.courseId" hs='true' :cdata='cdata'></course-item>
+                    </zingo-hs>
+
+                </div>
             </div>
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
         </script>
-        <script src ="/js/vue.js"></script>
+        <script src ="/js/lib/vue.js"></script>
+        <script>
+            Vue.component("lms-head", {
+                props:{
+                    session: { type: Object }
+                },
+                template: `
+                    <header>
+                        <a href="/" class="logo">LMS</a>
+                        <div class="search">
+                            <input type="text" placeholder="Search" /> <!--onkeypress="searchQuery(event)"-->
+                            <i class="fa fa-search"></i>
+                        </div>
+                        <ul class="navigation">
+                            <li v-show="session"><a href="/chat">Chat</a></li>
+                            <li v-show="session"><a href="/mycourses">My Courses</a></li>
+                            <li v-show="session && session.isAdmin"><a href="/admin">Admin</a></li>
+                            <li v-show="session"><a href="javascript: loadUserProfile();"><i class="fa fa-user"></i></a></li>
+                            <li v-show="!session"><a href="/login">Login</a></li>
+                        </ul>
+                    </header>
+                `
+            });
+            Vue.component("zingo-hs", {
+                template: `
+                    <div class="ctnZingoHS">
+                        <div class="zingoHS"><slot></slot></div>
+                        <div class="zingoHSController d-none d-md-block">
+                            <button class="zhscItem zhscItemLeft"><img src="../images/icons/iconArrowLeft.svg"/></button>
+                            <button class="zhscItem zhscItemRight"><img src="../images/icons/iconArrowRight.svg"/></button>
+                        </div>
+                    </div>
+                `, created: function(){
+                    Array.from(document.getElementsByClassName("ctnZingoHS")).forEach(function(ctnZingoHS){ 
+                            //Setup Controller
+                        let hsContent = ctnZingoHS.getElementsByClassName("zingoHS")[0];
+                        let hsController = ctnZingoHS.getElementsByClassName("zingoHSController")[0]
+                        let left = hsController.getElementsByClassName("zhscItemLeft")[0];
+                        let right = hsController.getElementsByClassName("zhscItemRight")[0];
+                        if(hsContent != null && left != null && right != null){
+                            left.addEventListener("click", zingoHSControllerPressed.bind(null, event, hsContent, -1));
+                            right.addEventListener("click", zingoHSControllerPressed.bind(null, event, hsContent, 1));
+                        }
+                    })
+                }, methods: {
+                    zingoHSControllerPressed: function(event, hsContent, direction){
+                        let hsContentItems = hsContent.children;
+                        if(hsContentItems.length > 0){
+                            let hsContentWidth = hsContent.getBoundingClientRect().width;
+                            let hsItemWidth = hsContent.children[0].getBoundingClientRect().width;
+                            let multiplier = Math.max(1, Math.floor(hsContentWidth / hsItemWidth)/2);
+                            let scrollDistance = hsItemWidth * multiplier;
+                            console.log(hsContentWidth, hsItemWidth, multiplier, scrollDistance);
+                            let scrollX = hsContent.scrollLeft + scrollDistance * direction;
+                            $(hsContent).animate({ scrollLeft: scrollX }, 300);
+                        }
+                    }
+                }
+            });
+            Vue.component("course-item", {
+                props: {
+                    "hs": { type: String },
+                    "cdata": { type: Object }
+                },
+                template: `
+                    <a :class="a_class" :href="'course/' + cdata.courseId">
+                        <div class="listing-item-wrapper">
+                            <div class="listing-item-head">
+                                <img class="image" :src="cdata.displayPicture">
+                                <div class="listing-item-tag sgprop-wrapper">
+                                    <span class="sgprop-font-semibold">0</span><img src="./resources/images/bed.png">
+                                    <span class="sgprop-font-semibold">0</span><img src="./resources/images/toilet.png">
+                                </div>
+                            </div>
+                            <div class="listing-item-body">
+                                From S$<span class="sgprop-font-semibold">ABC</span>
+                                <div class="li-title sgprop-font-semibold" :text="cdata.title"></div>
+                                <div class="li-location">HI</div>
+                                HELLO<span class="li-proptype sgprop-font-semibold">ROBIN</span>
+                            </div>
+                        </div>
+                    </a>
+                `,
+                computed: {
+                    a_class: () => {
+                        if(this.hs == 'true'){
+                            return "zingoHSItem zingoWidgetLink"
+                        }
+                        return "listing-item-wrapper zingoWidgetLink"
+                    }
+                }
+            })
+            const app = new Vue({
+                el: '#app',
+                data: {
+                    session: null,
+                    dataList: []
+                },
+                created: function(){
+                    //Dummy
+                    this.session = {
+                        accountId: "U100001",
+                        username: "Robin",
+                        displayName: "Robin Chong",
+                        isAdmin: true,
+                        isTrainer: true,
+                        dateCreated: new Date(),
+                        dateUpdated: new Date()
+                    };
+                    
+                    //DUMMY DATA
+                    this.dataList = [{
+                        courseId: 2,
+                        displayPicture: "https://cdn.sstatic.net/Img/teams/teams-illo-free-sidebar-promo.svg?v=47faa659a05e",
+                        title: "Robin"
+                    }];
+                }
+            });
+        </script>
     </body>
 </html>
