@@ -43,9 +43,9 @@ describe('The courses route and controller',()=>{
   })
 
   it('retrieves one course through get request',(done)=>{
-    request(app).get('/api/course/4').end(
+    request(app).get('/api/course/1').end(
       (err,response)=>{
-        assert(response.body.title == 'Biology')
+        assert(response.body.title == 'Physics')
         done()
       }
     )
