@@ -21,6 +21,7 @@ require("./app/routes/backend/turorial.routes")(app);
 require("./app/routes/backend/quiz.routes")(app);
 require("./app/routes/backend/question.routes")(app);
 require("./app/routes/backend/questionOption.routes")(app);
+require("./app/routes/backend/course.routes")(app);
 
 //Front-end
 require("./app/routes/frontend/main.froutes")(app);
