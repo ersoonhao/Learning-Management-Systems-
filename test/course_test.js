@@ -63,13 +63,13 @@ describe('The courses route and controller',()=>{
     )
   })
 
-  after(function(){
+  // after(function(){
     
-    setTimeout(function(){
-      process.kill(0)
-    },10000);
+  //   setTimeout(function(){
+  //     process.kill(0)
+  //   },10000);
 
-  })
+  // })
 
   
 
