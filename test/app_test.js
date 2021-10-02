@@ -6,7 +6,7 @@ const app = require('../server.js');
 const assert = require('assert')
 const db = require('../app/models/index');
 
-describe('The express app',async()=>{
+describe('The express app',()=>{
 
   it('handles a get request to /test',(done)=>{
     request(app).get('/test').end(

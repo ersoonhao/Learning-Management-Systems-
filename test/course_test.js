@@ -24,7 +24,7 @@ async function createCourseData(){
 });
 }
 
-describe('The courses route and controller',async()=>{
+describe('The courses route and controller',()=>{
 
     before(async function(){
       console.log('before all tests')
@@ -62,12 +62,16 @@ describe('The courses route and controller',async()=>{
     }
     )
   })
+
+  after(function(){
+    
+    setTimeout(function(){
+      process.kill(0)
+    },10000);
+
+  })
+
+  
+
 })
 
-// describe('Array', function() {
-//   describe('#indexOf()', function() {
-//     it('should return -1 when the value is not present', function() {
-//       assert.equal([1, 2, 3].indexOf(4), -1);
-//     });
-//   });
-// });
