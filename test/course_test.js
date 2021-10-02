@@ -63,13 +63,11 @@ describe('The courses route and controller',()=>{
     )
   })
 
-  // after(function(){
-    
-  //   setTimeout(function(){
-  //     process.kill(0)
-  //   },10000);
-
-  // })
+  after(async function(){
+    console.log('after all tests')
+    await createCourseData()
+ 
+  })
 
   
 
