@@ -2,6 +2,7 @@ const db = require("../models");
 const { Quizzes } = require("../models");
 const { Questions } = require("../models");
 const { QuestionOptions } = require("../models");
+const { Course } = require("../models");
 
 var initial_quizzes = [
     {type:'graded', title: 'Demand Quiz', instructions: 'For the demand quiz', durationInMins: '10',courseId:'1',sectionId:'2',passScoreRequirement:'5'},
@@ -19,8 +20,10 @@ var initial_quizzes = [
     {option: "True",isCorrect:true, questionId:2},
     {option: "False",isCorrect:false, questionId:2}
   ]
-    
-  db.sequelize.sync({ force: true }).then(() => {
+  
+  // { force: true }
+async function createTables(){
+  await db.sequelize.sync({ force: true }).then(() => {
   
     for(var i=0; i<initial_quizzes.length;i++){
       Quizzes.create(initial_quizzes[i])
@@ -36,3 +39,7 @@ var initial_quizzes = [
   
     console.log("Drop and re-sync db.");
 });
+}
+
+createTables()
+  
