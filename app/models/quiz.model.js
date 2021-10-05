@@ -24,49 +24,68 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER
         },
         passScoreRequirement: {
-            type: Sequelize.INTEGER
+            type: Sequelize.FLOAT //Range: 0 to 1
         },
         active:{
             type: Sequelize.BOOLEAN //Optional
         }
     });
-
+    
     Quiz.QUIZ_TYPES_GRADED = 'G';
     Quiz.QUIZ_TYPES_UNGRADED = 'UG';
 
-    //Public Methods
-    Quiz.createQuiz = function (quiz) {
+    //Public
+    Quiz.createQuiz = function (quiz, courseId, sectionId) {
+        delete quiz.quizId;
+
+        quiz.courseId = courseId
+        quiz.sectionId = sectionId
+
         if(isValidQuiz(quiz, true)){
             return quiz;
         }
         return null;
     }
     Quiz.updateQuiz = function (quiz) {
+        delete quiz.courseId;
+        delete quiz.sectionId;
+
         if(isValidQuiz(quiz, false)){
             return quiz;
         }
         return null;
     }
-    
 
     //Private
     function isValidQuiz(quiz, isNew){
-        if(quiz.type == null || ![Quiz.QUIZ_TYPES_GRADED, Quiz.QUIZ_TYPES_UNGRADED].includes(quiz.type) || 
-        quiz.title == null || quiz.durationInMins == null || quiz.durationInMins <= 0 || quiz.courseId == null){
+        if(quiz == null){
+            console.log("Quiz Error: 1");
             return false;
         }
-        if(!((isNew && quiz.quizId == null) || (!isNew && quiz.quizId != null))){
+        if(quiz.type == null || ![Quiz.QUIZ_TYPES_GRADED, Quiz.QUIZ_TYPES_UNGRADED].includes(quiz.type) || 
+        quiz.title == null || quiz.durationInMins == null || quiz.durationInMins <= 0 || quiz.active == null){
+            console.log("Quiz Error: 2");
+            return false;
+        }
+        if((isNew && quiz.quizId != null || isNew && quiz.courseId == null) || (!isNew && quiz.quizId == null)){
+            console.log("Quiz Error: 3");
             return false;
         }
         if(quiz.type == Quiz.QUIZ_TYPES_GRADED){
             //Graded
-            if(!(quiz.sectionId == null && quiz.passScoreRequirement != null && quiz.passScoreRequirement >= 0)){
+            if(!(quiz.sectionId == null && quiz.passScoreRequirement != null && quiz.passScoreRequirement >= 0 && quiz.passScoreRequirement <= 1)){
+                console.log("Quiz Error: 4");
                 return false;
             }
             
         }else if(quiz.type == Quiz.QUIZ_TYPES_UNGRADED){
             //Ungraded
-            if(!(quiz.sectionId != null && quiz.passScoreRequirement == null)){
+            if(isNew && quiz.sectionId == null){
+                console.log("Quiz Error: 5");
+                return false;
+            }
+            if(quiz.passScoreRequirement != null){
+                console.log("Quiz Error: 6");
                 return false;
             }
         }

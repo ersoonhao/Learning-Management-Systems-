@@ -3,15 +3,13 @@ module.exports = app => {
     var router = require("express").Router();
 
     //======== START: CONTROLLER LOGIC ========
-    const quizzes = require("../../controllers/quiz.controller");
+    const quiz = require("../../controllers/quiz.controller");
 
-    var router = require("express").Router();
+    router.post("/CreateQuiz",quiz.createQuiz);
 
-    router.post("/",quizzes.create);
+    router.post("/UpdateQuiz", quiz.updateQuiz);
 
-    router.get("/", quizzes.findAll);
-
-    router.get("/:id", quizzes.findOne);
+    //router.get("/:id", quiz.findOne);
 
     //======== END: CONTROLLER LOGIC ========
     
