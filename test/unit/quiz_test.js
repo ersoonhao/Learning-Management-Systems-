@@ -1,4 +1,4 @@
-// DONE BY: Robin Chong
+// CONTRIBUTOR: Robin Chong
 
 const assert = require('assert')
 const { Quiz } = require("../../app/models");
@@ -48,7 +48,7 @@ describe('GRADED Quiz creation', () => { //CREATE
 
             const result = Quiz.createQuiz(q, cId, sId);
             if(result != null){
-                console.log("FAILED: " + i);
+                console.log("Quiz FAILED: " + i);
             }
             assert(result == null);
         }
@@ -139,7 +139,7 @@ describe('UNGRADED Quiz creation', () => { //CREATE
 
             const result = Quiz.createQuiz(q, cId, sId);
             if(result != null){
-                console.log("FAILED: " + i);
+                console.log("Quiz FAILED: " + i);
             }
             assert(result == null);
         }
@@ -182,7 +182,7 @@ describe('UNGRADED Quiz update', () => { //UPDATE
 
             const result = Quiz.updateQuiz(q);
             if(result != null){
-                console.log("FAILED: " + i);
+                console.log("Quiz FAILED: " + i);
             }
             assert(result == null);
         }

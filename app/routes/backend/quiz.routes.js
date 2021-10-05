@@ -1,3 +1,5 @@
+// CONTRIBUTOR: Robin Chong
+
 module.exports = app => {
     ROUTE_PATH = "/api/quiz"
     var router = require("express").Router();
@@ -5,9 +7,16 @@ module.exports = app => {
     //======== START: CONTROLLER LOGIC ========
     const quiz = require("../../controllers/quiz.controller");
 
-    router.post("/CreateQuiz",quiz.createQuiz);
+    router.post("/createQuiz",quiz.createQuiz);
+    router.post("/updateQuiz", quiz.updateQuiz);
+    
+    router.post("/addQuestion", quiz.addQuestion);
+    router.post("/updateQuestion", quiz.updateQuestion);
+    router.post("/deleteQuestion", quiz.deleteQuestion);
 
-    router.post("/UpdateQuiz", quiz.updateQuiz);
+    router.post("/addQuestionOption", quiz.addQuestionOption);
+    router.post("/updateQuestionOption", quiz.updateQuestionOption);
+    router.post("/deleteQuestionOption", quiz.deleteQuestionOption);
 
     //router.get("/:id", quiz.findOne);
 

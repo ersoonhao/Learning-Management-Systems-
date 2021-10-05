@@ -1,4 +1,6 @@
 const { Quiz } = require("../models");
+const { Question } = require("../models");
+const { QuestionOption } = require("../models");
 
 //Get Quiz Package
 // exports.getQuizPackage = (req, res) => {
@@ -15,7 +17,7 @@ const { Quiz } = require("../models");
 //     });
 // };
 
-//==== POST: /CreateQuiz
+//==== POST: /createQuiz
 exports.createQuiz = (req,res) => {
     let body = req.body;
     if(!body){
@@ -32,7 +34,7 @@ exports.createQuiz = (req,res) => {
     const quiz = Quiz.createQuiz(body.quiz, body.courseId, body.sectionId);
     if(quiz == null){
         res.status(400).send({
-            message: "Invalid quiz data format"
+            message: "Invalid data format"
         })
         return
     }
@@ -44,7 +46,7 @@ exports.createQuiz = (req,res) => {
     }).catch(err=>{
         res.status(500).send({
             message:
-            err.message || "Some error occured while creating the quiz"
+            err.message || "Some error occured while creating"
         })
     })
 
@@ -65,7 +67,7 @@ exports.createQuiz = (req,res) => {
     */
 }
 
-//==== POST: /UpdateQuiz
+//==== POST: /updateQuiz
 exports.updateQuiz = (req, res) => {
     let body = req.body;
     if(!body){
@@ -91,7 +93,7 @@ exports.updateQuiz = (req, res) => {
     //Update DB
     let id = quiz.quizId;
 
-    Quiz.update(req.body, {
+    Quiz.update(quiz, {
         where: { quizId: id }
     }).then(num => {
         if (num == 1) {
@@ -125,15 +127,296 @@ exports.updateQuiz = (req, res) => {
     */
 }
 
-// exports.findAll = (req, res) => {
-//     Quiz.findAll()
-//       .then(data => {
-//         res.send(data); //change this to render
-//       })
-//       .catch(err => {
-//         res.status(500).send({
-//           message:
-//             err.message || "Some error occurred while retrieving quiz."
-//         });
-//       });
-//   };
+//=== POST: /addQuestion
+exports.addQuestion = (req,res) => {
+    let body = req.body;
+    if(!body){
+        res.status(400).send({
+            message: "Request body is empty!"
+        })
+        return
+    }
+    //Access control
+    //TODO: Get permissions
+    
+
+    //Init
+    const question = Question.createQuestion(body.question, body.quizId);
+    if(question == null){
+        res.status(400).send({
+            message: "Invalid data format"
+        })
+        return
+    }
+
+    //Write to DB
+    Question.create(question).then(data => {
+        res.send(data)
+
+    }).catch(err=>{
+        res.status(500).send({
+            message:
+            err.message || "Some error occured while creating"
+        })
+    })
+
+    /* SAMPLE JSON BODY REQUEST
+        {
+            "question": {
+                "questionId": null,
+                "question": "TEST",
+                "autoGraded": true,
+                "type": "MCQ"
+            }, 
+            "quizId": 1
+        }
+    */
+}
+//==== POST: /updateQuestion
+exports.updateQuestion = (req, res) => {
+    let body = req.body;
+    if(!body){
+        res.status(400).send({
+            message: "Request body is empty!"
+        })
+        return
+    }
+    //Access control
+    //TODO: Get permissions
+    
+
+    //Init
+    const question = Question.updateQuestion(body.question);
+    if(question == null){
+        res.status(400).send({
+            message: "Invalid data format"
+        })
+        return
+    }
+    console.log(`Updating: ${question}`)
+    
+    //Update DB
+    let id = question.questionId;
+
+    Question.update(question, {
+        where: { questionId: id }
+    }).then(num => {
+        if (num == 1) {
+            res.send({
+                message: "Successfully updated."
+            });
+        } else {
+            res.send({
+                message: `Cannot update with id=${id}.`
+            });
+        }
+    }).catch(err => {
+        console.log(err);
+        res.status(500).send({
+            message: "Error updating with id=" + id
+        });
+    });
+
+    /* SAMPLE JSON BODY REQUEST
+        {
+            "question": {
+                "questionId": 1,
+                "question": "TEST",
+                "autoGraded": true,
+                "type": "MCQ"
+            }
+        }
+    */
+}
+//==== POST: /deleteQuestion
+exports.deleteQuestion = (req, res) => {
+    let body = req.body;
+    if(!body){
+        res.status(400).send({
+            message: "Request body is empty!"
+        })
+        return
+    }
+    //Access control
+    //TODO: Get permissions
+    
+    let id = body.questionId;
+    if(id == null){
+        res.status(400).send({
+            message: "Invalid data format"
+        })
+        return
+    }
+
+    Question.destroy({
+        where: { questionId: id }
+    
+    }).then(num => {
+        if (num == 1) {
+                res.send({
+                    message: "Deleted successfully!"
+                });
+            } else {
+                res.send({
+                    message: `id=${id} has already been deleted.`
+                });
+            }
+      }).catch(err => {
+        res.status(500).send({
+            message: "Could not delete with id=" + id
+        });
+    });
+    /* SAMPLE JSON BODY REQUEST
+        {
+            "questionId": 1
+        }
+    */
+};
+
+//=== POST: /addQuestionOption
+exports.addQuestionOption = (req,res) => {
+    let body = req.body;
+    if(!body){
+        res.status(400).send({
+            message: "Request body is empty!"
+        })
+        return
+    }
+    //Access control
+    //TODO: Get permissions
+    
+
+    //Init
+    const questionOption = QuestionOption.createQuestionOption(body.questionOption, body.questionId);
+    if(questionOption == null){
+        res.status(400).send({
+            message: "Invalid data format"
+        })
+        return
+    }
+
+    //Write to DB
+    QuestionOption.create(questionOption).then(data => {
+        res.send(data)
+
+    }).catch(err=>{
+        res.status(500).send({
+            message:
+            err.message || "Some error occured while creating"
+        })
+    })
+
+    /* SAMPLE JSON BODY REQUEST
+        {
+            "questionOption": {
+                "questionOptionId": null,
+                "option": "TEST",
+                "isCorrect": true
+            },
+            "questionId": 1
+        }
+    */
+}
+//==== POST: /updateQuestionOption
+exports.updateQuestionOption = (req, res) => {
+    let body = req.body;
+    if(!body){
+        res.status(400).send({
+            message: "Request body is empty!"
+        })
+        return
+    }
+    //Access control
+    //TODO: Get permissions
+    
+
+    //Init
+    const questionOption = QuestionOption.updateQuestionOption(body.questionOption);
+    if(questionOption == null){
+        res.status(400).send({
+            message: "Invalid data format"
+        })
+        return
+    }
+    console.log(`Updating: ${questionOption}`)
+    
+    //Update DB
+    let id = questionOption.questionOptionId;
+
+    QuestionOption.update(questionOption, {
+        where: { questionOptionId: id }
+    }).then(num => {
+        if (num == 1) {
+            res.send({
+                message: "Successfully updated."
+            });
+        } else {
+            res.send({
+                message: `Cannot update with id=${id}.`
+            });
+        }
+    }).catch(err => {
+        console.log(err);
+        res.status(500).send({
+            message: "Error updating with id=" + id
+        });
+    });
+
+    /* SAMPLE JSON BODY REQUEST
+        {
+            "questionOption": {
+                "questionOptionId": 1,
+                "option": "TEST",
+                "isCorrect": true
+            }
+        }
+    */
+}
+//==== POST: /deleteQuestionOption
+exports.deleteQuestionOption = (req, res) => {
+    let body = req.body;
+    if(!body){
+        res.status(400).send({
+            message: "Request body is empty!"
+        })
+        return
+    }
+    //Access control
+    //TODO: Get permissions
+    
+    let id = body.questionOptionId;
+    if(id == null){
+        res.status(400).send({
+            message: "Invalid data format"
+        })
+        return
+    }
+
+    QuestionOption.destroy({
+        where: { questionOptionId: id }
+    
+    }).then(num => {
+        if (num == 1) {
+                res.send({
+                    message: "Deleted successfully!"
+                });
+            } else {
+                res.send({
+                    message: `id=${id} has already been deleted.`
+                });
+            }
+      }).catch(err => {
+        console.log(err);
+
+        res.status(500).send({
+            message: "Could not delete with id=" + id
+        });
+    });
+    /* SAMPLE JSON BODY REQUEST
+        {
+            "questionOptionId": 1
+        }
+    */
+};
+
+
