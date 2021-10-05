@@ -1,9 +1,9 @@
 module.exports = app => {
-    ROUTE_PATH = "/api/accounts"
+    ROUTE_PATH = "/api/account"
     var router = require("express").Router();
 
     //======== START: CONTROLLER LOGIC ========
-    const accounts = require("../../controllers/accounts.controller.js");
+    const accounts = require("../../controllers/account.controller.js");
     
     //Create new account
     router.post("/", accounts.create);

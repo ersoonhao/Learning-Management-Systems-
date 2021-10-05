@@ -1,5 +1,5 @@
 const db = require("../models");
-const Quizzes = db.Quizzes;
+const Quiz = db.Quiz;
 const Op = db.Sequelize.Op;
 
 exports.create = (req,res) =>{
@@ -20,7 +20,7 @@ exports.create = (req,res) =>{
         passScoreRequirement:req.body.passScoreRequirement
     }
 
-    Quizzes.create(quiz)
+    Quiz.create(quiz)
     .then(data=>{
         res.send(data) //change this to render
     }).catch(err=>{
@@ -33,14 +33,14 @@ exports.create = (req,res) =>{
 
 exports.findAll = (req, res) => {
   
-    Quizzes.findAll()
+    Quiz.findAll()
       .then(data => {
         res.send(data); //change this to render
       })
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving quizzes."
+            err.message || "Some error occurred while retrieving quiz."
         });
       });
   };
@@ -48,7 +48,7 @@ exports.findAll = (req, res) => {
   exports.findOne = (req, res) => {
     const id = req.params.id;
   
-    Quizzes.findByPk(id)
+    Quiz.findByPk(id)
       .then(data => {
         res.send(data);
       })

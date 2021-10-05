@@ -1,4 +1,8 @@
 module.exports = app => {
+    ROUTE_PATH = "/api/quiz"
+    var router = require("express").Router();
+
+    //======== START: CONTROLLER LOGIC ========
     const quizzes = require("../../controllers/quiz.controller");
 
     var router = require("express").Router();
@@ -9,5 +13,7 @@ module.exports = app => {
 
     router.get("/:id", quizzes.findOne);
 
-    app.use('/api/quizzes', router)
+    //======== END: CONTROLLER LOGIC ========
+    
+    app.use(ROUTE_PATH, router);
 }

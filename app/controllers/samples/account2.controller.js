@@ -1,4 +1,6 @@
-const Account = require("../models/account.model");
+//========== [NOT IN USE] SAMPLE - Without ORM: Use account.controller.js instead ==========
+
+const Account = require("../../models/account.model");
 // var bcrypt = require('bcryptjs');
 var crypto = require('crypto');
 var algorithm = 'aes256'; // or any other algorithm supported by OpenSSL

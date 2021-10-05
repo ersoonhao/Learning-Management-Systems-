@@ -1,3 +1,5 @@
+//========== [NOT IN USE] SAMPLE ==========
+
 module.exports = (sequelize, Sequelize) => {
   const Tutorial = sequelize.define("tutorial", {
     title: {
