@@ -1,4 +1,6 @@
-const db = require("../models");
+//========== [NOT IN USE] SAMPLE ==========
+
+const db = require("../../models");
 const Tutorial = db.tutorials;
 const Op = db.Sequelize.Op;
 

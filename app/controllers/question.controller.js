@@ -1,5 +1,5 @@
 const db = require("../models");
-const Questions = db.Questions;
+const Question = db.Question;
 const Op = db.Sequelize.Op;
 
 exports.create = (req,res) =>{
@@ -17,7 +17,7 @@ exports.create = (req,res) =>{
         quizId: req.body.quizId,
     }
 
-    Questions.create(question)
+    Question.create(question)
     .then(data=>{
         res.send(data) //change this to render
     }).catch(err=>{
@@ -33,14 +33,14 @@ exports.findAll = (req, res) => {
     const quizId = req.body.quizId;
     var condition = quizId ? { quizId: { [Op.like]: `%${quizId}%` } } : null;
   
-    Questions.findAll({where: condition})
+    Question.findAll({where: condition})
       .then(data => {
         res.send(data); //change this to render
       })
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving questions."
+            err.message || "Some error occurred while retrieving question."
         });
       });
   };
@@ -48,7 +48,7 @@ exports.findAll = (req, res) => {
   exports.findOne = (req, res) => {
     const id = req.params.id;
   
-    Questions.findByPk(id)
+    Question.findByPk(id)
       .then(data => {
         res.send(data);
       })

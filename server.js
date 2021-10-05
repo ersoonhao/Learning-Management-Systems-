@@ -16,8 +16,9 @@ app.get("/test", (req, res) => {
 });
 
 //Backend
-require("./app/routes/backend/accounts.routes")(app)
-require("./app/routes/backend/turorial.routes")(app);
+//require("./app/routes/backend/turorial.routes")(app);
+
+require("./app/routes/backend/account.routes")(app)
 require("./app/routes/backend/quiz.routes")(app);
 require("./app/routes/backend/question.routes")(app);
 require("./app/routes/backend/questionOption.routes")(app);

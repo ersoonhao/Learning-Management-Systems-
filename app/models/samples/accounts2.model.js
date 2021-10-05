@@ -1,4 +1,6 @@
-const sql = require("./db.js");
+//========== [NOT IN USE] SAMPLE - Without ORM: Use account.model.js instead ==========
+
+const sql = require("./db.js.js");
 const bcrypt = require('bcryptjs');
 const crypto = require("crypto");
 // constructor - values can be left as null except email, password , title ,firstname , lastname , role, created isApproved

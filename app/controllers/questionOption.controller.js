@@ -1,5 +1,5 @@
 const db = require("../models");
-const QuestionOptions = db.QuestionOptions;
+const QuestionOption = db.QuestionOption;
 const Op = db.Sequelize.Op;
 
 exports.create = (req,res) =>{
@@ -17,7 +17,7 @@ exports.create = (req,res) =>{
         questionId: req.body.questionId,
     }
 
-    QuestionOptions.create(questionOption)
+    QuestionOption.create(questionOption)
     .then(data=>{
         res.send(data) //change this to render
     }).catch(err=>{
@@ -33,7 +33,7 @@ exports.findAll = (req, res) => {
     const questionId = req.body.questionId;
     var condition = questionId ? { questionId: { [Op.like]: `%${questionId}%` } } : null;
   
-    QuestionOptions.findAll({where: condition})
+    QuestionOption.findAll({where: condition})
       .then(data => {
         res.send(data); //change this to render
       })

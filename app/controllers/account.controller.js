@@ -1,7 +1,7 @@
 const db = require("../models");
 
 // need to create an account table
-const Accounts = db.Accounts; // must declare this in index.js of model
+const Account = db.Account; // must declare this in index.js of model
 const Op = db.Sequelize.Op;
 
 // helper function to hash. Not used yet.Use if required.
@@ -32,7 +32,7 @@ exports.create = (req, res) => {
   };
   console.log(account)
   // Save Tutorial in the database
-  Accounts.create(account)
+  Account.create(account)
     .then(data => {
       res.send(data);
     })
@@ -49,7 +49,7 @@ exports.findAll = (req, res) => {
 //   const title = req.query.username;
 //   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
-  Accounts.findAll()
+  Account.findAll()
     .then(data => {
       res.send(data);
     })
@@ -65,7 +65,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Accounts.findByPk(id)
+  Account.findByPk(id)
     .then(data => {
       res.send(data);
     })
@@ -94,7 +94,7 @@ exports.updateAddAdmin = (req, res) => {
   // returns an object on successful return 
   //  first element is always the number of affected rows
   //  second element is the actual affected rows (only supported in postgres with options.returning true.)
-  Accounts.update({isAdmin: 1}, {
+  Account.update({isAdmin: 1}, {
     where: { username:username }
   })
     .then(result => {
@@ -121,14 +121,14 @@ exports.updateAddAdmin = (req, res) => {
 exports.delete = (req, res) => {
 //   const id = req.params.id;
   const username= req.params.username; 
-  Accounts.destroy({
+  Account.destroy({
     where: { username: username }
   })
     .then(result => { 
       if (result == 1) {
         res.send({
           status: 200,  
-          message: "Accounts deleted successfully"
+          message: "Account deleted successfully"
         });
       } else {
         res.send({
@@ -146,12 +146,12 @@ exports.delete = (req, res) => {
 
 // Delete all Tutorials from the database.
 exports.deleteAll = (req, res) => {
-    Accounts.destroy({
+    Account.destroy({
     where: {},
     truncate: false
   })
     .then(nums => {
-      res.send({ message: `${nums} Accounts were deleted successfully!` });
+      res.send({ message: `${nums} Account were deleted successfully!` });
     })
     .catch(err => {
       res.status(500).send({

@@ -1,7 +1,9 @@
 module.exports = app => {
-    const questionOptions = require("../../controllers/questionOption.controller");
-
+    ROUTE_PATH = "/api/questionOption"
     var router = require("express").Router();
+
+    //======== START: CONTROLLER LOGIC ========
+    const questionOptions = require("../../controllers/questionOption.controller");
 
     router.post("/",questionOptions.create);
 
@@ -9,5 +11,7 @@ module.exports = app => {
 
     router.get("/:id", questionOptions.findOne);
 
-    app.use('/api/questionOptions', router)
+    //======== END: CONTROLLER LOGIC ========
+
+    app.use(ROUTE_PATH, router);
 }
