@@ -36,6 +36,9 @@ module.exports = (sequelize, Sequelize) => {
 
     //Public
     Quiz.createQuiz = function (quiz, courseId, sectionId) {
+        if(quiz == null){
+            return null;
+        }
         delete quiz.quizId;
 
         quiz.courseId = courseId
@@ -47,6 +50,9 @@ module.exports = (sequelize, Sequelize) => {
         return null;
     }
     Quiz.updateQuiz = function (quiz) {
+        if(quiz == null){
+            return null;
+        }
         delete quiz.courseId;
         delete quiz.sectionId;
 
@@ -58,10 +64,6 @@ module.exports = (sequelize, Sequelize) => {
 
     //Private
     function isValidQuiz(quiz, isNew){
-        if(quiz == null){
-            console.log("Quiz Error: 1");
-            return false;
-        }
         if(quiz.type == null || ![Quiz.QUIZ_TYPES_GRADED, Quiz.QUIZ_TYPES_UNGRADED].includes(quiz.type) || 
         quiz.title == null || quiz.durationInMins == null || quiz.durationInMins <= 0 || quiz.active == null){
             console.log("Quiz Error: 2");

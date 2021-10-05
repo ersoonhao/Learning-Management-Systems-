@@ -52,4 +52,7 @@ db.Quiz = require("./quiz.model")(sequelize, Sequelize);
 db.Question = require("./question.model")(sequelize, Sequelize);
 db.QuestionOption = require("./questionOption.model")(sequelize, Sequelize);
 
+// -- SYNC
+//db.sequelize.sync(); //drop the table if it already exists
+
 module.exports = db;

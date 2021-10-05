@@ -54,7 +54,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse requests of content
 // db.sequelize.sync(); //drop the table if it already exists
 
 // Init Dummy Data
-require("./app/dummy/quiz")
+//require("./app/dummy/quiz")
 
 
 // ================ SETUP ================

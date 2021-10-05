@@ -39,7 +39,7 @@ exports.createQuiz = (req,res) => {
 
     //Write to DB
     Quiz.create(quiz).then(data => {
-        res.send(data) //change this to render
+        res.send(data)
 
     }).catch(err=>{
         res.status(500).send({
@@ -56,7 +56,7 @@ exports.createQuiz = (req,res) => {
                 "title": "TEST",
                 "instructions": null,
                 "durationInMins": 10,
-                "passScoreRequirement": 3,
+                "passScoreRequirement": 0.7,
                 "active": false
             }, 
             "courseId": 1,
@@ -96,17 +96,17 @@ exports.updateQuiz = (req, res) => {
     }).then(num => {
         if (num == 1) {
             res.send({
-                message: "Quiz was updated successfully."
+                message: "Successfully updated."
             });
         } else {
             res.send({
-                message: `Cannot update Quiz with id=${id}. Maybe Tutorial was not found or req.body is empty!`
+                message: `Cannot update with id=${id}.`
             });
         }
     }).catch(err => {
         console.log(err);
         res.status(500).send({
-            message: "Error updating Quiz with id=" + id
+            message: "Error updating with id=" + id
         });
     });
 
@@ -118,7 +118,7 @@ exports.updateQuiz = (req, res) => {
                 "title": "TEST",
                 "instructions": null,
                 "durationInMins": 10,
-                "passScoreRequirement": 3,
+                "passScoreRequirement": 0.7,
                 "active": false
             }
         }
