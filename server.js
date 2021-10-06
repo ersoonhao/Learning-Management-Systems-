@@ -49,10 +49,16 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse requests of content
 
 
 // ================ MODELS ================
-// db.sequelize.sync(); //drop the table if it already exists
+const db = require('./app/models')
+let reset_db = true;
 
-// Init Dummy Data
-//require("./app/dummy/quiz")
+if(reset_db){
+    db.sequelize.sync({ force: true }).then(() => { //Reset database
+        // Init Dummy Data
+        require("./app/dummy/quiz") 
+      
+    });
+}
 
 
 // ================ SETUP ================

@@ -12,6 +12,29 @@ const QuestionOption = db.QuestionOption;
 
 chai.use(chaiHttp);
 
+describe('Quiz API - POST /api/quiz/getQuizPackage', () => { //POST: getQuizPackage
+    after(async function(){
+        await db.sequelize.sync({ force: true }).then(() => { 
+            require("../../app/dummy/quiz") // Load Dummy Data
+        });
+    })
+    it("Valid POST /api/quiz/getQuizPackage", (done) => {
+        const data = {
+            "quizId": 1
+        }
+        chai.request(app).post("/api/quiz/getQuizPackage").send(data)
+        .end((err, response) => {
+            console.log("Status:" + response.status);
+            assert(response.status == 200);
+            assert('quiz' in response.body);
+            done();
+        })
+    })
+    before(async function(){
+        await db.sequelize.sync({ force: true });
+    })
+})
+
 describe('Quiz API - POST /api/quiz/createQuiz', () => { //POST: createQuiz
     after(async function(){
         await db.sequelize.sync({ force: true });
@@ -83,7 +106,18 @@ describe('Quiz API - POST /api/quiz/updateQuiz', () => { //POST: updateQuiz
 
 describe('Quiz API - POST /api/quiz/addQuestion', () => { //POST: addQuestion
     before(async function(){
-        await db.sequelize.sync({ force: true });
+        await db.sequelize.sync({ force: true }).then(() => {
+            let qList = [{
+                quizId: 1,
+                type: Quiz.QUIZ_TYPES_GRADED,
+                title: "TEST",
+                instructions: null,
+                durationInMins: 10,
+                passScoreRequirement: 0.7,
+                active: false
+            }];
+            for(q of qList){ Quiz.create(q) }
+        });
     })
     it("Valid POST /api/quiz/addQuestion", (done) => {
         const data = {
@@ -110,14 +144,25 @@ describe('Quiz API - POST /api/quiz/addQuestion', () => { //POST: addQuestion
 describe('Quiz API - POST /api/quiz/updateQuestion', () => { //POST: updateQuestion
     before(async function(){
         await db.sequelize.sync({ force: true }).then(() => {
-            let qList = [{
+            let q = {
+                quizId: 1,
+                type: Quiz.QUIZ_TYPES_GRADED,
+                title: "TEST",
+                instructions: null,
+                durationInMins: 10,
+                passScoreRequirement: 0.7,
+                active: false
+            }
+            let qn = {
                 questionId: 1,
                 question: "TEST",
                 autoGraded: true,
                 type: Question.QUESTION_TYPES_MCQ,
                 quizId: 1
-            }];
-            for(q of qList){ Question.create(q) }
+            }
+            Quiz.create(q).then(() => {
+                Question.create(qn);
+            })
         });
     });
     it("Valid POST /api/quiz/updateQuestion", (done) => {
@@ -143,14 +188,25 @@ describe('Quiz API - POST /api/quiz/updateQuestion', () => { //POST: updateQuest
 describe('Quiz API - POST /api/quiz/deleteQuestion', () => { //POST: deleteQuestion
     before(async function(){
         await db.sequelize.sync({ force: true }).then(() => {
-            let qList = [{
+            let q = {
+                quizId: 1,
+                type: Quiz.QUIZ_TYPES_GRADED,
+                title: "TEST",
+                instructions: null,
+                durationInMins: 10,
+                passScoreRequirement: 0.7,
+                active: false
+            }
+            let qn = {
                 questionId: 1,
                 question: "TEST",
                 autoGraded: true,
                 type: Question.QUESTION_TYPES_MCQ,
                 quizId: 1
-            }];
-            for(q of qList){ Quiz.create(q) }
+            }
+            Quiz.create(q).then(() => {
+                Question.create(qn);
+            })
         });
     });
     it("Valid POST /api/quiz/deleteQuestion", (done) => {
@@ -169,11 +225,31 @@ describe('Quiz API - POST /api/quiz/deleteQuestion', () => { //POST: deleteQuest
     })
 })
 
-//####
+//QuestionOption
 
 describe('Quiz API - POST /api/quiz/addQuestionOption', () => { //POST: addQuestionOption
     before(async function(){
-        await db.sequelize.sync({ force: true });
+        await db.sequelize.sync({ force: true }).then(() => {
+            let q = {
+                quizId: 1,
+                type: Quiz.QUIZ_TYPES_GRADED,
+                title: "TEST",
+                instructions: null,
+                durationInMins: 10,
+                passScoreRequirement: 0.7,
+                active: false
+            }
+            let qn = {
+                questionId: 1,
+                question: "TEST",
+                autoGraded: true,
+                type: Question.QUESTION_TYPES_MCQ,
+                quizId: 1
+            }
+            Quiz.create(q).then(() => {
+                Question.create(qn);
+            })
+        });
     })
     it("Valid POST /api/quiz/addQuestionOption", (done) => {
         const data = {
@@ -199,13 +275,33 @@ describe('Quiz API - POST /api/quiz/addQuestionOption', () => { //POST: addQuest
 describe('Quiz API - POST /api/quiz/updateQuestionOption', () => { //POST: updateQuestionOption
     before(async function(){
         await db.sequelize.sync({ force: true }).then(() => {
-            let qList = [{
+            let q = {
+                quizId: 1,
+                type: Quiz.QUIZ_TYPES_GRADED,
+                title: "TEST",
+                instructions: null,
+                durationInMins: 10,
+                passScoreRequirement: 0.7,
+                active: false
+            }
+            let qn = {
+                questionId: 1,
+                question: "TEST",
+                autoGraded: true,
+                type: Question.QUESTION_TYPES_MCQ,
+                quizId: 1
+            }
+            let qo = {
                 questionOptionId: 1,
                 option: "TEST",
                 isCorrect: true,
                 questionId: 1
-            }];
-            for(q of qList){ QuestionOption.create(q) }
+            }
+            Quiz.create(q).then(() => {
+                Question.create(qn).then(() => {
+                    QuestionOption.create(qo);
+                });
+            })
         });
     });
     it("Valid POST /api/quiz/updateQuestionOption", (done) => {
@@ -230,13 +326,33 @@ describe('Quiz API - POST /api/quiz/updateQuestionOption', () => { //POST: updat
 describe('Quiz API - POST /api/quiz/deleteQuestionOption', () => { //POST: deleteQuestionOption
     before(async function(){
         await db.sequelize.sync({ force: true }).then(() => {
-            let qList = [{
+            let q = {
+                quizId: 1,
+                type: Quiz.QUIZ_TYPES_GRADED,
+                title: "TEST",
+                instructions: null,
+                durationInMins: 10,
+                passScoreRequirement: 0.7,
+                active: false
+            }
+            let qn = {
+                questionId: 1,
+                question: "TEST",
+                autoGraded: true,
+                type: Question.QUESTION_TYPES_MCQ,
+                quizId: 1
+            }
+            let qo = {
                 questionOptionId: 1,
                 option: "TEST",
                 isCorrect: true,
                 questionId: 1
-            }];
-            for(q of qList){ QuestionOption.create(q) }
+            }
+            Quiz.create(q).then(() => {
+                Question.create(qn).then(() => {
+                    QuestionOption.create(qo);
+                });
+            })
         });
     });
     it("Valid POST /api/quiz/deleteQuestionOption", (done) => {

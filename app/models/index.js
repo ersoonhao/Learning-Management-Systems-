@@ -54,9 +54,23 @@ db.Quiz = require("./quiz.model")(sequelize, Sequelize);
 db.Question = require("./question.model")(sequelize, Sequelize);
 db.QuestionOption = require("./questionOption.model")(sequelize, Sequelize);
 
-// -- SYNC
-//db.sequelize.sync(); //drop the table if it already exists
+// ================== ASSOCIATIONS ======================
+/*
+Sample - https://sequelize.org/v3/docs/associations/
+    var City = sequelize.define('city', { countryCode: Sequelize.STRING });
+    var Country = sequelize.define('country', { isoCode: Sequelize.STRING });
 
-// =============================================
+    Country.hasMany(City, {foreignKey: 'countryCode', sourceKey: 'isoCode'});
+    City.belongsTo(Country, {foreignKey: 'countryCode', targetKey: 'isoCode'});
+*/
+
+db.Quiz.hasMany(db.Question, {foreignKey: 'quizId', sourceKey: 'quizId'});
+db.Question.belongsTo(db.Quiz, {foreignKey: 'quizId', targetKey: 'quizId'});
+
+db.Question.hasMany(db.QuestionOption, {foreignKey: 'questionId', sourceKey: 'questionId'});
+db.QuestionOption.belongsTo(db.Question, {foreignKey: 'questionId', targetKey: 'questionId'});
+
+// ================== SYNC ==================
+db.sequelize.sync(); //drop the table if it already exists
 
 module.exports = db;

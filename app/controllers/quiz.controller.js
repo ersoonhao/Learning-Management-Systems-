@@ -1,19 +1,33 @@
 const { Quiz, Question, QuestionOption } = require("../models");
 
-//Get Quiz Package
-// exports.getQuizPackage = (req, res) => {
-//     const id = req.params.id;
+//==== POST: /getQuizPackage
+exports.getQuizPackage = (req, res) => {
+    let body = req.body;
+    if(!body){
+        res.status(400).send({
+            message: "Request body is empty!"
+        })
+        return
+    }
+    //Access control
+    //TODO: Get permissions
+    
+    let quizId = body.quizId;
+    if(quizId == null){
+        res.status(400).send({
+            message: "Invalid data format"
+        })
+        return
+    }
 
-//     Quiz.findByPk(id)
-//         .then(data => {
-//         res.send(data);
-//         })
-//         .catch(err => {
-//         res.status(500).send({
-//             message: "Error retrieving Quiz with id=" + id
-//         });
-//     });
-// };
+    //Get quiz data
+    Quiz.findOne({
+        where: { quizId: quizId },
+        include: [ { model: Question, include: [QuestionOption] } ]
+    }).then(data => {
+        res.send({ "quiz": data });
+    });
+}
 
 //==== POST: /createQuiz
 exports.createQuiz = (req,res) => {

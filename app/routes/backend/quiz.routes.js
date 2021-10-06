@@ -7,7 +7,9 @@ module.exports = app => {
     //======== START: CONTROLLER LOGIC ========
     const quiz = require("../../controllers/quiz.controller");
 
-    router.post("/createQuiz",quiz.createQuiz);
+    router.post("/getQuizPackage", quiz.getQuizPackage);
+
+    router.post("/createQuiz", quiz.createQuiz);
     router.post("/updateQuiz", quiz.updateQuiz);
     
     router.post("/addQuestion", quiz.addQuestion);
