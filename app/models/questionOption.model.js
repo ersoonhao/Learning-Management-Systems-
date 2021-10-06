@@ -1,4 +1,6 @@
 // CONTRIBUTOR: Robin Chong
+const vld = require("./validator");
+
 module.exports = (sequelize, Sequelize) => {
     const QuestionOption = sequelize.define("QuestionOption", {
         questionOptionId: {
@@ -16,7 +18,7 @@ module.exports = (sequelize, Sequelize) => {
             type:Sequelize.INTEGER
         }
     });
-    
+
     //Public
     QuestionOption.createQuestionOption = function(option, questionId){
         if(option == null){
@@ -52,6 +54,10 @@ module.exports = (sequelize, Sequelize) => {
         if(option.option == null || option.isCorrect == null){
             console.log("Option Error: 2");
             return false; 
+        }
+        if(!(vld.validType(option.questionOptionId, 'number') && vld.validType(option.option, 'string') && vld.validType(option.isCorrect, 'boolean') && vld.validType(option.questionId, 'number'))){
+            console.log("Option Error: 3");
+            return false;
         }
         return true;
     }

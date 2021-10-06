@@ -1,6 +1,4 @@
-const { Quiz } = require("../models");
-const { Question } = require("../models");
-const { QuestionOption } = require("../models");
+const { Quiz, Question, QuestionOption } = require("../models");
 
 //Get Quiz Package
 // exports.getQuizPackage = (req, res) => {
@@ -41,7 +39,7 @@ exports.createQuiz = (req,res) => {
 
     //Write to DB
     Quiz.create(quiz).then(data => {
-        res.send(data)
+        res.send({"quiz": data})
 
     }).catch(err=>{
         res.status(500).send({
@@ -151,7 +149,7 @@ exports.addQuestion = (req,res) => {
 
     //Write to DB
     Question.create(question).then(data => {
-        res.send(data)
+        res.send({ "question": data })
 
     }).catch(err=>{
         res.status(500).send({
@@ -297,7 +295,7 @@ exports.addQuestionOption = (req,res) => {
 
     //Write to DB
     QuestionOption.create(questionOption).then(data => {
-        res.send(data)
+        res.send({ "questionOption": data })
 
     }).catch(err=>{
         res.status(500).send({

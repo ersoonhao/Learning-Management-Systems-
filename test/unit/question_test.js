@@ -21,14 +21,15 @@ describe('Question creation', () => { //CREATE
     });
 
     it('Create invalid Question', () => {
-        for(let i = 0; i < 4; i++){
+        for(let i = 0; i < 5; i++){
             let q = Object.assign({}, question);
             let qId = quizId;
 
             if(i == 0){ q.question = null}
             else if (i == 1){ q.autoGraded = null }
             else if (i == 2){ q.type = null }
-            else if (i == 3){ qId = null }
+            else if (i == 3){ q.type = "?-TYPE" }
+            else if (i == 4){ qId = null }
 
             const result = Question.createQuestion(q, qId);
             if(result != null){
@@ -55,13 +56,14 @@ describe('Question update', () => { //UPDATE
     });
 
     it('Update invalid question', () => {
-        for(let i = 0; i < 4; i++){
+        for(let i = 0; i < 5; i++){
             let q = Object.assign({}, question);
 
             if(i == 0){ q.questionId = null}
             else if(i == 1){ q.question = null}
             else if (i == 2){ q.autoGraded = null }
             else if (i == 3){ q.type = null }
+            else if (i == 4){ q.type = "?-TYPE" }
 
             const result = Question.updateQuestion(q);
             if(result != null){

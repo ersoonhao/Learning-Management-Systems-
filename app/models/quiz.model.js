@@ -1,3 +1,6 @@
+// CONTRIBUTOR: Robin Chong
+const vld = require("./validator");
+
 module.exports = (sequelize, Sequelize) => {
     const Quiz = sequelize.define("Quiz", {
         quizId: {
@@ -90,6 +93,10 @@ module.exports = (sequelize, Sequelize) => {
                 console.log("Quiz Error: 5");
                 return false;
             }
+        }
+        if(!(vld.validType(quiz.quizId, 'number') && vld.validType(quiz.type, 'string') && vld.validType(quiz.title, 'string') && vld.validType(quiz.instructions, 'string') && vld.validType(quiz.durationInMins, 'number') && vld.validType(quiz.passScoreRequirement, 'number') && vld.validType(quiz.active, 'boolean'))){
+            console.log("Quiz Error: 6");
+            return false;
         }
         return true;
     }
