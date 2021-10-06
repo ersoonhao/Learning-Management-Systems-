@@ -24,7 +24,7 @@
     HOST: "spm.czmzwyti4icp.ap-southeast-1.rds.amazonaws.com",
     USER: "admin",
     PASSWORD: "regopq==",
-    DB: "spm",
+    DB: "lms_test",
     dialect: "mysql",
     pool: {
       max: 5,

@@ -20,8 +20,6 @@ app.get("/test", (req, res) => {
 
 require("./app/routes/backend/account.routes")(app)
 require("./app/routes/backend/quiz.routes")(app);
-require("./app/routes/backend/question.routes")(app);
-require("./app/routes/backend/questionOption.routes")(app);
 require("./app/routes/backend/course.routes")(app);
 
 //Front-end
@@ -51,10 +49,16 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse requests of content
 
 
 // ================ MODELS ================
-// db.sequelize.sync(); //drop the table if it already exists
+const db = require('./app/models')
+let reset_db = true;
 
-// Init Dummy Data
-require("./app/dummy/quiz")
+if(reset_db){
+    db.sequelize.sync({ force: true }).then(() => { //Reset database
+        // Init Dummy Data
+        require("./app/dummy/quiz") 
+      
+    });
+}
 
 
 // ================ SETUP ================
