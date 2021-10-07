@@ -7,10 +7,12 @@ const assert = require('assert')
 const db = require('../app/models');
 const { Course } = require("../app/models");
 
-var initial_courses = [
-  {title: 'Physics', description:"Course on physics"},
-  {title: 'Sex Education', description: "How to fuck well"},
-  {title: 'Porn history', description:"The grand history of the world's best industry"}
+
+let initial_courses = [
+  {title: 'Physics',description:'This course is about Physics', active:true},
+  {title: 'Biology',description:'This course is about Biology', active:true},
+  {title: 'Chemistry',description: 'This course is about Chemistry', active: false},
+  {title: 'Mathematics',description: 'This course is about Mathematics', active: true}
 ]
 
 async function createCourseData(){
@@ -52,6 +54,23 @@ describe('The courses route and controller',()=>{
     //   });
    
     // })
+
+    before(
+      async function(){
+        createCourseData()
+  
+      }
+    )
+  
+    after(
+      async function(){
+        db.sequelize.sync({ force: true }).then(() => { //Reset database
+          // Init Dummy Data
+          require("./app/dummy/course")
+      });
+  
+      }
+    )
   
 
   it('creates one course through post request',(done)=>{
