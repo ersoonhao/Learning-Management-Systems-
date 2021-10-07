@@ -24,7 +24,7 @@ require("./app/routes/backend/course.routes")(app);
 
 //Front-end
 require("./app/routes/frontend/main.froutes")(app);
-require("./app/routes/frontend/quiz.froutes")(app);
+require("./app/routes/frontend/manage.froutes")(app);
 
 
 
