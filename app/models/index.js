@@ -46,6 +46,7 @@ db.Account = require("./account.model.js")(sequelize, Sequelize);
 db.Course = require("./course.model")(sequelize, Sequelize);
 
 //Class
+db.Class = require("./class.model")(sequelize, Sequelize);
 
 //Section
 

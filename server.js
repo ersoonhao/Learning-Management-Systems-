@@ -50,7 +50,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse requests of content
 
 // ================ MODELS ================
 const db = require('./app/models')
-let reset_db = true;
+let reset_db = false;
 
 if(reset_db){
     db.sequelize.sync({ force: true }).then(() => { //Reset database
