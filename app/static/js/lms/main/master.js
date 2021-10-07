@@ -105,10 +105,11 @@ Vue.component("hs-course-item", {
 })
 
 //Menu
-function initMenu(sections, focus_index){
+function initMenu(sections, focus_section_index, focus_link_index){
     return {
         sections: sections,
-        focus_index: focus_index
+        focus_section_index: focus_section_index,
+        focus_link_index: focus_link_index
     }
     /* SAMPLE INIT
     let section = [{ 
@@ -135,9 +136,9 @@ Vue.component("side-menu", {
                         <small v-text="section.subtitle"></small>
                     </button>
                 </div>
-                <div :id="'section_' + section.id" :class="(i == menu.focus_index)?'accordion-collapse collapse show':'accordion-collapse collapse'" data-bs-parent="#side-menu">
+                <div :id="'section_' + section.id" :class="(i == menu.focus_section_index)?'accordion-collapse collapse show':'accordion-collapse collapse'" data-bs-parent="#side-menu">
                     <div class="list-group pt-2 pb-2">
-                        <a v-for="link in section.links" :href="link.link" class="list-group-item list-group-item-action side-menu-item">
+                        <a v-for="(link, l_i) in section.links" :href="link.link" :class="(l_i == menu.focus_link_index)?'list-group-item list-group-item-action side-menu-item active':'list-group-item list-group-item-action side-menu-item'">
                             <span v-text="link.title"></span>
                         </a>
                     </div>
@@ -168,3 +169,7 @@ Vue.component("m-div", {
         </div>
     `
 });
+function getParams(param){
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}

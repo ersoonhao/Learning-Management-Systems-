@@ -17,9 +17,8 @@
             <lms-head :session="session"></lms-head>
             <div class="content">
                 <div class=container>
-                    <m-div :menu="menu" title="Classes" :subtitle="'For Class ID: '+classId">
-                        <h1>SHOW LIST OF Sections</h1>
-                        <a href="/manage/section?sectionId=1">Specific section</a>
+                    <m-div :menu="menu" title="Learning Materials" :subtitle="'For Section ID: '+sectionId">
+                        <h1>SHOW LEARNING MATERIALS</h1>
                     </m-div>
                 </div>
             </div>
@@ -36,8 +35,8 @@
                 el: '#app',
                 data: {
                     session: getUserSession(),
-                    classId: getParams("classId"),
-                    menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 2)
+                    sectionId: getParams("sectionId"),
+                    menu: initMenu(generateMenuSections_Section(getParams("sectionId")), 0, 1)
                 }, created: () => {
                     
                 }

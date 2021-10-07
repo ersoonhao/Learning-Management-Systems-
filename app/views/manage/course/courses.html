@@ -36,7 +36,9 @@
                 el: '#app',
                 data: {
                     session: getUserSession(),
-                    menu: initMenu(MENU_SECTIONS_MANAGE_GENERAL, 0)
+                    menu: initMenu(MENU_SECTIONS_MANAGE_GENERAL, 0, 0)
+                }, created: () => {
+                    
                 }
             });
         </script>

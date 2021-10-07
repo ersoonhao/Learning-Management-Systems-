@@ -17,8 +17,8 @@
             <lms-head :session="session"></lms-head>
             <div class="content">
                 <div class=container>
-                    <m-div :menu="menu" title="Manage Course" subtitle="Course 1">
-                        <h1>WRITE CODES HERE!</h1>
+                    <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
+                        <h1>ADD COURSE SETTINGS HERE</h1>
                     </m-div>
                 </div>
             </div>
@@ -35,7 +35,10 @@
                 el: '#app',
                 data: {
                     session: getUserSession(),
-                    menu: initMenu(MENU_SECTIONS_MANAGE_COURSE, 0)
+                    courseId: getParams("courseId"),
+                    menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 0)
+                }, created: () => {
+                    
                 }
             });
         </script>
