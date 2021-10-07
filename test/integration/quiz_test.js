@@ -5,18 +5,13 @@ const chaiHttp = require("chai-http");
 const app = require('../../server');
 const assert = require('assert');
 
-const db = require("../../app/models");
-const Quiz = db.Quiz;
-const Question = db.Question;
-const QuestionOption = db.QuestionOption;
+const dummy_reload = require("../../app/dummy/reload")
 
 chai.use(chaiHttp);
 
 describe('Quiz API - POST /api/quiz/getQuizPackage', () => { //POST: getQuizPackage
-    after(async function(){
-        await db.sequelize.sync({ force: true }).then(() => { 
-            require("../../app/dummy/quiz") // Load Dummy Data
-        });
+    before(function(done){
+        dummy_reload.reload().then(() => { done() })
     })
     it("Valid POST /api/quiz/getQuizPackage", (done) => {
         const data = {
@@ -30,14 +25,11 @@ describe('Quiz API - POST /api/quiz/getQuizPackage', () => { //POST: getQuizPack
             done();
         })
     })
-    before(async function(){
-        await db.sequelize.sync({ force: true });
-    })
 })
 
 describe('Quiz API - POST /api/quiz/createQuiz', () => { //POST: createQuiz
-    after(async function(){
-        await db.sequelize.sync({ force: true });
+    before(function(done){
+        dummy_reload.reload().then(() => { done() })
     })
     it("Valid POST /api/quiz/createQuiz", (done) => {
         const data = {
@@ -61,35 +53,21 @@ describe('Quiz API - POST /api/quiz/createQuiz', () => { //POST: createQuiz
             done();
         })
     })
-    before(async function(){
-        await db.sequelize.sync({ force: true });
-    })
 })
 describe('Quiz API - POST /api/quiz/updateQuiz', () => { //POST: updateQuiz
-    before(async function(){
-        await db.sequelize.sync({ force: true }).then(() => {
-            let qList = [{
-                quizId: 1,
-                type: Quiz.QUIZ_TYPES_GRADED,
-                title: "TEST",
-                instructions: null,
-                durationInMins: 10,
-                passScoreRequirement: 0.7,
-                active: false
-            }];
-            for(q of qList){ Quiz.create(q) }
-        });
+    before(function(done){
+        dummy_reload.reload().then(() => { done() })
     })
     it("Valid POST /api/quiz/updateQuiz", (done) => {
         const data = {
             "quiz": {
                 "quizId": 1,
                 "type": "G",
-                "title": "TEST",
+                "title": "TESTING",
                 "instructions": null,
-                "durationInMins": 10,
-                "passScoreRequirement": 0.7,
-                "active": false
+                "durationInMins": 20,
+                "passScoreRequirement": 0.8,
+                "active": true
             }
         }
         chai.request(app).post("/api/quiz/updateQuiz").send(data)
@@ -99,25 +77,11 @@ describe('Quiz API - POST /api/quiz/updateQuiz', () => { //POST: updateQuiz
             done();
         })
     })
-    after(async function(){
-        await db.sequelize.sync({ force: true });
-    })
 })
 
 describe('Quiz API - POST /api/quiz/addQuestion', () => { //POST: addQuestion
-    before(async function(){
-        await db.sequelize.sync({ force: true }).then(() => {
-            let qList = [{
-                quizId: 1,
-                type: Quiz.QUIZ_TYPES_GRADED,
-                title: "TEST",
-                instructions: null,
-                durationInMins: 10,
-                passScoreRequirement: 0.7,
-                active: false
-            }];
-            for(q of qList){ Quiz.create(q) }
-        });
+    before(function(done){
+        dummy_reload.reload().then(() => { done() })
     })
     it("Valid POST /api/quiz/addQuestion", (done) => {
         const data = {
@@ -137,34 +101,11 @@ describe('Quiz API - POST /api/quiz/addQuestion', () => { //POST: addQuestion
             done();
         })
     })
-    after(async function(){
-        await db.sequelize.sync({ force: true });
-    })
 })
 describe('Quiz API - POST /api/quiz/updateQuestion', () => { //POST: updateQuestion
-    before(async function(){
-        await db.sequelize.sync({ force: true }).then(() => {
-            let q = {
-                quizId: 1,
-                type: Quiz.QUIZ_TYPES_GRADED,
-                title: "TEST",
-                instructions: null,
-                durationInMins: 10,
-                passScoreRequirement: 0.7,
-                active: false
-            }
-            let qn = {
-                questionId: 1,
-                question: "TEST",
-                autoGraded: true,
-                type: Question.QUESTION_TYPES_MCQ,
-                quizId: 1
-            }
-            Quiz.create(q).then(() => {
-                Question.create(qn);
-            })
-        });
-    });
+    before(function(done){
+        dummy_reload.reload().then(() => { done() })
+    })
     it("Valid POST /api/quiz/updateQuestion", (done) => {
         const data = {
             "question": {
@@ -181,34 +122,11 @@ describe('Quiz API - POST /api/quiz/updateQuestion', () => { //POST: updateQuest
             done();
         })
     })
-    after(async function(){
-        await db.sequelize.sync({ force: true });
-    })
 })
 describe('Quiz API - POST /api/quiz/deleteQuestion', () => { //POST: deleteQuestion
-    before(async function(){
-        await db.sequelize.sync({ force: true }).then(() => {
-            let q = {
-                quizId: 1,
-                type: Quiz.QUIZ_TYPES_GRADED,
-                title: "TEST",
-                instructions: null,
-                durationInMins: 10,
-                passScoreRequirement: 0.7,
-                active: false
-            }
-            let qn = {
-                questionId: 1,
-                question: "TEST",
-                autoGraded: true,
-                type: Question.QUESTION_TYPES_MCQ,
-                quizId: 1
-            }
-            Quiz.create(q).then(() => {
-                Question.create(qn);
-            })
-        });
-    });
+    before(function(done){
+        dummy_reload.reload().then(() => { done() })
+    })
     it("Valid POST /api/quiz/deleteQuestion", (done) => {
         const data = {
             "questionId": 1
@@ -220,42 +138,18 @@ describe('Quiz API - POST /api/quiz/deleteQuestion', () => { //POST: deleteQuest
             done();
         })
     })
-    after(async function(){
-        await db.sequelize.sync({ force: true });
-    })
 })
 
 //QuestionOption
-
 describe('Quiz API - POST /api/quiz/addQuestionOption', () => { //POST: addQuestionOption
-    before(async function(){
-        await db.sequelize.sync({ force: true }).then(() => {
-            let q = {
-                quizId: 1,
-                type: Quiz.QUIZ_TYPES_GRADED,
-                title: "TEST",
-                instructions: null,
-                durationInMins: 10,
-                passScoreRequirement: 0.7,
-                active: false
-            }
-            let qn = {
-                questionId: 1,
-                question: "TEST",
-                autoGraded: true,
-                type: Question.QUESTION_TYPES_MCQ,
-                quizId: 1
-            }
-            Quiz.create(q).then(() => {
-                Question.create(qn);
-            })
-        });
+    before(function(done){
+        dummy_reload.reload().then(() => { done() })
     })
     it("Valid POST /api/quiz/addQuestionOption", (done) => {
         const data = {
             "questionOption": {
                 "questionOptionId": null,
-                "option": "TEST",
+                "optionText": "TEST",
                 "isCorrect": true
             },
             "questionId": 1
@@ -268,47 +162,17 @@ describe('Quiz API - POST /api/quiz/addQuestionOption', () => { //POST: addQuest
             done();
         })
     })
-    after(async function(){
-        await db.sequelize.sync({ force: true });
-    })
 })
+
 describe('Quiz API - POST /api/quiz/updateQuestionOption', () => { //POST: updateQuestionOption
-    before(async function(){
-        await db.sequelize.sync({ force: true }).then(() => {
-            let q = {
-                quizId: 1,
-                type: Quiz.QUIZ_TYPES_GRADED,
-                title: "TEST",
-                instructions: null,
-                durationInMins: 10,
-                passScoreRequirement: 0.7,
-                active: false
-            }
-            let qn = {
-                questionId: 1,
-                question: "TEST",
-                autoGraded: true,
-                type: Question.QUESTION_TYPES_MCQ,
-                quizId: 1
-            }
-            let qo = {
-                questionOptionId: 1,
-                option: "TEST",
-                isCorrect: true,
-                questionId: 1
-            }
-            Quiz.create(q).then(() => {
-                Question.create(qn).then(() => {
-                    QuestionOption.create(qo);
-                });
-            })
-        });
+    before(function(done){
+        dummy_reload.reload().then(() => { done() })
     });
     it("Valid POST /api/quiz/updateQuestionOption", (done) => {
         const data = {
             "questionOption": {
                 "questionOptionId": 1,
-                "option": "TESTING",
+                "optionText": "TESTING",
                 "isCorrect": false
             }
         }
@@ -319,42 +183,11 @@ describe('Quiz API - POST /api/quiz/updateQuestionOption', () => { //POST: updat
             done();
         })
     })
-    after(async function(){
-        await db.sequelize.sync({ force: true });
-    })
 })
 describe('Quiz API - POST /api/quiz/deleteQuestionOption', () => { //POST: deleteQuestionOption
-    before(async function(){
-        await db.sequelize.sync({ force: true }).then(() => {
-            let q = {
-                quizId: 1,
-                type: Quiz.QUIZ_TYPES_GRADED,
-                title: "TEST",
-                instructions: null,
-                durationInMins: 10,
-                passScoreRequirement: 0.7,
-                active: false
-            }
-            let qn = {
-                questionId: 1,
-                question: "TEST",
-                autoGraded: true,
-                type: Question.QUESTION_TYPES_MCQ,
-                quizId: 1
-            }
-            let qo = {
-                questionOptionId: 1,
-                option: "TEST",
-                isCorrect: true,
-                questionId: 1
-            }
-            Quiz.create(q).then(() => {
-                Question.create(qn).then(() => {
-                    QuestionOption.create(qo);
-                });
-            })
-        });
-    });
+    before(function(done){
+        dummy_reload.reload().then(() => { done() })
+    })
     it("Valid POST /api/quiz/deleteQuestionOption", (done) => {
         const data = {
             "questionOptionId": 1
@@ -365,8 +198,5 @@ describe('Quiz API - POST /api/quiz/deleteQuestionOption', () => { //POST: delet
             assert(response.status == 200);
             done();
         })
-    })
-    after(async function(){
-        await db.sequelize.sync({ force: true });
     })
 })

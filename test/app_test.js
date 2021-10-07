@@ -1,10 +1,10 @@
 'use strict';
 
 const request = require('supertest'); 
-const test = require('unit.js');
+// const test = require('unit.js');
 const app = require('../server.js');
 const assert = require('assert')
-const db = require('../app/models/index');
+// const db = require('../app/models/index');
 
 describe('The express app',()=>{
 

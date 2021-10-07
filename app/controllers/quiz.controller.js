@@ -166,9 +166,9 @@ exports.addQuestion = (req,res) => {
         res.send({ "question": data })
 
     }).catch(err=>{
+        console.log(err);
         res.status(500).send({
-            message:
-            err.message || "Some error occured while creating"
+            message: err.message || "Some error occured while creating"
         })
     })
 
@@ -312,6 +312,7 @@ exports.addQuestionOption = (req,res) => {
         res.send({ "questionOption": data })
 
     }).catch(err=>{
+        console.log(err);
         res.status(500).send({
             message:
             err.message || "Some error occured while creating"
@@ -322,7 +323,7 @@ exports.addQuestionOption = (req,res) => {
         {
             "questionOption": {
                 "questionOptionId": null,
-                "option": "TEST",
+                "optionText": "TEST",
                 "isCorrect": true
             },
             "questionId": 1
@@ -333,6 +334,7 @@ exports.addQuestionOption = (req,res) => {
 exports.updateQuestionOption = (req, res) => {
     let body = req.body;
     if(!body){
+        console.log(err);
         res.status(400).send({
             message: "Request body is empty!"
         })
@@ -378,7 +380,7 @@ exports.updateQuestionOption = (req, res) => {
         {
             "questionOption": {
                 "questionOptionId": 1,
-                "option": "TEST",
+                "optionText": "TEST",
                 "isCorrect": true
             }
         }
