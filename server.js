@@ -53,10 +53,9 @@ const db = require('./app/models')
 let reset_db = false;
 
 if(reset_db){
-    db.sequelize.sync({ force: true }).then(() => { //Reset database
+    db.sequelize_force_reset.then(() => { //Reset database
         // Init Dummy Data
-        require("./app/dummy/quiz") 
-        require("./app/dummy/course")
+        require("./app/dummy/load") 
     });
 
     

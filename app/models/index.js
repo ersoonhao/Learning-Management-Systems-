@@ -4,6 +4,9 @@ const Sequelize = require("sequelize");
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
     dialect: dbConfig.dialect,
+    dialectOptions: {
+        multipleStatements: true
+    },
     operatorsAliases: false,
 
     pool: {
@@ -34,10 +37,18 @@ db.connect = connect;
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// =================== MODELS ===================
+db.sequelize_force_reset = () => {
+    return new Promise((resolve, _) => {
+        db.sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(() => {
+            db.sequelize.sync({ force: true }).then(() => {
+                db.sequelize.query('SET FOREIGN_KEY_CHECKS = 1').then(() => { resolve() })
+            });
+        })
+    });
+}
 
-//Sample
-db.Tutorial = require("./samples/tutorial.model.js")(sequelize, Sequelize); 
+// =================== MODELS ===================
+//db.Tutorial = require("./samples/tutorial.model.js")(sequelize, Sequelize);  
 
 //Account
 db.Account = require("./account.model.js")(sequelize, Sequelize);
@@ -65,13 +76,15 @@ Sample - https://sequelize.org/v3/docs/associations/
     City.belongsTo(Country, {foreignKey: 'countryCode', targetKey: 'isoCode'});
 */
 
-db.Quiz.hasMany(db.Question, {foreignKey: 'quizId', sourceKey: 'quizId'});
+db.Quiz.hasMany(db.Question, {foreignKey: 'quizId', sourceKey: 'quizId', onDelete: 'cascade' });
 db.Question.belongsTo(db.Quiz, {foreignKey: 'quizId', targetKey: 'quizId'});
 
-db.Question.hasMany(db.QuestionOption, {foreignKey: 'questionId', sourceKey: 'questionId'});
+db.Question.hasMany(db.QuestionOption, {foreignKey: 'questionId', sourceKey: 'questionId', onDelete: 'cascade' });
 db.QuestionOption.belongsTo(db.Question, {foreignKey: 'questionId', targetKey: 'questionId'});
 
+
+
 // ================== SYNC ==================
-db.sequelize.sync(); //drop the table if it already exists
+db.sequelize.sync();
 
 module.exports = db;

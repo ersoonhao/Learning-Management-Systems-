@@ -9,7 +9,7 @@ describe('QuestionOption creation', () => { //CREATE
 
         questionOption = {
             questionOptionId: null,
-            option: "TEST",
+            optionText: "TEST",
             isCorrect: true
         }
     });
@@ -24,7 +24,7 @@ describe('QuestionOption creation', () => { //CREATE
             let qo = Object.assign({}, questionOption);
             let qId = questionId;
 
-            if (i == 0){ qo.option = null }
+            if (i == 0){ qo.optionText = null }
             else if (i == 1){ qo.isCorrect = null }
             else if (i == 2){ qId = null }
 
@@ -41,7 +41,7 @@ describe('QuestionOption update', () => { //UPDATE
     before(function(){
         questionOption = {
             questionOptionId: 1,
-            option: "TEST",
+            optionText: "TEST",
             isCorrect: true
         }
     });
@@ -56,7 +56,7 @@ describe('QuestionOption update', () => { //UPDATE
             let qo = Object.assign({}, questionOption);
 
             if (i == 0){ qo.questionOptionId = null }
-            else if (i == 1){ qo.option = null }
+            else if (i == 1){ qo.optionText = null }
             else if (i == 2){ qo.isCorrect = null }
 
             const result = QuestionOption.updateQuestionOption(qo);

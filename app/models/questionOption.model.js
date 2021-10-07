@@ -8,7 +8,7 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true,
             primaryKey: true
         },
-        option:{
+        optionText:{
             type:Sequelize.STRING(250)
         },
         isCorrect:{
@@ -51,11 +51,11 @@ module.exports = (sequelize, Sequelize) => {
             console.log("Option Error: 1");
             return false;
         }
-        if(option.option == null || option.isCorrect == null){
+        if(option.optionText == null || option.isCorrect == null){
             console.log("Option Error: 2");
             return false; 
         }
-        if(!(vld.validType(option.questionOptionId, 'number') && vld.validType(option.option, 'string') && vld.validType(option.isCorrect, 'boolean') && vld.validType(option.questionId, 'number'))){
+        if(!(vld.validType(option.questionOptionId, 'number') && vld.validType(option.optionText, 'string') && vld.validType(option.isCorrect, 'boolean') && vld.validType(option.questionId, 'number'))){
             console.log("Option Error: 3");
             return false;
         }

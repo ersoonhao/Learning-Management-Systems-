@@ -1,6 +1,6 @@
 CREATE TABLE `QuestionOption` (
   `questionOptionId` int NOT NULL AUTO_INCREMENT,
-  `option` varchar(250) NOT NULL,
+  `optionText` varchar(250) NOT NULL,
   `isCorrect` tinyint NOT NULL,
   `questionId` int DEFAULT NULL,
   PRIMARY KEY (`questionOptionId`)
