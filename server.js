@@ -16,11 +16,14 @@ app.get("/test", (req, res) => {
 });
 
 //Backend
-//require("./app/routes/backend/turorial.routes")(app);
+// require("./app/routes/backend/turorial.routes")(app);
 
-require("./app/routes/backend/account.routes")(app)
+require("./app/routes/backend/account.routes")(app);
 require("./app/routes/backend/quiz.routes")(app);
 require("./app/routes/backend/course.routes")(app);
+require("./app/routes/backend/class.routes")(app);
+
+// port 8081
 
 //Front-end
 require("./app/routes/frontend/main.froutes")(app);
@@ -58,6 +61,8 @@ if(reset_db){
         require("./app/dummy/quiz") 
       
     });
+}else{
+  db.sequelize.sync({alter: true});
 }
 
 
