@@ -61,7 +61,7 @@ exports.createQuiz = (req,res) => {
             err.message || "Some error occured while creating"
         })
     })
-
+    
     /* SAMPLE JSON BODY REQUEST
         {
             "quiz": {

@@ -5,6 +5,7 @@ CREATE TABLE `Class` (
   `selfEnrollStartDateTime` datetime NOT NULL,
   `selfEnrollEndDateTime` datetime NOT NULL,
   `maxCapacity` int NOT NULL,
+  `courseId` int NOT NULL,
   `trnAccountId` int NOT NULL,
   `adminAccountId` int NOT NULL,
   PRIMARY KEY (`classId`)
