@@ -57,8 +57,8 @@ if(reset_db){
         // Init Dummy Data
         require("./app/dummy/load") 
     });
-
-    
+}else{
+    db.sequelize.sync({ alter: true });
 }
 
 
