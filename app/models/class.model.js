@@ -5,22 +5,39 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true,
             primaryKey: true
         },
-        classStartDateTime:{
+
+        classStartDateTime: {
             type:Sequelize.DATE
         },
+
         classEndDateTime:{
             type:Sequelize.DATE
         },
-        selfEnrolStartDateTime:{
+
+        selfEnrollStartDateTime:{
             type:Sequelize.DATE
         },
-        selfEnrolEndDateTime:{
+
+        selfEnrollEndDateTime:{
             type:Sequelize.DATE
         },
+
         maxCapacity:{
             type:Sequelize.INTEGER
+        },
+
+        courseId:{
+            type:Sequelize.INTEGER
+        },
+
+        trnAccountId:{
+            type:Sequelize.INTEGER
+        },
+
+        adminAccountId:{
+            type:Sequelize.INTEGER
         }
+
     });
-    return Class; 
+    return Class;
 };
-  
