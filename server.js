@@ -2,6 +2,43 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
+//================  Upload ================ 
+var aws = require('aws-sdk')
+var multer = require('multer')
+var multerS3 = require('multer-s3')
+
+var s3 = new aws.S3({ 
+    accessKeyId: "d788659e-d606-4e2b-9774-c20e6d29812f",
+    // secretAccessKey: IAM_USER_SECRET,
+    Bucket: 'elasticbeanstalk-ap-southeast-1-118103674449',
+    signatureVersion: 'v4'
+})
+
+// const uploadFile = require("../middleware/upload");
+// const fs = require("fs");
+// const baseUrl = "http://localhost:8080/files/";
+
+
+
+var upload = multer({
+    storage: multerS3({
+      s3: s3,
+      bucket: 'elasticbeanstalk-ap-southeast-1-118103674449',
+      contentType: multerS3.AUTO_CONTENT_TYPE,
+      serverSideEncryption: 'AES256',
+    //   contentType: multerS3.AUTO_CONTENT_TYPE,
+      metadata: function (req, file, cb) {
+        cb(null, {fieldName: file.fieldname});
+      },
+      key: function (req, file, cb) {
+        cb(null, Date.now().toString())
+      }
+    })
+  })
+
+
+//  ================ End of Upload ================ 
+
 const app = express();
 app.use(express.json())
 
@@ -55,6 +92,19 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse requests of content
 
 // Init Dummy Data
 require("./app/dummy/quiz")
+
+
+
+
+// ================ MAIN SERVER APIs ================
+app.post('/upload', upload.array('upl',1), function (req, res, next) {
+    res.send("Uploaded!");
+});
+
+
+app.post('/upload2', upload.array('photos', 3), function(req, res, next) {
+    res.send('Successfully uploaded ' + req.files.length + ' files!')
+  })
 
 
 // ================ SETUP ================
