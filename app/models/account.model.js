@@ -22,8 +22,8 @@ module.exports = (sequelize, Sequelize) => {
         isTrainer: {
             type: Sequelize.BOOLEAN
         },
-        isLearner: {
-            type: Sequelize.BOOLEAN
+        sessionId: {
+            type:Sequelize.STRING
         }
     });
     return Account; 

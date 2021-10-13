@@ -5,8 +5,11 @@ module.exports = app => {
     //======== START: CONTROLLER LOGIC ========
     const accounts = require("../../controllers/account.controller.js");
     
+    //Login
+    router.post("/login", accounts.login);
+
     //Create new account
-    router.post("/", accounts.create);
+    router.post("/create", accounts.create);
 
     //Retrieve all accounts
     router.get("/", accounts.findAll);

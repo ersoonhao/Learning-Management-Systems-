@@ -51,7 +51,7 @@ db.sequelize_force_reset = () => {
 //db.Tutorial = require("./samples/tutorial.model.js")(sequelize, Sequelize);  
 
 //Account
-db.Account = require("./account.model.js")(sequelize, Sequelize);
+db.Account = require("./account.model")(sequelize, Sequelize);
 
 //Course
 db.Course = require("./course.model")(sequelize, Sequelize);
@@ -78,10 +78,10 @@ Sample - https://sequelize.org/v3/docs/associations/
     City.belongsTo(Country, {foreignKey: 'countryCode', targetKey: 'isoCode'});
 */
 
-db.Quiz.hasMany(db.Question, {foreignKey: 'quizId', sourceKey: 'quizId', onDelete: 'cascade' });
+db.Quiz.hasMany(db.Question, {foreignKey: 'quizId', sourceKey: 'quizId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.Question.belongsTo(db.Quiz, {foreignKey: 'quizId', targetKey: 'quizId'});
 
-db.Question.hasMany(db.QuestionOption, {foreignKey: 'questionId', sourceKey: 'questionId', onDelete: 'cascade' });
+db.Question.hasMany(db.QuestionOption, {foreignKey: 'questionId', sourceKey: 'questionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.QuestionOption.belongsTo(db.Question, {foreignKey: 'questionId', targetKey: 'questionId'});
 
 
