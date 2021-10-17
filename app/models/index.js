@@ -56,12 +56,17 @@ db.Account = require("./account.model.js")(sequelize, Sequelize);
 //Course
 db.Course = require("./course.model")(sequelize, Sequelize);
 
-db.Class = require("./class.model")(sequelize, Sequelize);
+// db.Class = require("./class.model")(sequelize, Sequelize);
 
 //Class
 db.Class = require("./class.model")(sequelize, Sequelize);
 
 //Section
+db.Section= require("./section.model")(sequelize,Sequelize);
+
+//CourseMaterial
+db.CourseMaterial= require("./coursematerial.model")(sequelize,Sequelize);
+
 
 //Quiz
 db.Quiz = require("./quiz.model")(sequelize, Sequelize);
