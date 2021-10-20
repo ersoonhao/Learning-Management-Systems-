@@ -11,6 +11,7 @@
             <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
         <title>LMS</title>
         <link rel="stylesheet" href="/style/master.css">
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
     <body>
         <div id="app">
@@ -39,7 +40,7 @@
                     session: getUserSession(),
                     courseId: getParams("courseId"),
                     menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 0),
-                    info: 'hi'
+                    info: null
                 }, created: () => {
                     this.courseId
                 }, mounted () {
