@@ -1,35 +1,46 @@
-const { Quiz, Question, QuestionOption, Account } = require("../models");
+const { Quiz, Question, QuestionOption, Class } = require("../models");
 const AccountController = require("./account.controller");
 const debug = true;
 
 //==== POST: /getQuizPackage
 exports.getQuizPackage = (req, res) => {
     const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
+            let body = req.body;
+            let quizId = body.quizId; //For specific quiz
+            let courseId = body.courseId; //For graded quiz
+            let sectionId = body.sectionId; //For ungraded quiz
+            
+            console.log(req.body);
+            if(!quizId && !courseId && !sectionId){
+                res.status(400).send({
+                    message: "Invalid data format"
+                })
+                return
+            }
 
-    let body = req.body;
-    if(!body){
-        res.status(400).send({
-            message: "Request body is empty!"
-        })
-        return
-    }
-    let quizId = body.quizId;
-    if(quizId == null){
-        res.status(400).send({
-            message: "Invalid data format"
-        })
-        return
-    }
-    AccountController.validAuthNAccess(req, res, permissions).then(authorized => { //Access control
-        if(authorized){
             //TODO: Check if learner is enrolled & has completed previous sections
             
             //Get quiz data
+            let q;
+            if(quizId){
+                q = { quizId: quizId }
+            }else if(courseId){
+                q = { courseId: courseId, type: Quiz.QUIZ_TYPES_GRADED }
+            }else if(sectionId){
+                q = { sectionId: sectionId, type: Quiz.QUIZ_TYPES_UNGRADED }
+            }
+            console.log(q);
             Quiz.findOne({
-                where: { quizId: quizId },
+                where: q,
                 include: [ { model: Question, include: [QuestionOption] } ]
             }).then(data => {
                 res.send({ "quiz": data });
+            }).catch(err=>{
+                res.status(500).send({
+                    message: err.message || "Some error occured obtaining data"
+                })
             });
         }
     })
@@ -48,35 +59,48 @@ exports.getQuizPackage = (req, res) => {
 //==== POST: /createQuiz
 exports.createQuiz = (req,res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
+            let body = req.body;
+            if(body.courseId && body.quiz.type == Quiz.QUIZ_TYPES_GRADED){ //Graded Quiz
+                if(session.isAdmin){
+                    body.courseId = 1; //TODO: Replace DUMMY data
+                    _createQuiz(body, res); //CREATE quiz
+                    
+                }else if(session.isTrainer){
+                    body.courseId = 1; //TODO: Replace DUMMY data
+                    _createQuiz(body, res); //CREATE quiz | TODO: Remove when below condition is met
 
-    let body = req.body;
-    if(!body){
-        res.status(400).send({
-            message: "Request body is empty!"
-        })
-        return
-    }
-    AccountController.validAuthNAccess(req, res, permissions).then(authorized => { //Access control
-        if(authorized){
-            //Init quiz
-            const quiz = Quiz.createQuiz(body.quiz, body.courseId, body.sectionId);
-            if(quiz == null){
+                    //TODO: Uncomment when dummy classes are setup
+                    //Ensure is one of the trainers for course
+                    /*let q = { classId: body.courseId, trnAccountId: session.accountId }
+                    Class.findOne({ where: q }).then(c => {
+                        if(!c){
+                            res.status(500).send({ message: "Unable to obtain class" })
+                            return
+                        }
+                        _createQuiz(body, res); //CREATE quiz
+                    }).catch(err=>{
+                        res.status(500).send({
+                            message: err.message || "Some error occured while creating"
+                        })
+                    });*/
+                }else{
+                    res.status(500).send({ message: "Invalid session" })
+                    return
+                }
+            }else if(body.sectionId && body.quiz.type == Quiz.QUIZ_TYPES_UNGRADED){ //Ungraded Quiz
+                //TODO: Ensure is the specific trainer for section
+                
+                body.courseId = 1; //TODO: Replace DUMMY data
+                _createQuiz(body, res);
+            }else{
                 res.status(400).send({
-                    message: "Invalid data format"
+                    message: "Invalid data format!"
                 })
                 return
             }
-
-            //Write to DB
-            Quiz.create(quiz).then(data => {
-                res.send({"quiz": data})
-
-            }).catch(err=>{
-                res.status(500).send({
-                    message:
-                    err.message || "Some error occured while creating"
-                })
-            })
+            
         }
     })
     /* SAMPLE JSON BODY REQUEST
@@ -101,20 +125,32 @@ exports.createQuiz = (req,res) => {
     */
 }
 
-//==== POST: /updateQuiz
-exports.updateQuiz = (req, res) => {
-    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
-
-    let body = req.body;
-    if(!body){
+function _createQuiz(body, res){
+    //Init quiz
+    const quiz = Quiz.createQuiz(body.quiz, body.courseId, body.sectionId);
+    if(quiz == null){
         res.status(400).send({
-            message: "Request body is empty!"
+            message: "Invalid data format"
         })
         return
     }
-    AccountController.validAuthNAccess(req, res, permissions).then(authorized => { //Access control
-        if(authorized){
+    //Write to DB
+    Quiz.create(quiz).then(data => {
+        res.send({"quiz": data})
+    }).catch(err=>{
+        res.status(500).send({
+            message: err.message || "Some error occured while creating"
+        })
+    })
+}
+
+//==== POST: /updateQuiz
+exports.updateQuiz = (req, res) => {
+    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
             //Init quiz
+            let body = req.body;
             const quiz = Quiz.updateQuiz(body.quiz);
             if(quiz == null){
                 res.status(400).send({
@@ -170,17 +206,10 @@ exports.updateQuiz = (req, res) => {
 //=== POST: /addQuestion
 exports.addQuestion = (req,res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
-
-    let body = req.body;
-    if(!body){
-        res.status(400).send({
-            message: "Request body is empty!"
-        })
-        return
-    }
-    AccountController.validAuthNAccess(req, res, permissions).then(authorized => { //Access control
-        if(authorized){
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
             //Init
+            let body = req.body;
             const question = Question.createQuestion(body.question, body.quizId);
             if(question == null){
                 res.status(400).send({
@@ -221,17 +250,10 @@ exports.addQuestion = (req,res) => {
 //==== POST: /updateQuestion
 exports.updateQuestion = (req, res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
-
-    let body = req.body;
-    if(!body){
-        res.status(400).send({
-            message: "Request body is empty!"
-        })
-        return
-    }
-    AccountController.validAuthNAccess(req, res, permissions).then(authorized => { //Access control
-        if(authorized){
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
             //Init
+            let body = req.body;
             const question = Question.updateQuestion(body.question);
             if(question == null){
                 res.status(400).send({
@@ -283,16 +305,9 @@ exports.updateQuestion = (req, res) => {
 //==== POST: /deleteQuestion
 exports.deleteQuestion = (req, res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
-
-    let body = req.body;
-    if(!body){
-        res.status(400).send({
-            message: "Request body is empty!"
-        })
-        return
-    }
-    AccountController.validAuthNAccess(req, res, permissions).then(authorized => { //Access control
-        if(authorized){
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
+            let body = req.body;
             let id = body.questionId;
             if(id == null){
                 res.status(400).send({
@@ -336,17 +351,10 @@ exports.deleteQuestion = (req, res) => {
 //=== POST: /addQuestionOption
 exports.addQuestionOption = (req,res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
-
-    let body = req.body;
-    if(!body){
-        res.status(400).send({
-            message: "Request body is empty!"
-        })
-        return
-    }
-    AccountController.validAuthNAccess(req, res, permissions).then(authorized => { //Access control
-        if(authorized){
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
             //Init
+            let body = req.body;
             const questionOption = QuestionOption.createQuestionOption(body.questionOption, body.questionId);
             if(questionOption == null){
                 res.status(400).send({
@@ -387,17 +395,10 @@ exports.addQuestionOption = (req,res) => {
 //==== POST: /updateQuestionOption
 exports.updateQuestionOption = (req, res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
-
-    let body = req.body;
-    if(!body){
-        res.status(400).send({
-            message: "Request body is empty!"
-        })
-        return
-    }
-    AccountController.validAuthNAccess(req, res, permissions).then(authorized => { //Access control
-        if(authorized){
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
             //Init
+            let body = req.body;
             const questionOption = QuestionOption.updateQuestionOption(body.questionOption);
             if(questionOption == null){
                 res.status(400).send({
@@ -448,16 +449,9 @@ exports.updateQuestionOption = (req, res) => {
 //==== POST: /deleteQuestionOption
 exports.deleteQuestionOption = (req, res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
-
-    let body = req.body;
-    if(!body){
-        res.status(400).send({
-            message: "Request body is empty!"
-        })
-        return
-    }
-    AccountController.validAuthNAccess(req, res, permissions).then(authorized => { //Access control
-        if(authorized){
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
+            let body = req.body;
             let id = body.questionOptionId;
             if(id == null){
                 res.status(400).send({

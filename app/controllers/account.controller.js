@@ -13,7 +13,7 @@ exports.PERM_TRAINER = "T";
 exports.validAuthNAccess = (req, res, requiredPerms) => {
     const failed = "Auth and access failed";
     return new Promise((resolve, _) => {
-        if(! req.body || !req.body.session || !req.body.session.username || !req.body.session.sessionId || 
+        if(!req.body || !req.body.session || !req.body.session.username || !req.body.session.sessionId || 
             req.body.session.username == undefined || req.body.session.sessionId == undefined){
             res.status(400).send({ message: "Invalid data format" })
             resolve(false);
@@ -30,12 +30,12 @@ exports.validAuthNAccess = (req, res, requiredPerms) => {
         if(perm.length > 0){ q = { [Op.or]: perm } } else { q = {} }
         q.username = req.body.session.username
         q.sessionId = req.body.session.sessionId
-        console.log(q)
         Account.findOne({ where: q }).then(data => {
             if(data == null){
                 res.status(401).send({ message: failed })
+                return
             }
-            resolve(data != null);
+            resolve(data);
             return
         }).catch(err => {
             console.log(err)

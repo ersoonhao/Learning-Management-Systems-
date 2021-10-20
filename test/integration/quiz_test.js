@@ -13,12 +13,46 @@ describe('Quiz API - POST /api/quiz/getQuizPackage', () => { //POST: getQuizPack
     before(function(done){
         dummy.reload().then(() => { done() })
     })
-    //Valid POST - Valid learner, Valid trainer, ANY admin, ANY admin cum trainer
+    //Valid POST - | By quizId | Valid learner, Valid trainer, ANY admin, ANY admin cum trainer
     sessL = [dummy.SESSION_LEARNER, dummy.SESSION_TRAINER, dummy.SESSION_ADMIN, dummy.SESSION_ADMIN_TRAINER]
     sessL.forEach(function (ses, i) {
-        it(`Valid POST /api/quiz/getQuizPackage ${i}`, (done) => {
+        it(`Valid POST | By quizId /api/quiz/getQuizPackage ${i}`, (done) => {
             const data = {
                 "quizId": 1,
+                "session": ses
+            }
+            chai.request(app).post("/api/quiz/getQuizPackage").send(data)
+            .end((err, response) => {
+                console.log("Status:" + response.status);
+                assert(response.status == 200);
+                assert('quiz' in response.body);
+                done();
+            })
+        })
+    })
+    //Valid POST - | By courseId | Valid learner, Valid trainer, ANY admin, ANY admin cum trainer
+    sessL = [dummy.SESSION_LEARNER, dummy.SESSION_TRAINER, dummy.SESSION_ADMIN, dummy.SESSION_ADMIN_TRAINER]
+    sessL.forEach(function (ses, i) {
+        it(`Valid POST | By courseId /api/quiz/getQuizPackage ${i}`, (done) => {
+            const data = {
+                "courseId": 1,
+                "session": ses
+            }
+            chai.request(app).post("/api/quiz/getQuizPackage").send(data)
+            .end((err, response) => {
+                console.log("Status:" + response.status);
+                assert(response.status == 200);
+                assert('quiz' in response.body);
+                done();
+            })
+        })
+    })
+    //Valid POST - | By sectionId | Valid learner, Valid trainer, ANY admin, ANY admin cum trainer
+    sessL = [dummy.SESSION_LEARNER, dummy.SESSION_TRAINER, dummy.SESSION_ADMIN, dummy.SESSION_ADMIN_TRAINER]
+    sessL.forEach(function (ses, i) {
+        it(`Valid POST | By sectionId /api/quiz/getQuizPackage ${i}`, (done) => {
+            const data = {
+                "sectionId": 1,
                 "session": ses
             }
             chai.request(app).post("/api/quiz/getQuizPackage").send(data)
