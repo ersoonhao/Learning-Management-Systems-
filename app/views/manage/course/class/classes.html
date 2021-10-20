@@ -38,6 +38,10 @@
                     session: getUserSession(),
                     courseId: getParams("courseId"),
                     menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 1)
+                }, created: () => {
+                    this.courseId
+                }, methods: {
+                    
                 }
             });
         </script>
