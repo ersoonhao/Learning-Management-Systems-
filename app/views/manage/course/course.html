@@ -19,7 +19,9 @@
                 <div class=container>
                     <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
                         <h1>ADD COURSE SETTINGS HERE</h1>
+                        <p>{{info}}</p>
                     </m-div>
+                    
                 </div>
             </div>
         </div>
@@ -36,10 +38,15 @@
                 data: {
                     session: getUserSession(),
                     courseId: getParams("courseId"),
-                    menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 0)
+                    menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 0),
+                    info: 'hi'
                 }, created: () => {
                     this.courseId
-                }
+                }, mounted () {
+    axios
+      .get('https://api.coindesk.com/v1/bpi/currentprice.json')
+      .then(response => (this.info = response))
+  }
             });
         </script>
     </body>
