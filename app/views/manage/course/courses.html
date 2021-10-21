@@ -59,7 +59,7 @@
                     menu: initMenu(MENU_SECTIONS_MANAGE_GENERAL, 0, 0),
                     courses : null
                 }, created: () => {
-                    axios.get(API('/courses')).then(response => (
+                    axios.get(API('/course')).then(response => (
                         console.log(response.data),
                         app.courses = response.data
                         ))}
