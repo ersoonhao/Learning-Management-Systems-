@@ -46,7 +46,7 @@
                     this.courseId
                 }, mounted () {
     axios
-      .get('/api/course/1')
+      .get(API(`/course/${this.courseId}`))
       .then(response => (
           this.title = response.data.title,
           this.description = response.data.description
