@@ -89,6 +89,13 @@
                 },methods: {
                     onSubmit() {
                         console.log(app.form.title, app.form.description)
+                        var courseObj = {title: app.form.title, description: app.form.description}
+                        axios.post(API('/course'), courseObj)
+                        .then((response) => {
+                        console.log(response);
+                        }, (error) => {
+                        console.log(error);
+                        });
                     }},
                     created: () => {
 
