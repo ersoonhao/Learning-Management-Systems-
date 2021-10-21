@@ -45,7 +45,7 @@
                     this.courseId
                 }, mounted () {
     axios
-      .get('http://localhost:8081/api/course/1')
+      .get('/api/course/1')
       .then(response => (this.info = response))
   }
             });
