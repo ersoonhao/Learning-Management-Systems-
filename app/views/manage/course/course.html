@@ -45,7 +45,7 @@
                     this.courseId
                 }, mounted () {
     axios
-      .get('https://api.coindesk.com/v1/bpi/currentprice.json')
+      .get('http://localhost:8081/api/course/1')
       .then(response => (this.info = response))
   }
             });
