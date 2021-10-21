@@ -68,6 +68,12 @@ db.Quiz = require("./quiz.model")(sequelize, Sequelize);
 db.Question = require("./question.model")(sequelize, Sequelize);
 db.QuestionOption = require("./questionOption.model")(sequelize, Sequelize);
 
+//Forum
+db.Thread = require("./thread.model")(sequelize, Sequelize);
+db.Post = require("./post.model")(sequelize, Sequelize);
+db.Comment = require("./comment.model")(sequelize, Sequelize);
+
+
 // ================== ASSOCIATIONS ======================
 /*
 Sample - https://sequelize.org/v3/docs/associations/
@@ -84,7 +90,11 @@ db.Question.belongsTo(db.Quiz, {foreignKey: 'quizId', targetKey: 'quizId'});
 db.Question.hasMany(db.QuestionOption, {foreignKey: 'questionId', sourceKey: 'questionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.QuestionOption.belongsTo(db.Question, {foreignKey: 'questionId', targetKey: 'questionId'});
 
+db.Thread.hasMany(db.Post, {foreignKey: 'threadId', sourceKey: 'threadId', onDelete: 'cascade' });
+db.Post.belongsTo(db.Thread, {foreignKey: 'threadId', targetKey: 'threadId'});
 
+db.Post.hasMany(db.Comment, {foreignKey: 'postId', sourceKey: 'postId', onDelete: 'cascade' });
+db.Comment.belongsTo(db.Post, {foreignKey: 'postId', targetKey: 'postId'});
 
 // ================== SYNC ==================
 db.sequelize.sync();
