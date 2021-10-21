@@ -19,8 +19,8 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
-                        <h1>ADD COURSE SETTINGS HERE</h1>
-                        <p>{{info}}</p>
+                        <h1>{{title}}</h1>
+                        <p>{{description}}</p>
                     </m-div>
                     
                 </div>
@@ -40,13 +40,17 @@
                     session: getUserSession(),
                     courseId: getParams("courseId"),
                     menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 0),
-                    info: null
+                    title: null,
+                    description: null
                 }, created: () => {
                     this.courseId
                 }, mounted () {
     axios
       .get('/api/course/1')
-      .then(response => (this.info = response))
+      .then(response => (
+          this.title = response.data.title,
+          this.description = response.data.description
+          ))
   }
             });
         </script>
