@@ -26,14 +26,14 @@
                         <div class="columns" id="app" v-if="!submitSuccess">
                             <div class="column is-two-thirds">
                               <section class="section">
-                                <h1 class="title">Fun with Forms in Vue 2.0</h1>
+                                <h1 class="title">Create Course Page</h1>
                                 <p class="subtitle">
-                                  Learn how to work with forms, including <strong>validation</strong>!
+                                  Fill in form below to create the course
                                 </p>
                                 <hr>      
                                 
                                 <!-- form starts here -->
-                                <section class="form">
+                    
                                   <div class="field">
                                     <label class="label">Title</label>
                                     <div class="control">
@@ -46,30 +46,32 @@
                                       <input v-model="form.description" class="input" type="text" placeholder="Text input">
                                     </div>
                                   </div>
-                                </section>
+                                
                               </section>
                             </div>
-                            
-                            <div class="column">
+                            <br>
+                            <button v-on:click="onSubmit" class="btn btn-primary">Submit Class Creation</button>
+                            <!-- <div class="column">
                               <section class="section" id="results">
                                 <div class="box">
-                                  <ul>          
+                                  <ul>           -->
                                     <!-- loop through all the `form` properties and show their values -->
-                                    <li v-for="(item, k) in form">
+                                    <!-- <li v-for="(item, k) in form">
                                       <strong>{{ k }}:</strong> {{ item }}
                                     </li>
                                   </ul>
                                 </div>
                               </section>
-                            </div>
-                            <button v-on:click="onSubmit">Greet</button>
+                            </div> -->
+                            
                         </div>
                         <div class='content' v-if='submitSuccess'>
                             <h1>
                                 Class Creation Successful
                             </h1>
-                            <a>Link to all classes</a>
-                            <a>Link to created class with title: {{form}}</a>
+                            <a href='/manage/courses' class="link-primary">Link to all classes</a>
+                            <br>
+                            <a :href="'/manage/course?courseId=' + this.id">Link to created class with title: {{form.title}} and description: {{form.description}}</a>
                         </div>
                     </m-div>
                 </div>
@@ -92,6 +94,7 @@
                     form : {
                         title: '',
                         description: '',
+                        id: ''
 
                     },
                     submitSuccess: null
@@ -104,6 +107,7 @@
                         console.log(response);
                         if(response.status == 200){
                             this.submitSuccess = true
+                            this.id = response.data.courseId
                         }
                         }, (error) => {
                         console.log(error);
