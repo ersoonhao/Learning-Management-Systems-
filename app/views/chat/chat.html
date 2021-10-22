@@ -29,18 +29,19 @@
         <div id="app">
             <lms-head :session="session"></lms-head>
             <div class="content">
-              <div class=container>
-                      
-                    
-             
+              <div class=container>             
+                <ul id="messages">
+                  <li v-for="messageObj in messages" :key="messageObj.id">
+                    {{ messageObj.text }}
+                  </li>
+                </ul>
               </div>
           </div>
         </div>
 
         <div>
 
-          <ul id="messages">
-          </ul>
+          
           <form id="form" action="">
             <input id="input" autocomplete="off" /><button>Send</button>
           </form>
@@ -76,23 +77,19 @@
                 }
                 });
 
-                socket.on('chat message', function(msg) {
-                var item = document.createElement('li');
-                item.textContent = msg;
-                messages.appendChild(item);
-                window.scrollTo(0, document.body.scrollHeight);
-                });
-
 
                 const app = new Vue({
                 el: '#app',
                 data: {
                     session: getUserSession(),
                     menu: initMenu(MENU_SECTIONS_MANAGE_GENERAL, 0, 0),
-                    
+                    messages : []
                 }, created: () => {
 
-
+                  socket.on('chat message', function(msg) {
+                  var msg_id = messages.length+1
+                  app.messages.push({text:msg, id:msg_id})
+                  });
 
                    }
                         });
