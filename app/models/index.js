@@ -73,6 +73,8 @@ db.Thread = require("./thread.model")(sequelize, Sequelize);
 db.Post = require("./post.model")(sequelize, Sequelize);
 db.Comment = require("./comment.model")(sequelize, Sequelize);
 
+//Chat
+db.Message = require("./message.model")(sequelize, Sequelize);
 
 // ================== ASSOCIATIONS ======================
 /*
