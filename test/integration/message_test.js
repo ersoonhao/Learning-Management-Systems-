@@ -11,7 +11,7 @@ describe('The messsages route and controller',()=>{
       dummy_reload.reload().then(() => { done() })
   })
 
-  it('creates one message through post request without id',(done)=>{
+  it('creates one message through post request without message id',(done)=>{
     request(app).post('/api/message/create').send({text: 'test message', senderAccountId:1, receiverAccountId:2}).end(
       (err,response)=>{
         assert(response.body.text == "test message")
@@ -22,9 +22,10 @@ describe('The messsages route and controller',()=>{
     )
   })
 
-  it('creates one message through post request with id',(done)=>{
+  it('creates one message through post request with message id',(done)=>{
     request(app).post('/api/message/create').send({messageId: 9, text: 'test message', senderAccountId:1, receiverAccountId:2}).end(
       (err,response)=>{
+        assert(response.body.messageId == 9)
         assert(response.body.text == "test message")
         assert(response.body.senderAccountId == 1)
         assert(response.body.receiverAccountId == 2)
@@ -33,10 +34,19 @@ describe('The messsages route and controller',()=>{
     )
   })
 
+  it('updates one message through post request with message id',(done)=>{
+    request(app).post('/api/message/update').send({messageId: 9, text: 'update message test'}).end(
+      (err,response)=>{
+        console.log(response.body)
+        assert(response.body.message == "Message was updated successfully.")
+        done()
+      }
+    )
+  })
+
   it('deletes message 9 through post request',(done)=>{
     request(app).post('/api/message/delete').send({messageId: 9}).end(
       (err,response)=>{
-        console.log(response.body)
         assert(response.body.message == "Message was deleted successfully!")
         done()
       }

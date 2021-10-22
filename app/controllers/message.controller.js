@@ -28,6 +28,31 @@ exports.create = (req,res) =>{
     })
 }
 
+exports.update = (req, res) => {
+  const messageId = req.body.messageId;
+  const text = req.body.text;
+
+  Message.update({text: text}, {
+    where: { messageId: messageId }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Message was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update Message with messageId=${messageId}. Maybe Message was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Message with messageId=" + messageId
+      });
+    });
+};
+
 exports.delete = (req, res) => {
   const messageId = req.body.messageId;
 

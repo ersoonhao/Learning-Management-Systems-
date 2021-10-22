@@ -15,6 +15,8 @@ module.exports = app => {
 
     router.post("/delete",message.delete)
 
+    router.post("/update",message.update)
+
     router.get("/:id", message.findOne);
 
     //======== END: CONTROLLER LOGIC ========
