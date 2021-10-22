@@ -56,6 +56,8 @@ module.exports = function(io) {
             io.emit('chat message', msg);
             console.log('chat message')
           });
+
+
     });
 
     

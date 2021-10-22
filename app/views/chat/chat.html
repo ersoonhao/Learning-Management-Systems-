@@ -29,27 +29,21 @@
         <div id="app">
             <lms-head :session="session"></lms-head>
             <div class="content">
-<<<<<<< Updated upstream
+
               <div class=container>             
                 <ul id="messages">
                   <li v-for="messageObj in messages" :key="messageObj.id">
                     {{ messageObj.text }}
                   </li>
                 </ul>
-=======
-              <div class=container>
-                      
-                    
-             
->>>>>>> Stashed changes
+
               </div>
           </div>
         </div>
 
         <div>
 
-          <ul id="messages">
-          </ul>
+          
           <form id="form" action="">
             <input id="input" autocomplete="off" /><button>Send</button>
           </form>
@@ -85,19 +79,12 @@
                 }
                 });
 
-                socket.on('chat message', function(msg) {
-                var item = document.createElement('li');
-                item.textContent = msg;
-                messages.appendChild(item);
-                window.scrollTo(0, document.body.scrollHeight);
-                });
 
                 const app = new Vue({
                 el: '#app',
                 data: {
                     session: getUserSession(),
                     menu: initMenu(MENU_SECTIONS_MANAGE_GENERAL, 0, 0),
-<<<<<<< Updated upstream
                     messages : []
                 }, created: () => {
 
@@ -105,12 +92,11 @@
                   var msg_id = messages.length+1
                   app.messages.push({text:msg, id:msg_id})
                   });
-=======
+
                     
                 }, created: () => {
 
 
->>>>>>> Stashed changes
 
                    }
                         });
