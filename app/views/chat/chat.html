@@ -29,25 +29,27 @@
         <div id="app">
             <lms-head :session="session"></lms-head>
             <div class="content">
+              <div class=container>  
 
-              <div class=container>             
                 <ul id="messages">
                   <li v-for="(messageObj, index) in messages" :key="index">
                     {{ messageObj.text }}
                   </li>
                 </ul>
 
+                <form id="form" action="">
+                  <input id="input" autocomplete="off" v-model="newMessage"/>
+                  <button v-on:click="sendMessage">Send</button>
+                </form>
                 
               </div>
-          </div>
+            </div>
         </div>
 
         <div>
 
           
-          <form id="form" action="">
-            <input id="input" autocomplete="off" /><button>Send</button>
-          </form>
+          
         </div>
         
     
@@ -67,28 +69,27 @@
     
         <script>
                 var socket = io();
-    
-        
-                form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                if (input.value) {
-                  socket.emit('chat message', input.value);
-                  input.value = '';
-                }
-                });
-
 
                 const app = new Vue({
                 el: '#app',
                 data: {
                     session: getUserSession(),
                     menu: initMenu(MENU_SECTIONS_MANAGE_GENERAL, 0, 0),
-                    messages : []
+                    messages : [],
+                    newMessage: ''
                 }, created: () => {
 
                   socket.on('chat message', function(msg) {
                   app.messages.push({text:msg})
                   });
+                }, methods:{
+                  sendMessage: function(event){
+                    event.preventDefault()
+                    if (app.newMessage) {
+                    socket.emit('chat message', app.newMessage);
+                    app.newMessage = '';
+                }
+                  }
                 }
                         });
         </script>
