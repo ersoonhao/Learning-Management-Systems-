@@ -32,11 +32,12 @@
 
               <div class=container>             
                 <ul id="messages">
-                  <li v-for="messageObj in messages" :key="messageObj.id">
+                  <li v-for="(messageObj, index) in messages" :key="index">
                     {{ messageObj.text }}
                   </li>
                 </ul>
 
+                
               </div>
           </div>
         </div>
@@ -67,10 +68,7 @@
         <script>
                 var socket = io();
     
-                var messages = document.getElementById('messages');
-                var form = document.getElementById('form');
-                var input = document.getElementById('input');
-
+        
                 form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 if (input.value) {
@@ -89,16 +87,9 @@
                 }, created: () => {
 
                   socket.on('chat message', function(msg) {
-                  var msg_id = messages.length+1
-                  app.messages.push({text:msg, id:msg_id})
+                  app.messages.push({text:msg})
                   });
-
-                    
-                }, created: () => {
-
-
-
-                   }
+                }
                         });
         </script>
     </body>
