@@ -44,10 +44,10 @@ exports.findAll = (req, res) => {
 
 exports.findAllByCourseFK = (req, res) => {
 
-    const courseId = req.body.courseId;
+    const course_fk = req.body.course_fk;
     
     PrerequisiteSet.findAll({ where: {
-      courseId : courseId
+      course_fk : course_fk
     }})
       .then(data => {
         res.send(data); //change this to render

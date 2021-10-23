@@ -7,7 +7,7 @@ module.exports = app => {
 
     router.get("/all", prerequisiteSet.findAll);
 
-    router.post("/coursefk", prerequisiteSet.findAllByCourseFK)
+    router.post("/course_fk", prerequisiteSet.findAllByCourseFK)
 
     router.post("/setnumber", prerequisiteSet.findAllBySetNumber)
 

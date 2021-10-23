@@ -24,7 +24,7 @@ describe('The prerequisites route and controller',()=>{
   })
 
   it('retrieves all prerequisite sets through post request with course foreign key of 1', (done)=>{
-    request(app).post('/api/prereqset/coursefk').send({course_fk: 1}).end(
+    request(app).post('/api/prereqset/course_fk').send({course_fk: 1}).end(
     (err,response)=>{
       console.log(response.body)
       console.log(response.body.length)
