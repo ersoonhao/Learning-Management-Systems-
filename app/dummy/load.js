@@ -77,6 +77,17 @@ module.exports.load = () => {
         (6, "Hi Varun, WHat's up, I am Asher", 7, 4),
         (7, 'I love you Asher', 4, 7),
         (8, 'Hehe me too', 7, 4);
+
+        INSERT INTO PrerequisiteSets(setNumber, course_fk) VALUES
+        (1, 2),
+        (1, 3),
+        (1, 4),
+        (2, 1),
+        (2, 3);
+
+        INSERT INTO CoursePrerequisites(setNumber, course_fk) VALUES
+        (1, 1),
+        (2, 2);
     `)
 };
 

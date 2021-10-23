@@ -55,8 +55,8 @@ db.Account = require("./account.model")(sequelize, Sequelize);
 
 //Course
 db.Course = require("./course.model")(sequelize, Sequelize);
-
-db.Class = require("./class.model")(sequelize, Sequelize);
+db.PrerequisiteSet = require("./prerequisiteSet.model")(sequelize, Sequelize);
+db.CoursePrerequisite = require("./coursePrerequisite.model")(sequelize, Sequelize);
 
 //Class
 db.Class = require("./class.model")(sequelize, Sequelize);
