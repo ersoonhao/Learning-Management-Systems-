@@ -12,7 +12,7 @@ exports.create = (req,res) =>{
 
     const prerequisiteSet = {
       setNumber: req.body.setNumber,
-      course_fk: req.body.course_fk
+      courseId: req.body.courseId
     }
 
     PrerequisiteSet.create(prerequisiteSet)
@@ -44,10 +44,10 @@ exports.findAll = (req, res) => {
 
 exports.findAllByCourseFK = (req, res) => {
 
-    const course_fk = req.body.course_fk;
+    const courseId = req.body.courseId;
     
     PrerequisiteSet.findAll({ where: {
-      course_fk : course_fk
+      courseId : courseId
     }})
       .then(data => {
         res.send(data); //change this to render

@@ -1,6 +1,22 @@
 const db = require("../models");
-const Course = db.Course;
+const { Course, PrerequisiteSet, CoursePrerequisite } = require("../models");
 const Op = db.Sequelize.Op;
+
+exports.findOneCourse = (req,res)=>{
+
+  const id = req.params.id;
+
+  Course.findOne({
+    where: {courseId: id},
+    include: [ { model: CoursePrerequisite, include: [PrerequisiteSet] } ]
+  }).then(data => {
+    res.send({ "course": data });
+}).catch(err=>{
+    res.status(500).send({
+        message: err.message || "Some error occured obtaining data"
+    })
+});
+}
 
 exports.create = (req,res) =>{
     if(!req.body){
@@ -54,3 +70,4 @@ exports.findAll = (req, res) => {
         });
       });
   };
+
