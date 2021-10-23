@@ -1,3 +1,4 @@
+// CONTRIBUTOR: John Cheong
 'use strict';
 
 const request = require('supertest'); 

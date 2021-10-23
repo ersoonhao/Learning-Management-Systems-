@@ -24,7 +24,7 @@ require("./app/routes/backend/course.routes")(app);
 require("./app/routes/backend/class.routes")(app);
 require("./app/routes/backend/forum.routes")(app);
 require("./app/routes/backend/message.routes")(app);
-
+require("./app/routes/backend/prerequisiteSet.routes")(app);
 
 // port 8081
 
