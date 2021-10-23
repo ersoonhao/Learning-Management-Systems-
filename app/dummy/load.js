@@ -85,7 +85,7 @@ module.exports.load = () => {
         (2, 1),
         (2, 3);
 
-        INSERT INTO CoursePrerequisites(setNumber, course_fk) VALUES
+        INSERT INTO CoursePrerequisites(setNumber, courseId) VALUES
         (1, 1),
         (2, 2);
     `)

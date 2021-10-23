@@ -12,7 +12,7 @@ exports.create = (req,res) =>{
 
     const prerequisiteSet = {
       setNumber: req.body.setNumber,
-      course_fk: req.body.course_fk
+      courseId: req.body.courseId
     }
 
     PrerequisiteSet.create(prerequisiteSet)

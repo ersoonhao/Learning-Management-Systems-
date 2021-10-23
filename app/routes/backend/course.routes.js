@@ -11,6 +11,8 @@ module.exports = app => {
 
     router.get("/:id", course.findOne);
 
+    router.get("/find/:id",course.findOneCourse);
+
     //======== END: CONTROLLER LOGIC ========
     
     app.use(ROUTE_PATH, router);

@@ -4,7 +4,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             primaryKey: true
         },
-      course_fk: {
+      courseId: {
         type: Sequelize.INTEGER,
         primaryKey: true
       },
