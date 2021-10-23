@@ -55,7 +55,25 @@ exports.findAllByCourseFK = (req, res) => {
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving Messages."
+            err.message || "Some error occurred while retrieving prerequisite Sets."
+        });
+      });
+  };
+
+  exports.findAllBySetNumber = (req, res) => {
+
+    const setNumber = req.body.setNumber;
+    
+    PrerequisiteSet.findAll({ where: {
+      setNumber : setNumber
+    }})
+      .then(data => {
+        res.send(data); //change this to render
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving prerequisite Sets."
         });
       });
   };
