@@ -11,13 +11,20 @@ module.exports = app => {
 
 
     //Create Class
-    router.post("/", Class.create);
+    router.post("/", Class.createClass);
 
     //Get available classes
-    router.get("/", Class.findAll);
+    // router.get("/", Class.findAll);
+
+    // Get available classes according to courseId
+    router.get("/:courseId", Class.getCourseClasses);
 
     //Update ClassStartDateTime using classId
-    router.put("/:classId", Class.update);
+    router.put("/:classId", Class.updateClass);
+
+    //Check if section trainer is true
+
+    
 
 
 
