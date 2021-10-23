@@ -9,6 +9,8 @@ module.exports = app => {
 
     router.post("/coursefk", prerequisiteSet.findAllByCourseFK)
 
+    router.post("/setnumber", prerequisiteSet.findAllBySetNumber)
+
     //======== END: CONTROLLER LOGIC ========
     
     app.use(ROUTE_PATH, router);
