@@ -183,3 +183,28 @@ exports.findAll = (req, res) => {
         });
       });
   };
+
+  exports.coursePrereqDelete = (req, res) => {
+    const courseId = req.body.courseId;
+    const setNumber = req.body.setNumber;
+  
+    CoursePrerequisite.destroy({
+      where: { courseId: courseId , setNumber: setNumber}
+    })
+      .then(num => {
+        if (num == 1) {
+          res.send({
+            message: "Course prerequisite set was deleted successfully!"
+          });
+        } else {
+          res.send({
+            message: `Cannot delete Course prerequisite set with courseId=${courseId} and setNumber=${setNumber}. Maybe Course was not found!`
+          });
+        }
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Could not delete Course with courseId=" + courseId+" and setNumber="+setNumber
+        });
+      });
+  };
