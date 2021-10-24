@@ -5,6 +5,16 @@ const cors = require("cors");
 const app = express();
 app.use(express.json())
 
+
+// Multer 
+
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
+
+// end of Multer 
+
+
+
 // ================ Routes ================
 app._FRONT_END_PATH = __dirname + '/app/views/';
 //app.use(express.static(app._FRONT_END_PATH));
@@ -33,7 +43,7 @@ require("./app/routes/frontend/manage.froutes")(app);
 
 // ================ CORS ================
 // Cross-origin resource sharing (CORS) defines a way for client web applications that are loaded in one domain to interact with resources in a different domain. 
-app.use(cors({
+app.use(cors({ 
     //origin: "*",
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }));
@@ -67,6 +77,22 @@ if(reset_db){
 
 // ================ SETUP ================
 const PORT = process.env.PORT || 8081; //Set port, listen for requests
+
+
+// my own middlewear for images ?? 
+// cuz front end upload image
+app.post('/images', upload.single('image'), function (req, res, next) {
+    // req.file is the `avatar` file
+    // req.body will hold the text fields, if there were any
+
+    const file = req.file;
+    const description = req.description 
+
+    res.status(200); 
+
+  })
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
