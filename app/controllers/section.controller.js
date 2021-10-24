@@ -24,14 +24,26 @@ function isSectionTrainer (Account, SectionId){
 // basic CRUD for section is done 
 
 //to-do 
-// get Section Package 
-// isSectionTrainer private fucntion
-// 
+// isSectionTrainer
+// getSectionPackage
+// createSection X 
+// updateSection X 
+
+
+// Added:
+// deleteSection X 
+// findAllSection X 
+// deleteAllSection X 
+
+// S3 related NOT DONE 
+// addCourseMaterial
+// updateCoursematerial 
+// deleteCourseMater 
 
 
 
 // Create and Save a Section 
-exports.create = (req, res) => {
+exports.createSection = (req, res) => {
   // Validate request
   if (!req.body.title || !req.body.subtitle ) {
     res.status(400).send({
@@ -63,7 +75,7 @@ exports.create = (req, res) => {
 };
 
 // Retrieve all Tutorials from the database.
-exports.findAll = (req, res) => {
+exports.findAllSection = (req, res) => {
 //   const title = req.query.username;
 //   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
@@ -97,7 +109,7 @@ exports.findOne = (req, res) => {
 
 
 
-exports.delete = (req, res) => {
+exports.deleteSection = (req, res) => {
 //   const id = req.params.id;
 const id = req.params.sectionId;
   Section.destroy({
@@ -128,7 +140,7 @@ const id = req.params.sectionId;
 // Update Section why need account?
 // update based on req.body
 // validation not done hence throw error if something goes wrong
-exports.update = (req, res) => {
+exports.updateSection = (req, res) => {
     const id = req.params.id;
     
     Section.update(req.body, {
@@ -155,7 +167,7 @@ exports.update = (req, res) => {
 
 
 // Delete all Tutorials from the database.
-exports.deleteAll = (req, res) => {
+exports.deleteAllSection = (req, res) => {
     Section.destroy({
     where: {},
     truncate: false
