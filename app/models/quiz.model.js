@@ -68,6 +68,7 @@ module.exports = (sequelize, Sequelize) => {
     //Private
     function isValidQuiz(quiz, isNew){
         if((isNew && quiz.quizId != null || isNew && quiz.courseId == null) || (!isNew && quiz.quizId == null)){
+            console.log(quiz);
             console.log("Quiz Error: 1");
             return false;
         }

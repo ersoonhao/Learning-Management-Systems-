@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+        <title>LMS</title>
+        <link rel="stylesheet" href="/style/master.css">
+    </head>
+    <body>
+        <div id="app">
+            <lms-head :session="session"></lms-head>
+            <div class="content">
+                <div class=container>
+                    <m-div :menu="menu" :title="quizType+'Quiz'" :subtitle="mainId">
+                        <div v-show="quiz.quizId != null">
+                            <h4 class="lms-font-semibold" v-text="quizType + 'Quiz Settings'"></h4>
+                            <p>Quiz ID: <span v-text="quiz.quizId"></span></p>
+                        </div>
+                        <div v-show="!quiz.quizId">
+                            <h4 class="lms-font-semibold">Create Graded Quiz</h4>
+                        </div>
+                        <q-input v-for="q in formQList" :qn="q"></q-input>
+                        <button v-show="formQList.length > 0" class="btn bg-highlight text-white my-3 px-3" @click="submitQuiz" v-text="quiz.quizId?'Save quiz':'Create quiz'"></button>
+                        <div class="hr-thick my-5"></div>
+                        <div v-show="quiz.quizId != null">
+                            <div class="clearfix">
+                                <h5 class="lms-font-semibold" style="margin: 20px 0px; float: left;">Questions</h5>
+                                <button class="btn btn-light" style="float: right; margin-top: 20px;" @click="showAddQuestion">Add question</button>
+                            </div> 
+                            <div id="questions">
+                                <edit-q-input v-for="question in questionList" :qn="question" @edit="showEditQuestion(question)" @remove="promptRemoveQuestion"></edit-q-input>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="qModal" tabindex="-1" role="dialog" aria-labelledby="qModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title lms-font-semibold" id="qModalLabel" v-text="focusedQModifyType + ' question'"></h5>
+                                  <button type="button" class="btn close" data-dismiss="qModal" aria-label="Close" onclick="$('#qModal').modal('hide')">
+                                    <i class="fa fa-times"></i>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <div class="lms-input">
+                                                <label for="form-title">Type</label><span class="mandatory">*</span>
+                                                <select class="form-control" v-model="focusedQ.type">
+                                                    <option value="" disabled selected hidden>Select a type</option>
+                                                    <option value="MCQ">MCQ</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="lms-input" style="margin-top: 25px;">
+                                                <input v-model="focusedQ.autoGraded" id="question-autoGraded" type="checkbox" style="margin-right: 7px;"/>
+                                                <label for="question-autoGraded">Auto Graded</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="lms-input">
+                                        <label>Question</label><span class="mandatory">*</span>
+                                        <textarea v-model="focusedQ.question" style="margin-top: 10px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn bg-contrast text-white" data-dismiss="qModal" onclick="$('#qModal').modal('hide')">Close</button>
+                                  <button type="button" class="btn bg-highlight text-white" @click="modifyQuestion" v-text="focusedQModifyType"></button>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </m-div>
+                </div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+        </script>
+        <script src="/js/lib/vue.js"></script>
+        <script src="/js/lms/main/master.js"></script>
+        <script src="/js/lms/main/manage.js"></script>
+        <script>
+            function generateNewQuestion(){ //Default NEW Question object
+                return { 
+                    questionId: null, question: "", autoGraded: true, type: ""
+                }
+            }
+            function formatUIQuestion(data, editor=false){
+                if(data.type == QUESTION_TYPES_MCQ){
+                    data._type = "radio";
+                }else{
+                    return null;
+                }
+                if(editor){
+                    if(data.QuestionOptions != null){
+                        for(let o of data.QuestionOptions){
+                            o.editing = false;
+                        }
+                    }
+                }
+                return {
+                    questionId: data.questionId, title: data.question, placeholder: "", _type: data._type, 
+                    required: false, questionOptions: data.QuestionOptions, value: "", 
+                    editor: editor, 
+                    question: data.question, autoGraded: data.autoGraded, type: data.type 
+                }
+            }
+            function formatDataQuestion(ui){
+                //TODO:
+            }
+            function getMenu(){
+                if(getParams("courseId")){
+                    return initMenu(generateMenuSections_Course(getParams("courseId")), 0, 2)
+                }else if(getParams("sectionId")){
+                    return initMenu(generateMenuSections_Section(getParams("sectionId")), 0, 2)
+                }
+            }
+            const app = new Vue({
+                el: '#app',
+                data: {
+                    session: getUserSession(),
+                    courseId: getParams("courseId"),
+                    sectionId: getParams("sectionId"),
+                    menu: getMenu(),
+                    formQList: [],
+                    questionList: [],
+                    focusedQ: generateNewQuestion(),
+                    quiz: {
+                        quizId: null,
+                        type: getParams("sectionId")?"UG":"G",
+                        title: "",
+                        instructions: "",
+                        durationInMins: 0,
+                        courseId: getParams("courseId"),
+                        sectionId: getParams("sectionId"),
+                        passScoreRequirement: null,
+                        active: false,
+                        createdAt: null,
+                        updatedAt: null,
+                        Questions: []
+                    }
+                }, created: () => {
+                    let courseId = getParams("courseId");
+                    let sectionId = getParams("sectionId");
+                    if(courseId == null && sectionId == null){
+                        window.location = "/manage";
+                        return
+                    }
+                    
+                    //Load Quiz
+                    let session = getUserSession();
+                    if(session != null){
+                        let data = { 
+                            session: getUserSession() 
+                        };
+                        if(courseId != null){
+                            data.courseId = courseId;
+                        }else if(sectionId != null){
+                            data.sectionId = sectionId;
+                        }
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", API("/quiz/getQuizPackage"), true);
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                if (xhr.status == 200) {
+                                    app.setupInputFields();
+                                    let dataJSON = JSON.parse(xhr.responseText);
+                                    let quiz = dataJSON['quiz'];
+                                    if(quiz != null){
+                                        app.quiz = quiz;
+                                        app.setInput('title', quiz.title);
+                                        app.setInput('instructions', quiz.instructions);
+                                        app.setInput('duration', quiz.durationInMins);
+                                        app.setInput('passreq', quiz.passScoreRequirement * 100)
+                                        app.setInput('active', quiz.active ? "True" : "False")
+
+                                        if(quiz.Questions != null){
+                                            for(let q of quiz.Questions){
+                                                let qui = formatUIQuestion(q, true);
+                                                if(qui != null){
+                                                    app.questionList.push(qui);
+                                                    console.log(app.questionList);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }else if(xhr.status == 401){
+                                    sessionExpired();
+                                    return;
+                                } else {
+                                    alert("An error has occured - " + xhr.status);
+                                    console.log(xhr.responseText);
+                                    return;
+                                }
+                            }
+                        };
+                        xhr.send(JSON.stringify(data));
+                        console.log(data);
+                    }else{
+                        sessionExpired();
+                        return
+                    }
+                }, methods: {
+                    setupInputFields: function(){
+                        this.formQList = [
+                            { questionId: "title", title: "Title", placeholder: "Title", _type: "text", required: true, questionOptions: null, value: "" },
+                            { questionId: "instructions", title: "Instructions", placeholder: null, _type: "textbox", required: true, questionOptions: null, value: "" },
+                            { questionId: "duration", title: "Duration (in mins)", placeholder: null, _type: "number", required: true, questionOptions: null, value: "", min: 0, max: 10 },
+                            { questionId: "active", title: "Enabled", placeholder: null, _type: "radio", required: true, questionOptions: [
+                                { questionOptionId: "True", optionText: "True", isCorrect: null, questionId: null },
+                                { questionOptionId: "False", optionText: "False", isCorrect: null, questionId: null }
+                            ], value: "False" }
+                        ]
+                        if(this.courseId != null){
+                            //Graded
+                            this.formQList.push({ questionId: "passreq", title: "Pass Score Requirement %", placeholder: "Range: 0% to 100%", _type: "number", required: true, questionOptions: "", value: "", min: 0, max: 100 })
+                        }
+                    }, 
+                    submitQuiz: function(){
+                        let data = { 
+                            quiz: this.formatQuiz(),
+                            session: getUserSession()
+                        };
+                        var xhr = new XMLHttpRequest();
+                        let update = this.quiz.quizId != null
+                        if(update){
+                            xhr.open("POST", API("/quiz/updateQuiz"), true);
+                        }else{
+                            xhr.open("POST", API("/quiz/createQuiz"), true);
+                            data.courseId = this.quiz.courseId
+                            data.sectionId = this.quiz.sectionId;
+                        }
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                if (xhr.status == 200) {
+                                    alert("Successfully saved");
+                                    if(!update){
+                                        let dataJSON = JSON.parse(xhr.responseText);
+                                        console.log(dataJSON);
+                                        app.quiz = dataJSON.quiz
+                                    }
+                                }else if(xhr.status == 401){
+                                    sessionExpired();
+                                    return;
+                                } else {
+                                    alert("An error has occured - " + xhr.status);
+                                    console.log(xhr.responseText);
+                                    return;
+                                }
+                            }
+                        };
+                        xhr.send(JSON.stringify(data));
+                        console.log(data);
+                    },
+                    modifyQuestion: function(){
+                        if(this.focusedQ.type == "" ||  this.focusedQ.question == ""){
+                            alert("Please fill in all required fields");
+                            return;
+                        }
+                        let quizId = this.quiz.quizId;
+                        if(quizId == null){
+                            alert("Unable to modify question");
+                            return;
+                        }
+                        //Handle modify question (Create & Update)
+                        this.focusedQ.value = this.focusedQ._type == 'checkbox' ? [] : "";
+                        let data = { 
+                            question: this.focusedQ,
+                            session: getUserSession()
+                        };
+                        var xhr = new XMLHttpRequest();
+                        let update = this.focusedQ.questionId != null
+                        if(update){
+                            xhr.open("POST", API("/quiz/updateQuestion"), true);
+                        }else{
+                            xhr.open("POST", API("/quiz/addQuestion"), true);
+                            data.quizId = this.quiz.quizId
+                        }
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                if (xhr.status == 200) {
+                                    alert("Successfully saved");
+                                    if(!update){
+                                        //Create
+                                        let dataJSON = JSON.parse(xhr.responseText);
+                                        console.log(dataJSON);
+                                        
+                                        let qui = formatUIQuestion(dataJSON.question, true);
+                                        if(qui != null){
+                                            app.questionList.push(qui);
+                                            console.log(app.questionList);
+                                        }
+                                    }else{
+                                        //Update
+                                        for(let q of app.questionList){
+                                            if(q.questionId == app.focusedQ.questionId){
+                                                q.title = app.focusedQ.question;
+                                                q.question = app.focusedQ.question;
+                                                q.autoGraded = app.focusedQ.autoGraded;
+                                                q.type = app.focusedQ.type;
+                                                console.log(q);
+                                            }
+                                        }
+                                    }
+                                    $('#qModal').modal('hide');
+                                    app._resetFocusedQuestions()
+                                }else if(xhr.status == 401){
+                                    sessionExpired();
+                                    return;
+                                } else {
+                                    alert("An error has occured - " + xhr.status);
+                                    console.log(xhr.responseText);
+                                    return;
+                                }
+                            }
+                        };
+                        xhr.send(JSON.stringify(data));
+                        console.log(data);
+                    },
+                    showAddQuestion: function(){
+                        this._resetFocusedQuestions()
+                        $('#qModal').modal('show');
+                    },
+                    showEditQuestion: function(qn){
+                        //TODO:
+                        console.log(qn);
+                        this.focusedQ = {... qn};
+                        $('#qModal').modal('show');
+                    },
+                    promptRemoveQuestion: function(qn){
+                        if(confirm("Are you sure you want to delete?")){
+                            let data = { 
+                                questionId: qn.questionId,
+                                session: getUserSession(),
+                            };
+                            var xhr = new XMLHttpRequest();
+                            xhr.open("POST", API("/quiz/deleteQuestion"), true);
+                            xhr.setRequestHeader("Content-Type", "application/json");
+                            
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState == XMLHttpRequest.DONE) {
+                                    if (xhr.status == 200) {
+                                        //Update UI
+                                        app.questionList = app.questionList.filter(function(_qn) { return _qn.questionId != qn.questionId; });
+                                    }else if(xhr.status == 401){
+                                        sessionExpired();
+                                        return;
+                                    } else {
+                                        alert("An error has occured - " + xhr.status);
+                                        console.log(xhr.responseText);
+                                        return;
+                                    }
+                                }
+                            };
+                            xhr.send(JSON.stringify(data));
+                            console.log(data);
+                        }
+                    },
+                    formatQuiz: function(){
+                        let rDuration = this.getInput('duration');
+                        let duration = 0;
+                        if(rDuration != ""){
+                            duration = parseInt(rDuration)
+                        }
+                        let rPassreq = this.getInput('passreq');
+                        let passreq = 0;
+                        if(rPassreq != ""){
+                            passreq = parseInt(rPassreq) / 100
+                        }
+                        return {
+                            quizId: this.quiz.quizId,
+                            type: this.quiz.type,
+                            title: this.getInput('title'),
+                            instructions: this.getInput('instructions'),
+                            durationInMins: duration,
+                            passScoreRequirement: passreq,
+                            active: this.getInput('active') == 'True' ? true:false
+                        }
+                    },
+                    setInput: function(questionId, input){
+                        for (q of this.formQList){
+                            if(q.questionId == questionId){
+                                q.value = input;
+                            }
+                        }
+                    },
+                    getInput: function(questionId){
+                        for (q of this.formQList){
+                            if(q.questionId == questionId){
+                                return q.value;
+                            }
+                        }
+                        return null;
+                    },
+                    _resetFocusedQuestions: function(){
+                        this.focusedQ = generateNewQuestion();
+                    },
+                    _hasQuestionId: function(id){
+                        for(q of this.questionList){
+                            if(q.questionId == id){
+                                return true;
+                            }
+                        }
+                        return false;
+                    },
+                    _generateRandomId: function(){
+                        while (true){
+                            let id = Math.random().toString(36).substr(2, 9);
+                            if(this._hasQuestionId(id)){
+                                continue;
+                            }
+                            return id;
+                        }
+                        return null;
+                    }
+                }, computed: {
+                    mainId: function(){
+                        if(this.courseId){
+                            return `For Course ID: ${this.courseId}`;
+                        }else if(this.sectionId){
+                            return `For Section ID: ${this.sectionId}`;
+                        }
+                        return "? ";
+                    },
+                    quizType: function(){
+                        if(this.courseId){
+                            return "Graded ";
+                        }else if(this.sectionId){
+                            return "Ungraded ";
+                        }
+                        return "? ";
+                    },
+                    focusedQModifyType: function(){
+                        return this.focusedQ.questionId == null ? "Add" : "Edit";
+                    },
+                    focusedQIsMultivalued: function(){
+                        return this.focusedQ._type == "radio" || this.focusedQ._type == "checkbox"
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>

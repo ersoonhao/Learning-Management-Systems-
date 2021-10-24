@@ -9,7 +9,16 @@ module.exports = app => {
 
     router.get("/", course.findAll);
 
+    router.get("/allid", course.findAllId);
+
+    router.get("/allidtitle", course.findAllIdTitle);
+
     router.get("/:id", course.findOne);
+
+    router.get("/find/:id",course.findOneCourse);
+
+    router.post("/delete",course.delete)
+
 
     //======== END: CONTROLLER LOGIC ========
     

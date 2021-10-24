@@ -8,8 +8,11 @@ module.exports = app => {
     app.get('/manage/course', async(req,res)=>{
         res.sendFile(app._FRONT_END_PATH + "/manage/course/course.html")
     })
+    app.get('/manage/course/create', async(req,res)=>{
+        res.sendFile(app._FRONT_END_PATH + "/manage/course/createCourse.html")
+    })
     app.get('/manage/gquiz', async(req,res)=>{
-        res.sendFile(app._FRONT_END_PATH + "/manage/course/gquiz.html")
+        res.sendFile(app._FRONT_END_PATH + "/manage/course/class/section/quiz.html")
     })
     app.get('/manage/classes', async(req,res)=>{
         res.sendFile(app._FRONT_END_PATH + "/manage/course/class/classes.html")
@@ -30,6 +33,6 @@ module.exports = app => {
         res.sendFile(app._FRONT_END_PATH + "/manage/course/class/section/materials.html")
     })
     app.get('/manage/ugquiz', async(req,res)=>{
-        res.sendFile(app._FRONT_END_PATH + "/manage/course/class/section/ugquiz.html")
+        res.sendFile(app._FRONT_END_PATH + "/manage/course/class/section/quiz.html")
     })
 }

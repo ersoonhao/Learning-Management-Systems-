@@ -2,10 +2,14 @@ const db = require("../models");
 
 module.exports.unload = () => {
     return db.sequelize.query(`
-        DELETE FROM Quizzes;
-        DELETE FROM Questions;
         DELETE FROM QuestionOptions;
+        DELETE FROM Questions;
+        DELETE FROM Quizzes;
         DELETE FROM Courses;
+        DELETE FROM Accounts;
+        DELETE FROM Messages;
+        DELETE FROM PrerequisiteSets;
+        DELETE FROM CoursePrerequisites;
     `);
 };
 

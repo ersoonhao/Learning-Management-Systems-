@@ -51,27 +51,30 @@ db.sequelize_force_reset = () => {
 //db.Tutorial = require("./samples/tutorial.model.js")(sequelize, Sequelize);  
 
 //Account
-db.Account = require("./account.model.js")(sequelize, Sequelize);
+db.Account = require("./account.model")(sequelize, Sequelize);
 
 //Course
 db.Course = require("./course.model")(sequelize, Sequelize);
-
-// db.Class = require("./class.model")(sequelize, Sequelize);
+db.PrerequisiteSet = require("./prerequisiteSet.model")(sequelize, Sequelize);
+db.CoursePrerequisite = require("./coursePrerequisite.model")(sequelize, Sequelize);
 
 //Class
 db.Class = require("./class.model")(sequelize, Sequelize);
 
 //Section
-db.Section= require("./section.model")(sequelize,Sequelize);
-
-//CourseMaterial
-db.CourseMaterial= require("./coursematerial.model")(sequelize,Sequelize);
-
 
 //Quiz
 db.Quiz = require("./quiz.model")(sequelize, Sequelize);
 db.Question = require("./question.model")(sequelize, Sequelize);
 db.QuestionOption = require("./questionOption.model")(sequelize, Sequelize);
+
+//Forum
+db.Thread = require("./thread.model")(sequelize, Sequelize);
+db.Post = require("./post.model")(sequelize, Sequelize);
+db.Comment = require("./comment.model")(sequelize, Sequelize);
+
+//Chat
+db.Message = require("./message.model")(sequelize, Sequelize);
 
 // ================== ASSOCIATIONS ======================
 /*
@@ -83,13 +86,23 @@ Sample - https://sequelize.org/v3/docs/associations/
     City.belongsTo(Country, {foreignKey: 'countryCode', targetKey: 'isoCode'});
 */
 
-db.Quiz.hasMany(db.Question, {foreignKey: 'quizId', sourceKey: 'quizId', onDelete: 'cascade' });
+db.Quiz.hasMany(db.Question, {foreignKey: 'quizId', sourceKey: 'quizId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.Question.belongsTo(db.Quiz, {foreignKey: 'quizId', targetKey: 'quizId'});
 
-db.Question.hasMany(db.QuestionOption, {foreignKey: 'questionId', sourceKey: 'questionId', onDelete: 'cascade' });
+db.Question.hasMany(db.QuestionOption, {foreignKey: 'questionId', sourceKey: 'questionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.QuestionOption.belongsTo(db.Question, {foreignKey: 'questionId', targetKey: 'questionId'});
 
+db.Thread.hasMany(db.Post, {foreignKey: 'threadId', sourceKey: 'threadId', onDelete: 'cascade' });
+db.Post.belongsTo(db.Thread, {foreignKey: 'threadId', targetKey: 'threadId'});
 
+db.Post.hasMany(db.Comment, {foreignKey: 'postId', sourceKey: 'postId', onDelete: 'cascade' });
+db.Comment.belongsTo(db.Post, {foreignKey: 'postId', targetKey: 'postId'});
+
+db.Course.hasMany(db.CoursePrerequisite, {foreignKey: 'courseId', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.CoursePrerequisite.belongsTo(db.Course, {foreignKey: 'courseId', targetKey: 'courseId'});
+
+db.CoursePrerequisite.hasMany(db.PrerequisiteSet, {foreignKey: 'setNumber', sourceKey: 'setNumber', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.PrerequisiteSet.belongsTo(db.CoursePrerequisite, {foreignKey: 'setNumber', targetKey: 'setNumber'});
 
 // ================== SYNC ==================
 db.sequelize.sync();

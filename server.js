@@ -32,6 +32,9 @@ require("./app/routes/backend/account.routes")(app);
 require("./app/routes/backend/quiz.routes")(app);
 require("./app/routes/backend/course.routes")(app);
 require("./app/routes/backend/class.routes")(app);
+require("./app/routes/backend/forum.routes")(app);
+require("./app/routes/backend/message.routes")(app);
+require("./app/routes/backend/prerequisiteSet.routes")(app);
 
 // port 8081
 
@@ -53,6 +56,7 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Credentials', true)
     res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+    res.set("Content-Security-Policy", "connect-src");
     next()
 })
 
@@ -73,6 +77,14 @@ if(reset_db){
 }else{
     db.sequelize.sync({ alter: true });
 }
+
+// ================ CHAT ================
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+require("./chat")(io)
 
 
 // ================ SETUP ================
@@ -98,4 +110,4 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
-module.exports = app;
+module.exports = server;

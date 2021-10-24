@@ -11,6 +11,7 @@
             <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
         <title>LMS</title>
         <link rel="stylesheet" href="/style/master.css">
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
     <body>
         <div id="app">
@@ -18,8 +19,27 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
-                        <h1>ADD COURSE SETTINGS HERE</h1>
+                        <h1>{{title}}</h1>
+                        <p>Description: {{description}}</p>
+                        <p>Active: {{active}}</p>
+                        <div v-if="prerequisiteSets.length>1">
+                            <h3>Prerequisites for this course</h3>
+                            <p>You have to complete either of the below sets of courses</p>
+            
+                            <div v-for="set in prerequisiteSets">
+                                <h4>Set {{set.setNumber}}</h4>
+                                <div v-for="PrerequisiteSet in set.PrerequisiteSets">
+                                    <p>Course {{ PrerequisiteSet.courseId }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <h3>Prerequisites for this course</h3>
+                            <p>You have to complete the below courses to be able to do this course</p>
+                            <p v-for="prereq in prerequisiteSets[0].PrerequisiteSets">Course {{prereq.course_fk}}</p>
+                        </div>
                     </m-div>
+                    
                 </div>
             </div>
         </div>
@@ -36,10 +56,24 @@
                 data: {
                     session: getUserSession(),
                     courseId: getParams("courseId"),
-                    menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 0)
-                }, created: () => {
-                    
-                }
+                    menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 0),
+                    title: null,
+                    description: null,
+                    active: null,
+                    prerequisiteSets: []},
+                created: () => {
+                    this.courseId
+                }, mounted () {
+    axios
+      .get(API(`/course/find/${this.courseId}`))
+      .then(response => (
+          console.log(response.data.course.CoursePrerequisites),
+          this.title = response.data.course.title,
+          this.description = response.data.course.description,
+          this.active = response.data.course.active,
+          this.prerequisiteSets = response.data.course.CoursePrerequisites
+          ))
+  }
             });
         </script>
     </body>
