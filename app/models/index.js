@@ -101,7 +101,7 @@ db.Comment.belongsTo(db.Post, {foreignKey: 'postId', targetKey: 'postId'});
 db.Course.hasMany(db.CoursePrerequisite, {foreignKey: 'courseId', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.CoursePrerequisite.belongsTo(db.Course, {foreignKey: 'courseId', targetKey: 'courseId'});
 
-db.CoursePrerequisite.hasMany(db.PrerequisiteSet, {foreignKey: 'setNumber', sourceKey: 'setNumber', onDelete: 'NO ACTION', onUpdate: 'NO ACTION' });
+db.CoursePrerequisite.hasMany(db.PrerequisiteSet, {foreignKey: 'setNumber', sourceKey: 'setNumber', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.PrerequisiteSet.belongsTo(db.CoursePrerequisite, {foreignKey: 'setNumber', targetKey: 'setNumber'});
 
 // ================== SYNC ==================
