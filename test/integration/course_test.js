@@ -13,10 +13,11 @@ describe('The courses route and controller',()=>{
   })
 
   it('creates one course through post request with courseId',(done)=>{
-    request(app).post('/api/course').send({courseId: 5, title: 'Biology', description:"Course on Biology"}).end(
+    request(app).post('/api/course').send({courseId: 5, title: 'Biology', description:"Course on Biology", active: true}).end(
       (err,response)=>{console.log(response.body)
         assert(response.body.course_data.description === "Course on Biology")
         assert(response.body.course_data.courseId === 5)
+        assert(response.body.course_data.active === true)
         assert(response.body.course_data.title == 'Biology')
         done()
       }
@@ -24,10 +25,11 @@ describe('The courses route and controller',()=>{
   })
 
   it('creates one course through post request without courseId',(done)=>{
-    request(app).post('/api/course').send({title: 'Organic Chemistry', description:"Course on Organic Chemistry"}).end(
+    request(app).post('/api/course').send({title: 'Organic Chemistry', description:"Course on Organic Chemistry", active:true}).end(
       (err,response)=>{console.log(response.body)
         assert(response.body.course_data.description === "Course on Organic Chemistry")
         assert(response.body.course_data.title == 'Organic Chemistry')
+        assert(response.body.course_data.active === true)
         done()
       }
     )
@@ -38,6 +40,7 @@ describe('The courses route and controller',()=>{
       (err,response)=>{console.log(response.body)
         assert(response.body.course_data.description === "Course on Econs")
         assert(response.body.course_data.title == 'Econs')
+        assert(response.body.course_data.active === true)
         assert(response.body.prerequisite_sets.length == 4)
         assert(response.body.course_sets.length == 2)
         done()
@@ -51,6 +54,7 @@ describe('The courses route and controller',()=>{
         assert(response.body.course_data.courseId == 8)
         assert(response.body.course_data.description === "Course on Econs")
         assert(response.body.course_data.title == 'Econs')
+        assert(response.body.course_data.active === true)
         assert(response.body.prerequisite_sets.length == 4)
         assert(response.body.course_sets.length == 2)
         done()
@@ -77,5 +81,15 @@ describe('The courses route and controller',()=>{
     }
     )
   })
+
+  it('deletes one course through post request with courseId',(done)=>{
+    request(app).post('/api/course/delete').send({"courseId":1}).end(
+      (err,response)=>{console.log(response.body)
+        assert(response.body.message == "Course was deleted successfully!")
+        done()
+      }
+    )
+  })
+
 })
 

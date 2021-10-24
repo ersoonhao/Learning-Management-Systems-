@@ -31,6 +31,7 @@ exports.create = (req,res) =>{
         courseId : req.body.courseId,
         title: req.body.title, 
         description: req.body.description, 
+        active: req.body.active
     }
     Course.create(course)
     .then(courseData=>{
@@ -80,6 +81,7 @@ exports.create = (req,res) =>{
       const course = {
         title: req.body.title, 
         description: req.body.description, 
+        active: req.body.active
     }
     Course.create(course)
     .then(courseData=>{
@@ -158,3 +160,26 @@ exports.findAll = (req, res) => {
       });
   };
 
+  exports.delete = (req, res) => {
+    const courseId = req.body.courseId;
+  
+    Course.destroy({
+      where: { courseId: courseId }
+    })
+      .then(num => {
+        if (num == 1) {
+          res.send({
+            message: "Course was deleted successfully!"
+          });
+        } else {
+          res.send({
+            message: `Cannot delete Course with id=${courseId}. Maybe Course was not found!`
+          });
+        }
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Could not delete Course with id=" + courseId
+        });
+      });
+  };
