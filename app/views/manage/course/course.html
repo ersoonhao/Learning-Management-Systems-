@@ -59,49 +59,14 @@
                     title: null,
                     description: null,
                     active: null,
-                    prerequisiteSets: [],
-                    "categories": [
-
-                    {
-
-                        "title": "Pants",
-
-                        "products": [
-
-                            {
-
-                                "name": "Levi Strauss",
-                                "price": "$49.99",
-
-                            }
-
-                        ]
-
-                    },
-
-                    {
-
-                        "title": "Sneakers",
-
-                        "products": [
-
-                            {
-
-                                "name": "Adidas",
-                                "price": "$149.99",
-
-                            }
-
-                        ]
-
-                    }]}
-                    , created: () => {
+                    prerequisiteSets: []},
+                created: () => {
                     this.courseId
                 }, mounted () {
     axios
       .get(API(`/course/find/${this.courseId}`))
       .then(response => (
-          console.log(response.data),
+          console.log(response.data.course.CoursePrerequisites),
           this.title = response.data.course.title,
           this.description = response.data.course.description,
           this.active = response.data.course.active,
