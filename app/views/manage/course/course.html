@@ -35,7 +35,8 @@
                         </div>
                         <div v-else>
                             <h3>Prerequisites for this course</h3>
-                            <p v-for="prereq in prerequisiteSets[0].PrerequisiteSets">Course {{prereq.courseId}}</p>
+                            <p>You have to complete the below courses to be able to do this course</p>
+                            <p v-for="prereq in prerequisiteSets[0].PrerequisiteSets">Course {{prereq.course_fk}}</p>
                         </div>
                     </m-div>
                     
