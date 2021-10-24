@@ -151,7 +151,7 @@
                         });
                     }},
                     created: () => {
-                      axios.get(API('/course/allid')).then(response => (
+                      axios.get(API('/course/allidtitle')).then(response => (
                         console.log(response.data),
                         app.courseIds = response.data
                         ))
@@ -169,7 +169,7 @@
               
             }, 
             props: {myMessage:String, courseIds: Array, setNumber:Number},
-            template: `<div class='blockOfSets'><h3>Set {{setNumber}}</h3><span>{{ myMessage }}</span><br><input v-model="coursesPerSet" class="length" type="number" placeholder="Number of sets"><div v-for="index in parseInt(coursesPerSet)" :key="index"><span>indicate which course by id</span><br><select class='select_class' required><option :value="null">Please select one</option><option v-for="oldId in courseIds" v-bind:value="oldId">{{oldId}}</option></select></div></div>`
+            template: `<div class='blockOfSets'><h3>Set {{setNumber}}</h3><span>{{ myMessage }}</span><br><input v-model="coursesPerSet" class="length" type="number" placeholder="Number of sets"><div v-for="index in parseInt(coursesPerSet)" :key="index"><span>indicate which course by id</span><br><select class='select_class' required><option :value="null">Please select one</option><option v-for="IdTitle in courseIds" v-bind:value="IdTitle.courseId">{{IdTitle.courseId}}, {{IdTitle.title}}</option></select></div></div>`
             })
 
         </script>
