@@ -164,6 +164,24 @@ exports.findAllId = (req, res) => {
       });
   };
 
+  exports.findAllIdTitle = (req, res) => {
+    var id_title = []
+    Course.findAll()
+      .then(data => {
+        for(var i=0; i<data.length; i++){
+          id_title.push({courseId: data[i]['courseId'], title: data[i]['title']})
+          
+        }
+        res.send(id_title); //change this to render
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving courses."
+        });
+      });
+  };
+
   
   exports.findOne = (req, res) => {
     const id = req.params.id;
