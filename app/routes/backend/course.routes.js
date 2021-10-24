@@ -13,6 +13,9 @@ module.exports = app => {
 
     router.get("/find/:id",course.findOneCourse);
 
+    router.post("/delete",course.delete)
+
+
     //======== END: CONTROLLER LOGIC ========
     
     app.use(ROUTE_PATH, router);
