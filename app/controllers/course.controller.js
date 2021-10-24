@@ -145,6 +145,25 @@ exports.findAll = (req, res) => {
         });
       });
   };
+
+exports.findAllId = (req, res) => {
+    var ids = []
+    Course.findAll()
+      .then(data => {
+        for(var i=0; i<data.length; i++){
+          ids.push(data[i]['courseId'])
+          
+        }
+        res.send(ids); //change this to render
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving courses."
+        });
+      });
+  };
+
   
   exports.findOne = (req, res) => {
     const id = req.params.id;

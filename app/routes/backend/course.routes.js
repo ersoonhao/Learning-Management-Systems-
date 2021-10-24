@@ -9,6 +9,8 @@ module.exports = app => {
 
     router.get("/", course.findAll);
 
+    router.get("/allid", course.findAllId);
+
     router.get("/:id", course.findOne);
 
     router.get("/find/:id",course.findOneCourse);
