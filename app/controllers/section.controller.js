@@ -10,6 +10,12 @@ async function hash(password) {
 }
 
 
+
+
+
+
+
+
 // private functions 
 function isSectionTrainer (Account, SectionId){
     // ??? 
@@ -41,6 +47,49 @@ function isSectionTrainer (Account, SectionId){
 // deleteCourseMater 
 
 
+
+exports.getQuizPackage = (req, res) => {
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
+            let body = req.body;
+            let quizId = body.quizId; //For specific quiz
+            let courseId = body.courseId; //For graded quiz
+            let sectionId = body.sectionId; //For ungraded quiz
+            
+            console.log(req.body);
+            if(!quizId && !courseId && !sectionId){
+                res.status(400).send({
+                    message: "Invalid data format"
+                })
+                return
+            }
+
+            //TODO: Check if learner is enrolled & has completed previous sections
+            
+            //Get quiz data
+            let q;
+            if(quizId){
+                q = { quizId: quizId }
+            }else if(courseId){
+                q = { courseId: courseId, type: Quiz.QUIZ_TYPES_GRADED }
+            }else if(sectionId){
+                q = { sectionId: sectionId, type: Quiz.QUIZ_TYPES_UNGRADED }
+            }
+            console.log(q);
+            Quiz.findOne({
+                where: q,
+                include: [ { model: Question, include: [QuestionOption] } ]
+            }).then(data => {
+                res.send({ "quiz": data });
+            }).catch(err=>{
+                res.status(500).send({
+                    message: err.message || "Some error occured obtaining data"
+                })
+            });
+        }
+    })
+}
 
 // Create and Save a Section 
 exports.createSection = (req, res) => {
