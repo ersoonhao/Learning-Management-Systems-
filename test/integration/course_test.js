@@ -116,6 +116,19 @@ describe('The courses route and controller',()=>{
     )
   })
 
+  it('retrieves all course ids and titles through get request', (done)=>{
+    request(app).get('/api/course/allidtitle').end(
+    (err,response)=>{
+      // console.log(response.body)
+      console.log(response.body)
+      assert(response.body.length==8)
+      assert(response.body[0]['courseId']==1)
+      assert(response.body[0]['title']=='Physics')
+      done()
+    }
+    )
+  })
+
   it('deletes one course through post request with courseId',(done)=>{
     request(app).post('/api/course/delete').send({"courseId":1}).end(
       (err,response)=>{console.log(response.body)
