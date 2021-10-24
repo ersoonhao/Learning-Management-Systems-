@@ -15,9 +15,9 @@ describe('The courses route and controller',()=>{
   it('creates one course through post request with courseId',(done)=>{
     request(app).post('/api/course').send({courseId: 5, title: 'Biology', description:"Course on Biology"}).end(
       (err,response)=>{console.log(response.body)
-        assert(response.body.description === "Course on Biology")
-        assert(response.body.courseId === 5)
-        assert(response.body.title == 'Biology')
+        assert(response.body.course_data.description === "Course on Biology")
+        assert(response.body.course_data.courseId === 5)
+        assert(response.body.course_data.title == 'Biology')
         done()
       }
     )
@@ -26,8 +26,33 @@ describe('The courses route and controller',()=>{
   it('creates one course through post request without courseId',(done)=>{
     request(app).post('/api/course').send({title: 'Organic Chemistry', description:"Course on Organic Chemistry"}).end(
       (err,response)=>{console.log(response.body)
-        assert(response.body.description === "Course on Organic Chemistry")
-        assert(response.body.title == 'Organic Chemistry')
+        assert(response.body.course_data.description === "Course on Organic Chemistry")
+        assert(response.body.course_data.title == 'Organic Chemistry')
+        done()
+      }
+    )
+  })
+
+  it('creates one course through post request without courseId with prerequisite sets',(done)=>{
+    request(app).post('/api/course').send({"title":"Econs","description":"Course on Econs", "active":true, "prerequisite":[[1,2],[3,4]]}).end(
+      (err,response)=>{console.log(response.body)
+        assert(response.body.course_data.description === "Course on Econs")
+        assert(response.body.course_data.title == 'Econs')
+        assert(response.body.prerequisite_sets.length == 4)
+        assert(response.body.course_sets.length == 2)
+        done()
+      }
+    )
+  })
+
+  it('creates one course through post request with courseId with prerequisite sets',(done)=>{
+    request(app).post('/api/course').send({"courseId":8,"title":"Econs","description":"Course on Econs", "active":true, "prerequisite":[[1,2],[3,4]]}).end(
+      (err,response)=>{console.log(response.body)
+        assert(response.body.course_data.courseId == 8)
+        assert(response.body.course_data.description === "Course on Econs")
+        assert(response.body.course_data.title == 'Econs')
+        assert(response.body.prerequisite_sets.length == 4)
+        assert(response.body.course_sets.length == 2)
         done()
       }
     )
@@ -47,7 +72,7 @@ describe('The courses route and controller',()=>{
     (err,response)=>{
       // console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==6)
+      assert(response.body.length==8)
       done()
     }
     )

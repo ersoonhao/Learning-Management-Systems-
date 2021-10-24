@@ -33,9 +33,43 @@ exports.create = (req,res) =>{
         description: req.body.description, 
     }
     Course.create(course)
-    .then(data=>{
-        res.send(data) //change this to render
-        
+    .then(courseData=>{
+         //change this to render
+      if(req.body.prerequisite){
+        PrerequisiteSet.findOne({
+          order: [ [ 'setNumber', 'DESC' ]],
+          
+          }).then(reqset=>{
+            var lastSet = reqset.setNumber
+            var prerequisite = req.body.prerequisite
+            var prerequisiteSet = []
+            var setNumbers = []
+            
+            for(var i=0;i<prerequisite.length;i++){
+            
+              setNumbers.push({setNumber: i+1+lastSet, courseId: courseData.courseId})
+              for(var j=0;j<prerequisite[i].length;j++){
+                prerequisiteSet.push({course_fk: prerequisite[i][j],setNumber: i+1+lastSet})
+              }
+            }
+
+            PrerequisiteSet.bulkCreate(prerequisiteSet).then(
+              prereqsets=>{
+                CoursePrerequisite.bulkCreate(setNumbers).then(
+                  courseprereqs=>{
+                    // res.send([courseData,reqset, prerequisiteSet, setNumbers,prereqsets,courseprereqs])
+                    res.send({course_data: courseData,prerequisite_sets: prereqsets,course_sets: courseprereqs})
+                  }
+                )
+              }
+            )
+
+          
+          })
+      }else{
+        res.send({course_data: courseData})
+      }
+
     }).catch(err=>{
         res.status(500).send({
             message:
@@ -48,8 +82,43 @@ exports.create = (req,res) =>{
         description: req.body.description, 
     }
     Course.create(course)
-    .then(data=>{
-        res.send(data) //change this to render
+    .then(courseData=>{
+         //change this to render
+      if(req.body.prerequisite){
+        PrerequisiteSet.findOne({
+          order: [ [ 'setNumber', 'DESC' ]],
+          
+          }).then(reqset=>{
+            var lastSet = reqset.setNumber
+            var prerequisite = req.body.prerequisite
+            var prerequisiteSet = []
+            var setNumbers = []
+            
+            for(var i=0;i<prerequisite.length;i++){
+            
+              setNumbers.push({setNumber: i+1+lastSet, courseId: courseData.courseId})
+              for(var j=0;j<prerequisite[i].length;j++){
+                prerequisiteSet.push({course_fk: prerequisite[i][j],setNumber: i+1+lastSet})
+              }
+            }
+
+            PrerequisiteSet.bulkCreate(prerequisiteSet).then(
+              prereqsets=>{
+                CoursePrerequisite.bulkCreate(setNumbers).then(
+                  courseprereqs=>{
+                    // res.send([courseData,reqset, prerequisiteSet, setNumbers,prereqsets,courseprereqs])
+                    res.send({course_data: courseData,prerequisite_sets: prereqsets,course_sets: courseprereqs})
+                  }
+                )
+              }
+            )
+
+          
+          })
+      }else{
+        res.send({course_data: courseData})
+      }
+
     }).catch(err=>{
         res.status(500).send({
             message:
