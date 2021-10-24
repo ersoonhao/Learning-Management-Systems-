@@ -26,12 +26,27 @@ exports.create = (req,res) =>{
         return
     }
 
-    const course = {
+    if(req.body.courseId){
+      const course = {
+        courseId : req.body.courseId,
         title: req.body.title, 
         description: req.body.description, 
-    
     }
-
+    Course.create(course)
+    .then(data=>{
+        res.send(data) //change this to render
+        
+    }).catch(err=>{
+        res.status(500).send({
+            message:
+            err.message || "Some error occured while creating the course"
+        })
+    })
+    }else{
+      const course = {
+        title: req.body.title, 
+        description: req.body.description, 
+    }
     Course.create(course)
     .then(data=>{
         res.send(data) //change this to render
@@ -41,6 +56,9 @@ exports.create = (req,res) =>{
             err.message || "Some error occured while creating the course"
         })
     })
+    }
+
+    
 }
 
 exports.findAll = (req, res) => {
