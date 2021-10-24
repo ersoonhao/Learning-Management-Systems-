@@ -47,6 +47,16 @@
                                     </div>
                                   </div>
                                 
+                                  <div class="field">
+                                    <label class="label">Is course active?</label>
+                                    <div class="control">
+                                      <label class="label">Yes</label>
+                                      <input type="radio" v-model="form.active" v-bind:value="true">
+                                      <label class="label">No</label>
+                                      <input type="radio" v-model="form.active" v-bind:value="false">
+                                    </div>
+                                  </div>
+
                               </section>
                             </div>
                             <br>
@@ -94,14 +104,14 @@
                     form : {
                         title: '',
                         description: '',
-                        id: ''
-
+                        id: '',
+                        active: null
                     },
                     submitSuccess: null
                 },methods: {
                     onSubmit() {
                         console.log(app.form.title, app.form.description)
-                        var courseObj = {title: app.form.title, description: app.form.description}
+                        var courseObj = {title: app.form.title, description: app.form.description, active: app.form.active}
                         axios.post(API('/course'), courseObj)
                         .then((response) => {
                         console.log(response);
