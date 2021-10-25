@@ -29,6 +29,14 @@
         <div id="app">
             <lms-head :session="session"></lms-head>
             <div class="content">
+              <div>
+                <button v-on:click="connect($event)" value='robin'>Connect as Robin</button>
+                <button v-on:click="connect($event)" value='john'>Connect as John</button>
+                <button v-on:click="connect($event)" value='asher'>Connect as Asher</button>
+                <button v-on:click="connect($event)" value='varun'>Connect as Varun</button>
+                <button v-on:click="connect($event)" value='soonhao'>Connect as SoonHao</button>
+              </div>
+              
               <div class=container>  
 
                 <ul id="messages">
@@ -40,6 +48,8 @@
                 <form id="form" action="">
                   <input id="input" autocomplete="off" v-model="newMessage"/>
                   <button v-on:click="sendMessage">Send</button>
+                  <input id="input" autocomplete="off" v-model="receiver"/>
+                  <button v-on:click="sendMessage">Receiver</button>
                 </form>
                 
               </div>
@@ -68,7 +78,7 @@
         <script src="/socket.io/socket.io.js"></script>
     
         <script>
-                var socket = io();
+               var socket = io({autoConnect: false});
 
                 const app = new Vue({
                 el: '#app',
@@ -76,20 +86,30 @@
                     session: getUserSession(),
                     menu: initMenu(MENU_SECTIONS_MANAGE_GENERAL, 0, 0),
                     messages : [],
-                    newMessage: ''
+                    newMessage: '',
+                    receiver: '',
+                    username: ''
                 }, created: () => {
-
+                  
                   socket.on('chat message', function(msg) {
                   app.messages.push({text:msg})
                   });
                 }, methods:{
                   sendMessage: function(event){
                     event.preventDefault()
-                    if (app.newMessage) {
-                    socket.emit('chat message', app.newMessage);
+                    if (app.newMessage && app.username && app.receiver) {
+                    socket.emit('chat message', {msg: app.newMessage, receiver: app.receiver, sender: app.username});
                     app.newMessage = '';
                 }
-                  }
+                  }, connect: function(event){
+                  // console.log(app.session.username)
+                  // var username = app.session.username
+                  console.log(event.target.value)
+                  app.username = event.target.value
+                  var username = app.username
+                  socket.auth = {username};
+                  socket.connect();
+                }
                 }
                         });
         </script>
