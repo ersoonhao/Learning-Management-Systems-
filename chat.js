@@ -47,18 +47,26 @@ async function DeleteData(url, stringData) {
 
 module.exports = function(io) {
     io.on('connection', (socket) => {
+
         console.log('a user connected');
+        console.log(socket.handshake)
+        socket.join(socket.handshake.auth.username);
+
         socket.on('disconnect', () => {
           console.log('user disconnected');
         });
     
-        socket.on('chat message', msg => {
-            io.emit('chat message', msg);
+        socket.on('chat message', async ({msg, sender, receiver}) => {
+            // io.emit('chat message', msg);
+            io.to(socket.handshake.auth.username).to(receiver).emit('chat message', {msg, sender, receiver});
             console.log('chat message')
+            console.log({msg, sender, receiver})
           });
 
 
     });
+
+    
 
     
 };
