@@ -12,55 +12,93 @@
         <title>LMS</title>
         <link rel="stylesheet" href="/style/master.css">
         <style>
-          body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     
-          #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: absolute; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-          #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+          /* #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); } */
+          #form {position:fixed;bottom: 0; background-color: red;}
+          /* #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; } */
           #input:focus { outline: none; }
           #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
-    
-          #messages { list-style-type: none; margin: 0; padding: 0; }
+          #messages { list-style-type: none; margin: 0; padding: 0; overflow: scroll;}
           #messages > li { padding: 0.5rem 1rem; }
-          #messages > li:nth-child(odd) { background: #efefef; }
+          /* #messages > li:nth-child(odd) { background: #efefef; } */
+
         </style>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
     <body>
         <div id="app">
             <lms-head :session="session"></lms-head>
-            <div class="content">
-              <div>
-                <button v-on:click="connect($event)" value='robin'>Connect as Robin</button>
-                <button v-on:click="connect($event)" value='john'>Connect as John</button>
-                <button v-on:click="connect($event)" value='asher'>Connect as Asher</button>
-                <button v-on:click="connect($event)" value='varun'>Connect as Varun</button>
-                <button v-on:click="connect($event)" value='soonhao'>Connect as SoonHao</button>
-              </div>
+            
+            <!-- <div class="container">
+              <div class="row">
+                  <div class="col-sm-3 col-md-6 col-lg-4">
+                    <ul id="messages">
+                      <li v-for="(messageObj, index) in messages" :key="index">
+                        {{ messageObj.text }}
+                      </li>
+                    </ul>
+
+                  <form id="form" action="">
+
+                    
+                      <div>
+                        <button v-on:click="connect($event)" value='1'>Connect as Robin</button>
+                        <button v-on:click="connect($event)" value='3'>Connect as John</button>
+                        <button v-on:click="connect($event)" value='7'>Connect as Asher</button>
+                        <button v-on:click="connect($event)" value='4'>Connect as Varun</button>
+                        <button v-on:click="connect($event)" value='2'>Connect as SoonHao</button>
+                      </div>
+                    
+                    <input id="input" autocomplete="off" v-model="newMessage"/>
+                    <button v-on:click="sendMessage">Send</button>
+                    <input id="input" autocomplete="off" v-model="receiver"/>
+                    <button v-on:click="sendMessage">Receiver</button>
+                  </form>
+                  </div>
               
-              <div class=container>  
+                  <div class="col-sm-9 col-md-6 col-lg-8">
+                    <h1>hello</h1>
+                  </div>
+                  
+                </div>
+                  
+            </div> -->
+            <div class='content'>
+              <div class="container-fluid">
+                        <button type="button" class="btn btn-primary" v-on:click="connect($event)" value='1'>Connect as Robin</button>
+                        <button type="button" class="btn btn-primary" v-on:click="connect($event)" value='3'>Connect as John</button>
+                        <button type="button" class="btn btn-primary" v-on:click="connect($event)" value='7'>Connect as Asher</button>
+                        <button type="button" class="btn btn-primary" v-on:click="connect($event)" value='4'>Connect as Varun</button>
+                        <button type="button" class="btn btn-primary" v-on:click="connect($event)" value='2'>Connect as SoonHao</button>
+                <div class="row">
+                  <div class="col-sm-3 col-md-6 col-lg-4" style="background-color:white;">
+                    
+                    hi
 
-                <ul id="messages">
-                  <li v-for="(messageObj, index) in messages" :key="index">
-                    {{ messageObj.text }}
-                  </li>
-                </ul>
+                  </div>
+                  <div class="col-sm-9 col-md-6 col-lg-8" style="background-color:white;">
+                    
+                    <ul id="messages">
+                      <li v-for="(messageObj, index) in messages" :key="index">
+                        {{ messageObj.text }}
+                      </li>
+                    </ul>
+                    
+                    <form id='form'>
+                      <input id="input" autocomplete="off" v-model="newMessage"/>
+                      <button v-on:click="sendMessage">Send</button>
+                      <input id="input" autocomplete="off" v-model="receiver"/>
+                      <button v-on:click="sendMessage">Receiver</button>
+                  </form>
 
-                <form id="form" action="">
-                  <input id="input" autocomplete="off" v-model="newMessage"/>
-                  <button v-on:click="sendMessage">Send</button>
-                  <input id="input" autocomplete="off" v-model="receiver"/>
-                  <button v-on:click="sendMessage">Receiver</button>
-                </form>
-                
+                  </div>
+                </div>
               </div>
             </div>
-        </div>
+            
+        </div>  
 
-        <div>
-
-          
-          
-        </div>
+            
         
     
         
@@ -88,7 +126,8 @@
                     messages : [],
                     newMessage: '',
                     receiver: '',
-                    username: ''
+                    username: '',
+                    accountId: ''
                 }, created: () => {
                   
                   socket.on('chat message', function(msg) {
@@ -97,21 +136,38 @@
                 }, methods:{
                   sendMessage: function(event){
                     event.preventDefault()
-                    if (app.newMessage && app.username && app.receiver) {
-                    socket.emit('chat message', {msg: app.newMessage, receiver: app.receiver, sender: app.username});
+                    if (app.newMessage && app.accountId && app.receiver) {
+                    socket.emit('chat message', {msg: app.newMessage, receiver: app.receiver, sender: app.accountId});
                     app.newMessage = '';
                 }
                   }, connect: function(event){
                   // console.log(app.session.username)
                   // var username = app.session.username
                   console.log(event.target.value)
-                  app.username = event.target.value
-                  var username = app.username
-                  socket.auth = {username};
+                  app.accountId = event.target.value
+                  var accountId = app.accountId
+                  axios
+                  .get(API(`/message/all/${accountId}`))
+                  .then(response => (
+                      console.log(response.data)
+                      ))
+                  socket.auth = {accountId};
                   socket.connect();
                 }
                 }
                         });
+
+            Vue.component('user',
+            {data: function () {
+            return {
+              // coursesPerSet: 0,
+              // courses: []
+            }},created:()=>{
+              
+            }, 
+            props: {username:String},
+            template: `<div class='user'></div>`
+            })
         </script>
     </body>
 </html>

@@ -192,26 +192,36 @@ exports.findAllById = (req, res) => {
     var accountId = req.params.id
     console.log(accountId)
     // const [senders, metadata_senders] = await sequelize.query(`SELECT * FROM Messages INNER JOIN Accounts b ON Messages.senderAccountId=b.accountId WHERE Messages.senderAccountID = ${accountId} OR Messages.receiverAccountID = ${accountId}`);
-    const [user, metadata_user] = await sequelize.query(`SELECT a.username FROM Accounts a WHERE a.accountId=${accountId}`)
-    const [senders, metadata_senders] = await sequelize.query(`SELECT a.messageId, a.text, a.senderAccountId, a.receiverAccountId, b.username as sender, c.username as receiver FROM Messages a LEFT JOIN Accounts b ON a.senderAccountId=b.accountId LEFT JOIN Accounts c ON a.receiverAccountId=c.accountId WHERE a.senderAccountId = ${accountId} OR a.receiverAccountId = ${accountId}`);
+    const [user, metadata_user] = await sequelize.query(`SELECT a.username, a.accountId FROM Accounts a WHERE a.accountId=${accountId}`)
+    const [all_users, metadata_all_users] = await sequelize.query(`SELECT * FROM Accounts`);
+    const [messages_data, metadata_senders] = await sequelize.query(`SELECT a.messageId, a.text, a.senderAccountId, a.receiverAccountId, b.username as sender, c.username as receiver FROM Messages a LEFT JOIN Accounts b ON a.senderAccountId=b.accountId LEFT JOIN Accounts c ON a.receiverAccountId=c.accountId WHERE a.senderAccountId = ${accountId} OR a.receiverAccountId = ${accountId}`);
 
     var messages = {}
+    messages['accountId']= user[0]['accountId']
+    messages['username'] = user[0]['username']
+    messages['messages'] = {}
 
-        for(var i=0; i<senders.length; i++){
-          if(senders[i]['sender'] != user[0]['username']){
-            if(messages[senders[i]['sender']]){
-              messages[senders[i]['sender']].push(senders[i])
-            }else{
-              messages[senders[i]['sender']] = [senders[i]]
-            }
-          }else{
-            if(messages[senders[i]['receiver']]){
-              messages[senders[i]['receiver']].push(senders[i])
-            }else{
-              messages[senders[i]['receiver']] = [senders[i]]
-            }
-          }
+    for(var i=0; i< messages_data.length; i++){
+      if(messages_data[i]['sender']!=messages['username']){
+        if(messages['messages'][messages_data[i]['sender']]){
+          messages['messages'][messages_data[i]['sender']]['messages'].push(messages_data[i])
+        }else{
+          messages['messages'][messages_data[i]['sender']] = {messages: [messages_data[i]], accountId: messages_data[i]['senderAccountId']}
+        }
+      }else{
+        if(messages['messages'][messages_data[i]['receiver']]){
+          messages['messages'][messages_data[i]['receiver']]['messages'].push(messages_data[i])
+        }else{
+          messages['messages'][messages_data[i]['receiver']] = {messages: [messages_data[i]], accountId: messages_data[i]['receiverAccountId']}
+        }
       }
+    }
+
+    for(var j=0; j<all_users.length; j++){
+      if(!messages['messages'].hasOwnProperty(all_users[j].username )){
+        messages['messages'][all_users[j].username] = {messages: {}, accountId:all_users[j].accountId}
+      }
+    }
 
     res.send(messages)
   }
