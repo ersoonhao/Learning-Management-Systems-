@@ -219,7 +219,7 @@ exports.findAllById = (req, res) => {
 
     for(var j=0; j<all_users.length; j++){
       if(!messages['messages'].hasOwnProperty(all_users[j].username )){
-        messages['messages'][all_users[j].username] = {messages: {}, accountId:all_users[j].accountId}
+        messages['messages'][all_users[j].username] = {messages: [], accountId:all_users[j].accountId}
       }
     }
 
