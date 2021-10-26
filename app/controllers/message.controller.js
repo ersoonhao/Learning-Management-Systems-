@@ -1,6 +1,7 @@
 const db = require("../models");
 const Message = db.Message;
 const Op = db.Sequelize.Op;
+const sequelize = db.sequelize;
 
 exports.create = (req,res) =>{
     if(!req.body){
@@ -113,6 +114,46 @@ exports.findAllById = (req, res) => {
       });
   };
 
+  exports.findAllByUsername = (req, res) => {
+
+    const senderUsername = req.body.username;
+    const receiverUsername = req.body.username;
+    
+    Message.findAll({ where: {
+      [Op.or]:[{senderUsername : senderUsername},
+      {receiverUsername : receiverUsername}]
+    } })
+      .then(data => {
+        
+        var messages = {}
+
+        for(var i=0; i<data.length; i++){
+          if(data[i]['senderUsername'] != req.body.username){
+            if(messages[data[i]['senderUsername']]){
+              messages[data[i]['senderUsername']].push(data[i])
+            }else{
+              messages[data[i]['senderUsername']] = [data[i]]
+            }
+          }else{
+            if(messages[data[i]['receiverUsername']]){
+              messages[data[i]['receiverUsername']].push(data[i])
+            }else{
+              messages[data[i]['receiverUsername']] = [data[i]]
+            }
+          }
+        }
+
+        res.send(messages); 
+
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Messages."
+        });
+      });
+  };
+
   exports.findAllBySenderReceiverId = (req, res) => {
 
     const senderAccountId = req.body.senderAccountId;
@@ -146,3 +187,11 @@ exports.findAllById = (req, res) => {
         });
       });
   };
+
+  exports.getMessagesUsernamebyAccountId = async(req,res) =>{
+    var accountId = req.body.accountId
+    // const [senders, metadata_senders] = await sequelize.query(`SELECT * FROM Messages INNER JOIN Accounts b ON Messages.senderAccountId=b.accountId WHERE Messages.senderAccountID = ${accountId} OR Messages.receiverAccountID = ${accountId}`);
+    const [senders, metadata_senders] = await sequelize.query(`SELECT * FROM Messages LEFT JOIN Accounts b ON Messages.senderAccountId=b.accountId LEFT JOIN Accounts c ON Messages.receiverAccountId=c.accountId `);
+
+    res.send({senders: senders})
+  }
