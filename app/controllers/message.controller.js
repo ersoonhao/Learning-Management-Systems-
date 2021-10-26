@@ -189,9 +189,29 @@ exports.findAllById = (req, res) => {
   };
 
   exports.getMessagesUsernamebyAccountId = async(req,res) =>{
-    var accountId = req.body.accountId
+    var accountId = req.params.id
+    console.log(accountId)
     // const [senders, metadata_senders] = await sequelize.query(`SELECT * FROM Messages INNER JOIN Accounts b ON Messages.senderAccountId=b.accountId WHERE Messages.senderAccountID = ${accountId} OR Messages.receiverAccountID = ${accountId}`);
-    const [senders, metadata_senders] = await sequelize.query(`SELECT * FROM Messages LEFT JOIN Accounts b ON Messages.senderAccountId=b.accountId LEFT JOIN Accounts c ON Messages.receiverAccountId=c.accountId `);
+    const [user, metadata_user] = await sequelize.query(`SELECT a.username FROM Accounts a WHERE a.accountId=${accountId}`)
+    const [senders, metadata_senders] = await sequelize.query(`SELECT a.messageId, a.text, a.senderAccountId, a.receiverAccountId, b.username as sender, c.username as receiver FROM Messages a LEFT JOIN Accounts b ON a.senderAccountId=b.accountId LEFT JOIN Accounts c ON a.receiverAccountId=c.accountId WHERE a.senderAccountId = ${accountId} OR a.receiverAccountId = ${accountId}`);
 
-    res.send({senders: senders})
+    var messages = {}
+
+        for(var i=0; i<senders.length; i++){
+          if(senders[i]['sender'] != user[0]['username']){
+            if(messages[senders[i]['sender']]){
+              messages[senders[i]['sender']].push(senders[i])
+            }else{
+              messages[senders[i]['sender']] = [senders[i]]
+            }
+          }else{
+            if(messages[senders[i]['receiver']]){
+              messages[senders[i]['receiver']].push(senders[i])
+            }else{
+              messages[senders[i]['receiver']] = [senders[i]]
+            }
+          }
+      }
+
+    res.send(messages)
   }

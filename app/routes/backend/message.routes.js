@@ -21,7 +21,7 @@ module.exports = app => {
 
     router.get("/:id", message.findOne);
 
-    router.post('/all/test', message.getMessagesUsernamebyAccountId);
+    router.get('/all/:id', message.getMessagesUsernamebyAccountId);
 
     //======== END: CONTROLLER LOGIC ========
     
