@@ -68,15 +68,19 @@ module.exports.load = () => {
         (17, "True", true, 6),
         (18, "False", false, 6);
 
-        INSERT INTO Messages(messageId, text, senderAccountId, receiverAccountId) VALUES
-        (1, 'Hi SoonHao, Robin Here', 1, 2),
-        (2, "Hi Robin, WHat's up, I am Soon Hao", 2, 1),
-        (3, 'I love you Soon Hao', 1, 2),
-        (4, 'Hehe me too', 2, 1),
-        (5, 'Hi Asher, Varun Here', 4, 7),
-        (6, "Hi Varun, WHat's up, I am Asher", 7, 4),
-        (7, 'I love you Asher', 4, 7),
-        (8, 'Hehe me too', 7, 4);
+        INSERT INTO Messages(messageId, text, senderUsername, receiverUsername, senderAccountId, receiverAccountId) VALUES
+        (1, 'Hi SoonHao, Robin Here', "robin", "soonhao", 1, 2),
+        (2, "Hi Robin, WHat's up, I am Soon Hao", "soonhao", "robin", 2, 1),
+        (3, 'I love you Soon Hao', "robin","soonhao", 1, 2),
+        (4, 'Hehe me too', "soonhao", "robin", 2, 1),
+        (5, 'Hi Varun, Robin Here', "robin", "varun", 1, 4),
+        (6, "Hi Robin, WHat's up, I am Varun", "varun", "robin", 4, 1),
+        (7, 'I love you Asher', "robin","asher", 1, 7),
+        (8, 'Hehe me too', "asher", "robin", 7, 1),
+        (9, 'Hi Asher, Varun Here', "varun", "asher", 4, 7),
+        (10, "Hi Varun, WHat's up, I am Asher", "asher", "varun", 7, 4),
+        (11, 'I love you Asher', "varun", "asher", 4, 7),
+        (12, 'Hehe me too', "asher", "varun", 7, 4);
 
         INSERT INTO PrerequisiteSets(setNumber, course_fk) VALUES
         (1, 2),

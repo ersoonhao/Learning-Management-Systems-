@@ -11,6 +11,8 @@ module.exports = app => {
 
     router.post("/", message.findAllById);
 
+    router.post("/username", message.findAllByUsername);
+
     router.post("/pair",message.findAllBySenderReceiverId)
 
     router.post("/delete",message.delete)
@@ -18,6 +20,8 @@ module.exports = app => {
     router.post("/update",message.update)
 
     router.get("/:id", message.findOne);
+
+    router.get('/all/:id', message.getMessagesUsernamebyAccountId);
 
     //======== END: CONTROLLER LOGIC ========
     

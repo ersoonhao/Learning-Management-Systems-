@@ -1,6 +1,7 @@
 const db = require("../models");
 const Message = db.Message;
 const Op = db.Sequelize.Op;
+const sequelize = db.sequelize;
 
 exports.create = (req,res) =>{
     if(!req.body){
@@ -113,6 +114,46 @@ exports.findAllById = (req, res) => {
       });
   };
 
+  exports.findAllByUsername = (req, res) => {
+
+    const senderUsername = req.body.username;
+    const receiverUsername = req.body.username;
+    
+    Message.findAll({ where: {
+      [Op.or]:[{senderUsername : senderUsername},
+      {receiverUsername : receiverUsername}]
+    } })
+      .then(data => {
+        
+        var messages = {}
+
+        for(var i=0; i<data.length; i++){
+          if(data[i]['senderUsername'] != req.body.username){
+            if(messages[data[i]['senderUsername']]){
+              messages[data[i]['senderUsername']].push(data[i])
+            }else{
+              messages[data[i]['senderUsername']] = [data[i]]
+            }
+          }else{
+            if(messages[data[i]['receiverUsername']]){
+              messages[data[i]['receiverUsername']].push(data[i])
+            }else{
+              messages[data[i]['receiverUsername']] = [data[i]]
+            }
+          }
+        }
+
+        res.send(messages); 
+
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Messages."
+        });
+      });
+  };
+
   exports.findAllBySenderReceiverId = (req, res) => {
 
     const senderAccountId = req.body.senderAccountId;
@@ -146,3 +187,31 @@ exports.findAllById = (req, res) => {
         });
       });
   };
+
+  exports.getMessagesUsernamebyAccountId = async(req,res) =>{
+    var accountId = req.params.id
+    console.log(accountId)
+    // const [senders, metadata_senders] = await sequelize.query(`SELECT * FROM Messages INNER JOIN Accounts b ON Messages.senderAccountId=b.accountId WHERE Messages.senderAccountID = ${accountId} OR Messages.receiverAccountID = ${accountId}`);
+    const [user, metadata_user] = await sequelize.query(`SELECT a.username FROM Accounts a WHERE a.accountId=${accountId}`)
+    const [senders, metadata_senders] = await sequelize.query(`SELECT a.messageId, a.text, a.senderAccountId, a.receiverAccountId, b.username as sender, c.username as receiver FROM Messages a LEFT JOIN Accounts b ON a.senderAccountId=b.accountId LEFT JOIN Accounts c ON a.receiverAccountId=c.accountId WHERE a.senderAccountId = ${accountId} OR a.receiverAccountId = ${accountId}`);
+
+    var messages = {}
+
+        for(var i=0; i<senders.length; i++){
+          if(senders[i]['sender'] != user[0]['username']){
+            if(messages[senders[i]['sender']]){
+              messages[senders[i]['sender']].push(senders[i])
+            }else{
+              messages[senders[i]['sender']] = [senders[i]]
+            }
+          }else{
+            if(messages[senders[i]['receiver']]){
+              messages[senders[i]['receiver']].push(senders[i])
+            }else{
+              messages[senders[i]['receiver']] = [senders[i]]
+            }
+          }
+      }
+
+    res.send(messages)
+  }
