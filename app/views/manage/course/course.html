@@ -29,7 +29,7 @@
                             <div v-for="set in prerequisiteSets">
                                 <h4>Set {{set.setNumber}}</h4>
                                 <div v-for="PrerequisiteSet in set.PrerequisiteSets">
-                                    <p>Course {{ PrerequisiteSet.courseId }}</p>
+                                    <p>Course {{ PrerequisiteSet.course_fk }}</p>
                                 </div>
                             </div>
                         </div>
