@@ -8,7 +8,7 @@ module.exports = app => {
     const post = require("../../controllers/forum.controller");
 
     router.post("/getThread", post.getThread);
-
+    router.get("/getAllThreads", post.getAllThreads);
     router.post("/createThread", post.createThread);
     router.post("/createAnswer", post.createAnswer); 
     router.post("/updatePost", post.updatePost);
