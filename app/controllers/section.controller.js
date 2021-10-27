@@ -10,12 +10,6 @@ async function hash(password) {
 }
 
 
-
-
-
-
-
-
 // private functions 
 function isSectionTrainer (Account, SectionId){
     // ??? 
@@ -48,7 +42,7 @@ function isSectionTrainer (Account, SectionId){
 
 
 
-exports.getQuizPackage = (req, res) => {
+exports.getSectionPackage = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if(session){

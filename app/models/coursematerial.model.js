@@ -18,11 +18,11 @@ module.exports = (sequelize, Sequelize) => {
         source:{
             type:Sequelize.STRING
         },
-        // vid, pdf , doc , 
+        // vid, pdf , doc , ? 
         type: {
             type:Sequelize.STRING
         },
-        // what is order ? 
+        // Order is the positions 
         order: {
             type: Sequelize.INTEGER
         }

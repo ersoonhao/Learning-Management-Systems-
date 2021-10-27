@@ -6,11 +6,10 @@ const app = express();
 app.use(express.json())
 
 
-// Multer 
-
+// Multer & Upload related 
 const multer  = require('multer')
 const upload = multer({ dest: 'uploads/' })
-
+const { uploadFile, getFileStream } = require('./s3')
 // end of Multer 
 
 
@@ -93,16 +92,28 @@ const PORT = process.env.PORT || 8081; //Set port, listen for requests
 
 // my own middlewear for images ?? 
 // cuz front end upload image
-app.post('/images', upload.single('image'), function (req, res, next) {
+app.post('/images', upload.single('image'), async (req, res) => {
     // req.file is the `avatar` file
     // req.body will hold the text fields, if there were any
 
     const file = req.file;
-    const description = req.description 
+    // console.log(file); 
+    const result= await uploadFile(file);
+    console.log(result);
+    const description = req.body.description 
 
-    res.status(200); 
+    res.status(200).send({imagePath: `/images/${result.Key}`}); 
 
   })
+
+  // can embedded the image in 
+app.get('/images/:key', (req, res) => {
+    console.log(req.params)
+    const key = req.params.key
+    const readStream = getFileStream(key)
+
+    readStream.pipe(res)
+})
 
 
 
