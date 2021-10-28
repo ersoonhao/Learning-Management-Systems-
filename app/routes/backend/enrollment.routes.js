@@ -8,6 +8,7 @@ module.exports = app => {
   const enrollment = require('../../controllers/enrollment.controller')
 
   router.post('/findEnrollmentbyId', enrollment.findEnrollmentbyId)
+  router.post('/isEligibleForCourse', enrollment.isEligibleForCourse)
   router.post('/getMyEnrolledClasses', enrollment.getMyEnrolledClasses)
   router.post('/getAllClassEnrollments', enrollment.getAllClassEnrollments)
   router.get('/getAllPendingEnrollments', enrollment.getAllPendingEnrollments)

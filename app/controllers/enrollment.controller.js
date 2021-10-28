@@ -1,5 +1,20 @@
 const { Enrollment, Class, Account } = require('../models')
 const AccountController = require('./account.controller')
+const PrerequisiteSet = require('./prerequisiteSet.controller')
+
+//==== POST: /isEligibleForCourse
+exports.isEligibleForCourse = (req, res) => {
+  return PrerequisiteSet.findAllByCourseFK(req, res)
+  console.log(data)
+  res.status(200).send(true)
+
+  /* SAMPLE JSON BODY REQUEST
+      {
+          "course_fk": 1,
+          "accountId": 1,
+      }
+  */
+}
 
 //==== POST: /findEnrollmentbyId
 exports.findEnrollmentbyId = (req, res) => {
@@ -290,16 +305,13 @@ function _updateEnrollment (body, res) {
 
   if (body.isApproved) {
     stmt = { enrolledDate: enrolledDate, isEnrolled: true }
-  } else{
+  } else {
     stmt = { isEnrolled: false }
   }
 
-  Enrollment.update(
-    stmt,
-    {
-      where: { enrollmentId: enrollmentId }
-    }
-  )
+  Enrollment.update(stmt, {
+    where: { enrollmentId: enrollmentId }
+  })
     .then(num => {
       if (num == 1) {
         res.send({
