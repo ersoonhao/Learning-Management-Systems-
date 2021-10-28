@@ -1,19 +1,100 @@
-const { Enrollment, Class, Account } = require('../models')
+const {
+  Enrollment,
+  Class,
+  Account,
+  Course,
+  PrerequisiteSet,
+  CoursePrerequisite
+} = require('../models')
 const AccountController = require('./account.controller')
-const PrerequisiteSet = require('./prerequisiteSet.controller')
 
 //==== POST: /isEligibleForCourse
-exports.isEligibleForCourse = (req, res) => {
-  return PrerequisiteSet.findAllByCourseFK(req, res)
-  console.log(data)
-  res.status(200).send(true)
 
-  /* SAMPLE JSON BODY REQUEST
-      {
-          "course_fk": 1,
-          "accountId": 1,
-      }
-  */
+exports.isEligibleForCourse = (req, res) => {
+  let body = req.body
+  if (!body) {
+    res.status(400).send({
+      message: 'Request body is empty!'
+    })
+    return
+  }
+  const courseId = body.courseId
+  var prereqDict = {}
+  var eligible
+
+  Course.findOne({
+    where: { courseId: courseId },
+    include: [{ model: CoursePrerequisite, include: [PrerequisiteSet] }]
+  })
+    .then(data => {
+      data.CoursePrerequisites.forEach(element => {
+        presets = element.PrerequisiteSets
+        presets.forEach(preset => {
+          var values = preset.dataValues
+          var course = values.course_fk
+          var setNumber = values.setNumber
+
+          if (!prereqDict[setNumber]) {
+            prereqDict[setNumber] = []
+          }
+
+          Class.findAll({
+            where: { courseId: course }
+          })
+            .then(data => {
+              data.forEach(element => {
+                console.log(element.dataValues.classId)
+
+                Enrollment.findOne({
+                  where: {
+                    classId: element.dataValues.classId,
+                    coursePassed: true
+                  }
+                })
+                  .then(data => {
+                    if (data == null) {
+                      prereqDict[setNumber].push([course, false])
+                    } else {
+                      prereqDict[setNumber].push([course, true])
+                    }
+                    console.log(prereqDict)
+
+                    eligible = true
+                    for (const key of Object.keys(prereqDict)) {
+                      temp = true
+                      for (i = 0; i < prereqDict[key].length; i++) {
+                        if (!prereqDict[key][i][1]) {
+                          temp = false
+                          break
+                        }
+                      }
+                      if (!temp) {
+                        eligible = false
+                      }
+                    }
+                    res.send(eligible)
+                  })
+                  .catch(err => {
+                    res.status(500).send({
+                      message:
+                        err.message || 'Some error occured while creating'
+                    })
+                  })
+              })
+            })
+            .catch(err => {
+              res.status(500).send({
+                message: err.message || 'Some error occured while creating'
+              })
+            })
+        })
+      })
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || 'Some error occured obtaining data'
+      })
+    })
 }
 
 //==== POST: /findEnrollmentbyId
