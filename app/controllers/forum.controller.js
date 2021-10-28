@@ -98,26 +98,6 @@ exports.createThread = (req, res) => {
       })
     })
 
-  /* //Init post
-  const post = Post.createPost(body.post, body.accountId)
-  if (post == null) {
-    res.status(400).send({
-      message: 'Invalid data format'
-    })
-    return
-  }
-
-  //Write to DB
-  Post.create(post)
-    .then(data => {
-      res.send({ post: data })
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message || 'Some error occured while creating'
-      })
-    }) */
-
   /* SAMPLE JSON BODY REQUEST
         {      
             "thread": {

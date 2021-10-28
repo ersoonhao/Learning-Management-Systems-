@@ -14,50 +14,58 @@ module.exports = (sequelize, Sequelize) => {
     },
 
     dateCreated: {
-      type: Sequelize.DATE,
-      defaultValue: null
+      type: Sequelize.DATEONLY,
+      defaultValue: Sequelize.NOW
     },
 
-    enrollmentDate: {
-      type: Sequelize.DATE,
+    enrolledDate: {
+      type: Sequelize.DATEONLY,
       defaultValue: null
     },
 
     coursePassed: {
       type: Sequelize.BOOLEAN,
-      defaultValue: false
+      defaultValue: null
     },
 
     isWithdrawn: {
       type: Sequelize.BOOLEAN,
       defaultValue: false
-    }
+    },
 
+    accountId: {
+      type: Sequelize.INTEGER
+    },
+
+    classId: {
+      type: Sequelize.INTEGER //id of poster
+    }
   })
 
   //Public
-  Enrollment.enroll = function (enrollment) {
-    if (isSelfEnrollment == null || enrollmentDate == null) {
+  Enrollment.createEnrollment = function (enrollment, accountId, classId) {
+    if (enrollment == null || accountId == null || classId == null) {
       return null
     }
-    delete enrollment.enrollmentId
+    delete enrollment.accountId
+    delete enrollment.classId
 
-    enrollment.enrollmentId = enrollmentId
-    post.threadId = threadId
+    enrollment.accountId = accountId
+    enrollment.classId = classId
 
-    if (isValidEnrollment(post, true)) {
-      return post
+    if (isValidEnrollment(enrollment, true)) {
+      return enrollment
     }
     return null
   }
 
   Enrollment.updateEnrollment = function (enrollment) {
-    if (post == null) {
+    if (enrollment == null) {
       return null
     }
 
-    if (isValidPost(post, false)) {
-      return post
+    if (isValidPost(enrollment, false)) {
+      return enrollment
     }
     return null
   }
@@ -66,20 +74,26 @@ module.exports = (sequelize, Sequelize) => {
   function isValidEnrollment (enrollment, isNew) {
     if (
       (isNew && enrollment.isSelfEnrollment == null) ||
-      (isNew && enrollment.enrollmentDate == null)
+      (isNew && enrollment.accountId == null) ||
+      (isNew && enrollment.classId == null)
     ) {
       console.log('Post Error: 1')
       return false
+    }
+
+    if (!enrollment.isSelfEnrollment) {
+      date = new Date()
+      enrollment.enrolledDate = date.toISOString()
     }
 
     if (
       !(
         vld.validType(enrollment.enrollmentId, 'number') &&
         vld.validType(enrollment.isSelfEnrollment, 'boolean') &&
-        vld.validType(enrollment.dateCreated, 'datetime') && 
-        vld.validType(enrollment.enrollmentDate, 'datetime') &&
-        vld.validType(enrollment.coursePassed, 'boolean') &&
-        vld.validType(enrollment.isWithdrawn, 'boolean')
+        vld.validType(enrollment.enrolledDate, 'string') &&
+        vld.validType(enrollment.isWithdrawn, 'boolean') &&
+        vld.validType(enrollment.accountId, 'number') &&
+        vld.validType(enrollment.classId, 'number')
       )
     ) {
       console.log('Post Error: 2')

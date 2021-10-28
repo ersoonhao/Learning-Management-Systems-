@@ -73,6 +73,9 @@ db.Thread = require("./thread.model")(sequelize, Sequelize);
 db.Post = require("./post.model")(sequelize, Sequelize);
 db.Comment = require("./comment.model")(sequelize, Sequelize);
 
+//Enrollment
+db.Enrollment = require("./enrollment.model")(sequelize, Sequelize);
+
 //Chat
 db.Message = require("./message.model")(sequelize, Sequelize);
 
@@ -103,6 +106,12 @@ db.CoursePrerequisite.belongsTo(db.Course, {foreignKey: 'courseId', targetKey: '
 
 db.CoursePrerequisite.hasMany(db.PrerequisiteSet, {foreignKey: 'setNumber', sourceKey: 'setNumber', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.PrerequisiteSet.belongsTo(db.CoursePrerequisite, {foreignKey: 'setNumber', targetKey: 'setNumber'});
+
+db.Account.hasMany(db.Enrollment, {foreignKey: 'accountId', sourceKey: 'accountId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Enrollment.belongsTo(db.Account, {foreignKey: 'accountId', targetKey: 'accountId'});
+
+db.Class.hasMany(db.Enrollment, {foreignKey: 'classId', sourceKey: 'classId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Enrollment.belongsTo(db.Class, {foreignKey: 'classId', targetKey: 'classId'});
 
 // ================== SYNC ==================
 db.sequelize.sync();
