@@ -91,7 +91,7 @@
               
             }, 
             props: {username:String, message_set: Object},
-            template: `<div class='user'  @click="select(message_set.accountId) ">{{username}} {{message_set.messages}}</div>`,
+            template: `<div class='user'  @click="select(message_set.accountId) ">{{username}}</div>`,
             methods:{
               select(accountId) {
                 // console.log(username)
@@ -121,7 +121,7 @@
                       if(app.all_messages['messages'][name].accountId == msg.receiver || app.all_messages['messages'][name].accountId == msg.sender){
                         console.log('match found')
                         console.log(app.all_messages['messages'][name].messages)
-                        app.all_messages['messages'][name].messages.push({text:msg.msg,senderAccountId: msg.sender, receiverAccountId: msg.receiver})
+                        app.all_messages['messages'][name].messages.push({messageId: msg.messageId, text:msg.text,senderAccountId: msg.sender, receiverAccountId: msg.receiver})
                         
                       }
                     }
