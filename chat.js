@@ -49,8 +49,8 @@ module.exports = function(io) {
     io.on('connection', (socket) => {
 
         console.log('a user connected');
-        console.log(socket.handshake)
-        socket.join(socket.handshake.auth.username);
+        console.log(socket.handshake.auth)
+        socket.join(socket.handshake.auth.accountId);
 
         socket.on('disconnect', () => {
           console.log('user disconnected');
@@ -58,7 +58,13 @@ module.exports = function(io) {
     
         socket.on('chat message', async ({msg, sender, receiver}) => {
             // io.emit('chat message', msg);
-            io.to(socket.handshake.auth.username).to(receiver).emit('chat message', {msg, sender, receiver});
+            var message_info = await postData("http://localhost:8081/api/message/create",{text: msg, senderAccountId: sender, receiverAccountId: receiver})
+            var messageId = message_info.data.messageId
+            var text = message_info.data.text
+            var sender = message_info.data.senderAccountId
+            var receiver = message_info.data.receiverAccountId
+            console.log(socket.handshake.auth.accountId)
+            io.to(String(socket.handshake.auth.accountId)).to(String(receiver)).emit('chat message', {messageId, text, sender, receiver});
             console.log('chat message')
             console.log({msg, sender, receiver})
           });

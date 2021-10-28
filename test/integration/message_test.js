@@ -26,7 +26,6 @@ describe('The messsages route and controller',()=>{
   it('creates one message through post request with message id',(done)=>{
     request(app).post('/api/message/create').send({messageId: 13, text: 'test message', senderAccountId:1, receiverAccountId:2, senderUsername: 'robin', receiverUsername:'soonhao'}).end(
       (err,response)=>{
-        assert(response.body.messageId == 13)
         assert(response.body.text == "test message")
         assert(response.body.senderAccountId == 1)
         assert(response.body.receiverAccountId == 2)
@@ -72,7 +71,7 @@ describe('The messsages route and controller',()=>{
     (err,response)=>{
       console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==13)
+      assert(response.body[0].messageId == 1)
       done()
     }
     )
@@ -96,7 +95,7 @@ describe('The messsages route and controller',()=>{
     (err,response)=>{
       console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==5)
+      assert(response.body.length==6)
       done()
     }
     )

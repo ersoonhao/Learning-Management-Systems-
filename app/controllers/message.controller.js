@@ -10,9 +10,26 @@ exports.create = (req,res) =>{
         })
         return
     }
+    if(req.body.messageId){
+      const message = {
+        messageId: req.body.messageId,
+          text: req.body.text, 
+          senderAccountId: req.body.senderAccountId, 
+          receiverAccountId: req.body.receiverAccountId
+      }
+  
+      Message.create(message)
+      .then(data=>{
+          res.send(data) //change this to render
+      }).catch(err=>{
+          res.status(500).send({
+              message:
+              err.message || "Some error occured while creating the Message"
+          })
+      })
+    }
 
     const message = {
-      messageId: req.body.messageId,
         text: req.body.text, 
         senderAccountId: req.body.senderAccountId, 
         receiverAccountId: req.body.receiverAccountId
@@ -27,6 +44,8 @@ exports.create = (req,res) =>{
             err.message || "Some error occured while creating the Message"
         })
     })
+
+    
 }
 
 exports.update = (req, res) => {
