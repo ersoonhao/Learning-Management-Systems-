@@ -220,6 +220,12 @@ function _createEnrollment (body, res) {
     return
   }
 
+  if (!enrollment.isSelfEnrollment) {
+    date = new Date()
+    enrollment.enrolledDate = date.toISOString()
+    enrollment.isEnrolled = true
+  }
+
   //Write to DB
   Enrollment.create(enrollment)
     .then(data => {
@@ -282,9 +288,18 @@ function _updateEnrollment (body, res) {
   enrolledDate = date.toISOString()
   enrollmentId = body.enrollmentId
 
-  Enrollment.update({enrolledDate: enrolledDate}, {
-    where: { enrollmentId: enrollmentId }
-  })
+  if (body.isApproved) {
+    stmt = { enrolledDate: enrolledDate, isEnrolled: true }
+  } else{
+    stmt = { isEnrolled: false }
+  }
+
+  Enrollment.update(
+    stmt,
+    {
+      where: { enrollmentId: enrollmentId }
+    }
+  )
     .then(num => {
       if (num == 1) {
         res.send({

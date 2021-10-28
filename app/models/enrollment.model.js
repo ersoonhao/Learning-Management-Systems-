@@ -13,6 +13,11 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.BOOLEAN
     },
 
+    isEnrolled: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
+
     dateCreated: {
       type: Sequelize.DATEONLY,
       defaultValue: Sequelize.NOW
@@ -79,11 +84,6 @@ module.exports = (sequelize, Sequelize) => {
     ) {
       console.log('Post Error: 1')
       return false
-    }
-
-    if (!enrollment.isSelfEnrollment) {
-      date = new Date()
-      enrollment.enrolledDate = date.toISOString()
     }
 
     if (
