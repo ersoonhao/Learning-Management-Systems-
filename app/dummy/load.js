@@ -17,16 +17,16 @@ module.exports.SESSION_INVALID_SESSION = { username: "robin", sessionId: "00000"
 module.exports.load = () => {
     return db.sequelize.query(`
         INSERT INTO Accounts(accountId, username, email, isAdmin, isTrainer, password, sessionId) VALUES
-        (1, 'robin', 'robin.chong.2019@smu.edu.sg', 1, 1, 'a', '0q8l8'),
-        (2, 'soonhao', 'robin.chong.2019@smu.edu.sg', 1, 0, 'a', 'gee43'),
-        (3, 'john', 'robin.chong.2019@smu.edu.sg', 0, 1, 'a', 'daoi0'),
-        (4, 'varun', 'robin.chong.2019@smu.edu.sg', 0, 1, 'a', 'dsaw2'),
-        (5, 'joshua', 'robin.chong.2019@smu.edu.sg', 0, 1, 'a', 'eka31'),
-        (6, 'alvin', 'robin.chong.2019@smu.edu.sg', 0, 1, 'a', 'pr2o3'),
-        (7, 'asher', 'robin.chong.2019@smu.edu.sg', 0, 0, 'a', 'dsa98'),
-        (8, 'bob', 'robin.chong.2019@smu.edu.sg', 0, 0, 'a', '1cxm2'),
-        (9, 'sean', 'robin.chong.2019@smu.edu.sg', 0, 0, 'a', 'oei21'),
-        (10, 'george', 'robin.chong.2019@smu.edu.sg', 0, 0, 'a', 'csnm2');
+        (1, 'robin', 'john.d.cheong@gmail.com', 1, 1, 'a', '0q8l8'),
+        (2, 'soonhao', 'john.d.cheong@gmail.com', 1, 0, 'a', 'gee43'),
+        (3, 'john', 'john.d.cheong@gmail.com', 0, 1, 'a', 'daoi0'),
+        (4, 'varun', 'john.d.cheong@gmail.com', 0, 1, 'a', 'dsaw2'),
+        (5, 'joshua', 'john.d.cheong@gmail.com', 0, 1, 'a', 'eka31'),
+        (6, 'alvin', 'john.d.cheong@gmail.com', 0, 1, 'a', 'pr2o3'),
+        (7, 'asher', 'john.d.cheong@gmail.com', 0, 0, 'a', 'dsa98'),
+        (8, 'bob', 'john.d.cheong@gmail.com', 0, 0, 'a', '1cxm2'),
+        (9, 'sean', 'john.d.cheong@gmail.com', 0, 0, 'a', 'oei21'),
+        (10, 'george', 'john.d.cheong@gmail.com', 0, 0, 'a', 'csnm2');
 
         INSERT INTO Courses(courseId, title, description, active) VALUES
         (1, 'Physics', 'This course is about Physics', true),
