@@ -1,7 +1,8 @@
 const db = require("./app/models/index");
 const Message = db.Message;
+const sequelize = db.sequelize;
+
 // const Op = db.Sequelize.Op;
-// const sequelize = db.sequelize;
 // const axios = require('axios')
 
 module.exports = function(io) {
@@ -15,43 +16,44 @@ module.exports = function(io) {
         console.log('user disconnected');
       });
   
-      socket.on('chat message', async ({msg, sender, receiver}) => {
+      socket.on('chat message', async ({msg,senderAccountId,receiverAccountId}) => {
           // io.emit('chat message', msg);
           // var message_info = await postData("/api/message/create",{text: msg, senderAccountId: sender, receiverAccountId: receiver})
 
           const message = {
             text: msg, 
-            senderAccountId: sender, 
-            receiverAccountId: receiver
+            senderAccountId: senderAccountId, 
+            receiverAccountId: receiverAccountId
         }
+
+          const [sender_data, sender_metadata] = await sequelize.query(`SELECT a.username, a.accountId FROM Accounts a WHERE a.accountId=${senderAccountId}`)
+          console.log(sender_data[0]['username'])
+
+          const [receiver_data, receiver_metadata] = await sequelize.query(`SELECT a.username, a.accountId FROM Accounts a WHERE a.accountId=${receiverAccountId}`)
+          console.log(receiver_data[0]['username'])
+
+          var sender_username = sender_data[0]['username']
+          var receiver_username = receiver_data[0]['username']
 
           Message.create(message)
             .then(data=>{
 
-          var messageId = data.messageId
-          var text = data.text
-          var sender = data.senderAccountId
-          var receiver = data.receiverAccountId
+          console.log(data.dataValues.messageId)
+          var messageId = data.dataValues.messageId
+          var text = data.dataValues.text
+          var senderAccountId = data.dataValues.senderAccountId
+          var receiverAccountId = data.dataValues.receiverAccountId
+
           console.log(socket.handshake.auth.accountId)
-          io.to(String(socket.handshake.auth.accountId)).to(String(receiver)).emit('chat message', {messageId, text, sender, receiver});
+          io.to(String(socket.handshake.auth.accountId)).to(String(receiverAccountId)).emit('chat message', {messageId, text, senderAccountId, receiverAccountId, sender_username, receiver_username})
           console.log('chat message')
-          console.log({msg, sender, receiver})
+          console.log({messageId, text, senderAccountId, receiverAccountId, sender_username, receiver_username})
+          });
+        
+        })
 
-          }).catch(err=>{
-          res.status(500).send({
-            message:
-            err.message || "Some error occured while creating the Message"
-          })
-          })
-          
-        });
-
-
-  });
-
-  
-
-  
+      })
+ 
 };
 
 // async function getData(url, stringData) {
