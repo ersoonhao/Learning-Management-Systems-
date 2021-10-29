@@ -59,8 +59,6 @@ describe('The messsages route and controller',()=>{
         assert(response.body.text == 'Hi SoonHao, Robin Here')
         assert(response.body.senderAccountId == 1)
         assert(response.body.receiverAccountId == 2)
-        assert(response.body.senderUsername == 'robin')
-        assert(response.body.receiverUsername == 'soonhao')
         done()
       }
     )
@@ -114,28 +112,28 @@ describe('The messsages route and controller',()=>{
     )
   })
 
-  it('retrieves all message by account robin where he is both sender or receiver through post request', (done)=>{
-    request(app).post('/api/message/username').send({username: 'robin'}).end(
-    (err,response)=>{
-      console.log(response.body)
-      console.log(response.body['soonhao'].length)
-      assert(response.body['soonhao'].length==4)
-      assert(response.body['asher'].length==2)
-      assert(response.body['varun'].length==2)
-      done()
-    }
-    )
-  })
+  // it('retrieves all message by account robin where he is both sender or receiver through post request', (done)=>{
+  //   request(app).post('/api/message/username').send({username: 'robin'}).end(
+  //   (err,response)=>{
+  //     console.log(response.body)
+  //     console.log(response.body['soonhao'].length)
+  //     assert(response.body['soonhao'].length==4)
+  //     assert(response.body['asher'].length==2)
+  //     assert(response.body['varun'].length==2)
+  //     done()
+  //   }
+  //   )
+  // })
 
-  it('retrieves all message by account soonhao where he is both sender or receiver through post request', (done)=>{
-    request(app).post('/api/message/username').send({username: 'soonhao'}).end(
-    (err,response)=>{
-      console.log(response.body)
-      console.log(response.body['robin'].length)
-      assert(response.body['robin'].length==4)
-      done()
-    }
-    )
-  })
+  // it('retrieves all message by account soonhao where he is both sender or receiver through post request', (done)=>{
+  //   request(app).post('/api/message/username').send({username: 'soonhao'}).end(
+  //   (err,response)=>{
+  //     console.log(response.body)
+  //     console.log(response.body['robin'].length)
+  //     assert(response.body['robin'].length==4)
+  //     done()
+  //   }
+  //   )
+  // })
 })
 
