@@ -8,12 +8,12 @@ module.exports = (sequelize, Sequelize) => {
       text: {
         type: Sequelize.STRING
       },
-      senderUsername:{
-        type: Sequelize.STRING
-      },
-      receiverUsername:{
-        type: Sequelize.STRING
-      },
+      // senderUsername:{
+      //   type: Sequelize.STRING
+      // },
+      // receiverUsername:{
+      //   type: Sequelize.STRING
+      // },
       senderAccountId: {
         type: Sequelize.INTEGER
       },

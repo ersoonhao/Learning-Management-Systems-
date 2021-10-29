@@ -11,7 +11,7 @@ module.exports = app => {
 
     router.post("/", message.findAllById);
 
-    router.post("/username", message.findAllByUsername);
+    // router.post("/username", message.findAllByUsername);
 
     router.post("/pair",message.findAllBySenderReceiverId)
 

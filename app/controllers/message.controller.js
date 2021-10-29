@@ -133,45 +133,45 @@ exports.findAllById = (req, res) => {
       });
   };
 
-  exports.findAllByUsername = (req, res) => {
+  // exports.findAllByUsername = (req, res) => {
 
-    const senderUsername = req.body.username;
-    const receiverUsername = req.body.username;
+  //   const senderUsername = req.body.username;
+  //   const receiverUsername = req.body.username;
     
-    Message.findAll({ where: {
-      [Op.or]:[{senderUsername : senderUsername},
-      {receiverUsername : receiverUsername}]
-    } })
-      .then(data => {
+  //   Message.findAll({ where: {
+  //     [Op.or]:[{senderUsername : senderUsername},
+  //     {receiverUsername : receiverUsername}]
+  //   } })
+  //     .then(data => {
         
-        var messages = {}
+  //       var messages = {}
 
-        for(var i=0; i<data.length; i++){
-          if(data[i]['senderUsername'] != req.body.username){
-            if(messages[data[i]['senderUsername']]){
-              messages[data[i]['senderUsername']].push(data[i])
-            }else{
-              messages[data[i]['senderUsername']] = [data[i]]
-            }
-          }else{
-            if(messages[data[i]['receiverUsername']]){
-              messages[data[i]['receiverUsername']].push(data[i])
-            }else{
-              messages[data[i]['receiverUsername']] = [data[i]]
-            }
-          }
-        }
+  //       for(var i=0; i<data.length; i++){
+  //         if(data[i]['senderUsername'] != req.body.username){
+  //           if(messages[data[i]['senderUsername']]){
+  //             messages[data[i]['senderUsername']].push(data[i])
+  //           }else{
+  //             messages[data[i]['senderUsername']] = [data[i]]
+  //           }
+  //         }else{
+  //           if(messages[data[i]['receiverUsername']]){
+  //             messages[data[i]['receiverUsername']].push(data[i])
+  //           }else{
+  //             messages[data[i]['receiverUsername']] = [data[i]]
+  //           }
+  //         }
+  //       }
 
-        res.send(messages); 
+  //       res.send(messages); 
 
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while retrieving Messages."
-        });
-      });
-  };
+  //     })
+  //     .catch(err => {
+  //       res.status(500).send({
+  //         message:
+  //           err.message || "Some error occurred while retrieving Messages."
+  //       });
+  //     });
+  // };
 
   exports.findAllBySenderReceiverId = (req, res) => {
 
@@ -237,7 +237,7 @@ exports.findAllById = (req, res) => {
     }
 
     for(var j=0; j<all_users.length; j++){
-      if(!messages['messages'].hasOwnProperty(all_users[j].username )){
+      if(!messages['messages'].hasOwnProperty(all_users[j].username ) && all_users[j].accountId != messages['accountId']){
         messages['messages'][all_users[j].username] = {messages: [], accountId:all_users[j].accountId}
       }
     }

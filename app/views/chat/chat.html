@@ -91,7 +91,7 @@
               
             }, 
             props: {username:String, message_set: Object},
-            template: `<div class='user'  @click="select(message_set.accountId) ">{{username}}</div>`,
+            template: `<div class='user'  @click="select(message_set.accountId) ">{{username}} {{message_set}}</div>`,
             methods:{
               select(accountId) {
                 // console.log(username)
@@ -109,7 +109,6 @@
                     menu: initMenu(MENU_SECTIONS_MANAGE_GENERAL, 0, 0),
                     current_messages : [],
                     newMessage: '',
-                    username: '',
                     accountId: '',
                     all_messages : [],
                     selected: ''
