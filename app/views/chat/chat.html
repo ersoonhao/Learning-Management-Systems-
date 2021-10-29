@@ -22,6 +22,7 @@
           #messages > li { padding: 0.5rem 1rem; }
           .user {padding: 10px; background-color: lightgreen; margin: 10px}
           #sender{padding: 10px; background-color: lightblue; margin: 10px}
+          .selected{background-color: lightblue}
           /* #messages > li:nth-child(odd) { background: #efefef; } */
 
         </style>
@@ -42,7 +43,7 @@
                   <div class="col-sm-3 col-md-6 col-lg-4" style="background-color:white;">
                     
                     <div v-for="(message_set, username, index)  in all_messages.messages" :key="index">
-                    <user v-bind:username="username" v-bind:message_set="message_set" @update-select='updateSelect'></user>
+                    <user v-bind:selected="selected == message_set.accountId" v-bind:account_id= "message_set.accountId" v-bind:username="username" v-bind:message_set="message_set" @update-select='updateSelect'></user>
                     </div>
 
                   </div>
@@ -91,11 +92,12 @@
             }},created:()=>{
               
             }, 
-            props: {username:String, message_set: Object},
-            template: `<div class='user'  @click="select(message_set.accountId) ">{{username}}</div>`,
+            props: {username:String, message_set: Object, account_id: Number, selected: Boolean, app_selected: Number},
+            template: `<div v-bind:class="{ selected: selected }" class='user' @click="select(message_set.accountId) ">{{username}}</div>`,
             methods:{
               select(accountId) {
-                // console.log(username)
+                console.log(this.account_id)
+                console.log(this.selected)
                 this.$emit('update-select', accountId)
               }
             }
@@ -136,10 +138,10 @@
                     event.preventDefault()
                     if (app.newMessage && app.accountId && app.selected) {
                     socket.emit('chat message', {msg: app.newMessage, receiverAccountId: app.selected, senderAccountId: app.accountId});
-                    console.log()
                     app.newMessage = '';
                 }
-                  }, connect: function(event){
+                  }, 
+                  connect: function(event){
                   // console.log(app.session.username)
                   // var username = app.session.username
                   console.log(event.target.value)
@@ -153,9 +155,10 @@
                       ))
                   socket.auth = {accountId};
                   socket.connect();
-                },updateSelect:function(e){
+                },
+                updateSelect:function(e){
                   // console.log('hi')
-                  console.log(e)
+                  // console.log(e)
                   app.selected = e
                   for(const name in app.all_messages['messages']){
                       if(app.all_messages['messages'][name].accountId == app.selected){
