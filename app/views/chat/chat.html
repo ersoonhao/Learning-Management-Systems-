@@ -21,6 +21,7 @@
           #messages { list-style-type: none; margin: 0; padding: 0; overflow: scroll;}
           #messages > li { padding: 0.5rem 1rem; }
           .user {padding: 10px; background-color: lightgreen; margin: 10px}
+          #sender{padding: 10px; background-color: lightblue; margin: 10px}
           /* #messages > li:nth-child(odd) { background: #efefef; } */
 
         </style>
@@ -49,7 +50,7 @@
                     
                     <ul id="messages">
                       <li v-if="selected" v-for="(messageObj, index) in current_messages" :key="index">
-                        {{ messageObj.text }}
+                        {{ messageObj.text }} <span id='sender'>{{ messageObj.sender }}</span>
                       </li>
                     </ul>
                     
@@ -91,7 +92,7 @@
               
             }, 
             props: {username:String, message_set: Object},
-            template: `<div class='user'  @click="select(message_set.accountId) ">{{username}} {{message_set}}</div>`,
+            template: `<div class='user'  @click="select(message_set.accountId) ">{{username}}</div>`,
             methods:{
               select(accountId) {
                 // console.log(username)
@@ -115,12 +116,14 @@
                 }, created: () => {
                   
                   socket.on('chat message', function(msg) {
+
+                    console.log(msg)
                     
                     for(const name in app.all_messages['messages']){
-                      if(app.all_messages['messages'][name].accountId == msg.receiver || app.all_messages['messages'][name].accountId == msg.sender){
+                      if(app.all_messages['messages'][name].accountId == msg.receiverAccountId || app.all_messages['messages'][name].accountId == msg.senderAccountId){
                         console.log('match found')
                         console.log(app.all_messages['messages'][name].messages)
-                        app.all_messages['messages'][name].messages.push({messageId: msg.messageId, text:msg.text,senderAccountId: msg.sender, receiverAccountId: msg.receiver})
+                        app.all_messages['messages'][name].messages.push({messageId: msg.messageId, text:msg.text,senderAccountId: msg.senderAccountId, receiverAccountId: msg.receiverAccountId, sender: msg.sender_username, receiver: msg.sender_username})
                         
                       }
                     }
@@ -132,7 +135,8 @@
                   sendMessage: function(event){
                     event.preventDefault()
                     if (app.newMessage && app.accountId && app.selected) {
-                    socket.emit('chat message', {msg: app.newMessage, receiver: app.selected, sender: app.accountId});
+                    socket.emit('chat message', {msg: app.newMessage, receiverAccountId: app.selected, senderAccountId: app.accountId});
+                    console.log()
                     app.newMessage = '';
                 }
                   }, connect: function(event){
