@@ -1,9 +1,9 @@
 const db = require("./app/models/index");
 const Message = db.Message;
 const sequelize = db.sequelize;
+const axios = require('axios')
 
 // const Op = db.Sequelize.Op;
-// const axios = require('axios')
 
 module.exports = function(io) {
   io.on('connection', (socket) => {
@@ -29,11 +29,12 @@ module.exports = function(io) {
           const [sender_data, sender_metadata] = await sequelize.query(`SELECT a.username, a.accountId FROM Accounts a WHERE a.accountId=${senderAccountId}`)
           console.log(sender_data[0]['username'])
 
-          const [receiver_data, receiver_metadata] = await sequelize.query(`SELECT a.username, a.accountId FROM Accounts a WHERE a.accountId=${receiverAccountId}`)
+          const [receiver_data, receiver_metadata] = await sequelize.query(`SELECT a.username, a.accountId, a.email FROM Accounts a WHERE a.accountId=${receiverAccountId}`)
           console.log(receiver_data[0]['username'])
 
           var sender_username = sender_data[0]['username']
           var receiver_username = receiver_data[0]['username']
+          var receiver_email = receiver_data[0]['email']
 
           Message.create(message)
             .then(data=>{
@@ -48,6 +49,7 @@ module.exports = function(io) {
           io.to(String(socket.handshake.auth.accountId)).to(String(receiverAccountId)).emit('chat message', {messageId, text, senderAccountId, receiverAccountId, sender_username, receiver_username})
           console.log('chat message')
           console.log({messageId, text, senderAccountId, receiverAccountId, sender_username, receiver_username})
+          postData(`http://tbankonline.com/SMUtBank_API/Gateway?Header={"Header": {"serviceName": "sendEmail", "userID": "S9800980I", "PIN": "123456", "OTP": "999999"}}&Content={"Content": {"emailAddress": "${receiver_email}", "emailSubject": "Message from ${sender_username}", "emailBody": "You've received the message '${text}' from ${sender_username}"}}`,'')
           });
         
         })
@@ -71,20 +73,20 @@ module.exports = function(io) {
 //   return resp;
 // }
 
-// async function postData(url, stringData) {
-//   let resp = await axios({
-//     method: 'post',
-//     url: url,
-//     data: stringData,
-//     headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-//     maxContentLength: 100000000,
-//     maxBodyLength: 1000000000
-//   }).catch(err => {
-//     throw err;
-//   })
-//   console.log("postData: response:", resp.data);
-//   return resp;
-// }
+async function postData(url, stringData) {
+  let resp = await axios({
+    method: 'post',
+    url: url,
+    data: stringData,
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    maxContentLength: 100000000,
+    maxBodyLength: 1000000000
+  }).catch(err => {
+    throw err;
+  })
+  console.log("postData: response:", resp.data);
+  return resp;
+}
 
 // async function DeleteData(url, stringData) {
 //   let resp = await axios({
