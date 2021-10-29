@@ -1,28 +1,28 @@
 _SESSION = {
-    accountId: "U100001",
-    username: "robin",
+    accountId: 'U100001',
+    username: 'robin',
     isAdmin: true,
     isTrainer: true,
     dateCreated: new Date(),
     dateUpdated: new Date(),
-    sessionId: "0q8l8"
+    sessionId: '0q8l8'
 }
-function getUserSession(){
+
+function getUserSession() {
     return _SESSION
 }
 
-function API(path){
-    return "/api" + path;
+function API(path) {
+    return '/api' + path
 }
 
-function sessionExpired(){
-    _SESSION = null;
+function sessionExpired() {
+    _SESSION = null
 }
-
 
 //Templates
-Vue.component("lms-head", {
-    props:{
+Vue.component('lms-head', {
+    props: {
         session: { type: Object }
     },
     template: `
@@ -35,14 +35,15 @@ Vue.component("lms-head", {
             <ul class="navigation">
                 <li v-show="session"><a href="/chat">Chat</a></li>
                 <li v-show="session"><a href="/mycourses">My Courses</a></li>
+                <li v-show="session"><a href="/forum">Forum</a></li>
                 <li v-show="session && (session.isAdmin || session.isTrainer)"><a href="/manage">Manage</a></li>
                 <li v-show="session"><a href="javascript: loadUserProfile();"><i class="fa fa-user"></i></a></li>
                 <li v-show="!session"><a href="/login">Login</a></li>
             </ul>
         </header>
     `
-});
-Vue.component("zingo-hs", {
+})
+Vue.component('zingo-hs', {
     props: ['title', 'href'],
     template: `
         <div class="lms-wrapper horizontal-wrapper">
@@ -61,35 +62,45 @@ Vue.component("zingo-hs", {
             </div>
         </div>
     `
-});
-function setupZingoHS(){
-    Array.from(document.getElementsByClassName("ctnZingoHS")).forEach(function(ctnZingoHS){ 
+})
+
+function setupZingoHS() {
+    Array.from(document.getElementsByClassName('ctnZingoHS')).forEach(function(
+        ctnZingoHS
+    ) {
         //Setup Controller
-        let hsContent = ctnZingoHS.getElementsByClassName("zingoHS")[0];
-        let hsController = ctnZingoHS.getElementsByClassName("zingoHSController")[0]
-        let left = hsController.getElementsByClassName("zhscItemLeft")[0];
-        let right = hsController.getElementsByClassName("zhscItemRight")[0];
-        if(hsContent != null && left != null && right != null){
-            left.addEventListener("click", zingoHSControllerPressed.bind(null, event, hsContent, -1));
-            right.addEventListener("click", zingoHSControllerPressed.bind(null, event, hsContent, 1));
+        let hsContent = ctnZingoHS.getElementsByClassName('zingoHS')[0]
+        let hsController = ctnZingoHS.getElementsByClassName('zingoHSController')[0]
+        let left = hsController.getElementsByClassName('zhscItemLeft')[0]
+        let right = hsController.getElementsByClassName('zhscItemRight')[0]
+        if (hsContent != null && left != null && right != null) {
+            left.addEventListener(
+                'click',
+                zingoHSControllerPressed.bind(null, event, hsContent, -1)
+            )
+            right.addEventListener(
+                'click',
+                zingoHSControllerPressed.bind(null, event, hsContent, 1)
+            )
         }
     })
 }
-function zingoHSControllerPressed(event, hsContent, direction){
-    let hsContentItems = hsContent.children;
-    if(hsContentItems.length > 0){
-        let hsContentWidth = hsContent.getBoundingClientRect().width;
-        let hsItemWidth = hsContent.children[0].getBoundingClientRect().width;
-        let multiplier = Math.max(1, Math.floor(hsContentWidth / hsItemWidth)/2);
-        let scrollDistance = hsItemWidth * multiplier;
-        console.log(hsContentWidth, hsItemWidth, multiplier, scrollDistance);
-        let scrollX = hsContent.scrollLeft + scrollDistance * direction;
-        $(hsContent).animate({ scrollLeft: scrollX }, 300);
+
+function zingoHSControllerPressed(event, hsContent, direction) {
+    let hsContentItems = hsContent.children
+    if (hsContentItems.length > 0) {
+        let hsContentWidth = hsContent.getBoundingClientRect().width
+        let hsItemWidth = hsContent.children[0].getBoundingClientRect().width
+        let multiplier = Math.max(1, Math.floor(hsContentWidth / hsItemWidth) / 2)
+        let scrollDistance = hsItemWidth * multiplier
+        console.log(hsContentWidth, hsItemWidth, multiplier, scrollDistance)
+        let scrollX = hsContent.scrollLeft + scrollDistance * direction
+        $(hsContent).animate({ scrollLeft: scrollX }, 300)
     }
 }
-Vue.component("hs-course-item", {
+Vue.component('hs-course-item', {
     props: {
-        "cdata": { type: Object }
+        cdata: { type: Object }
     },
     template: `
         <a class="zingoHSItem zingoWidgetLink" :href="'course/' + cdata.courseId">
@@ -107,33 +118,34 @@ Vue.component("hs-course-item", {
                 </div>
             </div>
         </a>
-    `, methods: {
-        dateFormat: (d) => {
-            return [(d.getMonth()+1), d.getDate(), d.getFullYear()].join('/')
+    `,
+    methods: {
+        dateFormat: d => {
+            return [d.getMonth() + 1, d.getDate(), d.getFullYear()].join('/')
         }
     }
 })
 
 //Menu
-function initMenu(sections, focus_section_index, focus_link_index){
+function initMenu(sections, focus_section_index, focus_link_index) {
     return {
         sections: sections,
         focus_section_index: focus_section_index,
         focus_link_index: focus_link_index
     }
     /* SAMPLE INIT
-    let section = [{ 
-        id: "C1",
-        title: "Course",
-        subtitle: "LMS Courses",
-        links: [
-            { title: "Manage Courses", link: "/manage/courses", completed: false }
-        ]
-    }]
-    initMenu(sections, 0)
-    */
+      let section = [{ 
+          id: "C1",
+          title: "Course",
+          subtitle: "LMS Courses",
+          links: [
+              { title: "Manage Courses", link: "/manage/courses", completed: false }
+          ]
+      }]
+      initMenu(sections, 0)
+      */
 }
-Vue.component("side-menu", {
+Vue.component('side-menu', {
     props: {
         menu: { type: Object }
     },
@@ -157,12 +169,12 @@ Vue.component("side-menu", {
         </div>
     `
 })
-Vue.component("m-div", {
+Vue.component('m-div', {
     //Menu div
     props: {
         menu: { type: Object },
         title: { type: String },
-        subtitle: { type: String },
+        subtitle: { type: String }
     },
     template: `
         <div>
@@ -178,21 +190,22 @@ Vue.component("m-div", {
             </div>
         </div>
     `
-});
-function getParams(param){
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
+})
+
+function getParams(param) {
+    const urlParams = new URLSearchParams(window.location.search)
+    return urlParams.get(param)
 }
 
-const QUESTION_TYPES_MCQ = 'MCQ';
+const QUESTION_TYPES_MCQ = 'MCQ'
 
-Vue.component("q-input-field", {
+Vue.component('q-input-field', {
     props: {
         qn: {
             type: Object
         }
     },
-    template:  `
+    template: `
         <div>
             <input v-if="qn._type == 'text' || qn._type == 'number'" :id="inputId" v-model="qn.value" :type="qn._type" :placeholder="qn.placeholder" :min="qn.min != null ? qn.min : ''" :max="qn.max != null ? qn.max : ''" :step="qn.step != null ? qn.step : ''"/>
             <textarea v-else-if="qn._type == 'textbox'" id="form-description" v-model="qn.value" :placeholder="qn.placeholder"></textarea>
@@ -228,164 +241,173 @@ Vue.component("q-input-field", {
         </div>
     `,
     methods: {
-        addOption: function(qn){
+        addOption: function(qn) {
             //Add option template
-            qn.questionOptions.push({ 
-                tempQuestionOptionId: (Math.random() + 1).toString(36).substring(7), 
-                questionOptionId: null, optionText: "", isCorrect: false, isSelected: false, questionId: qn.questionId, editing: true
+            qn.questionOptions.push({
+                tempQuestionOptionId: (Math.random() + 1).toString(36).substring(7),
+                questionOptionId: null,
+                optionText: '',
+                isCorrect: false,
+                isSelected: false,
+                questionId: qn.questionId,
+                editing: true
             })
         },
-        editToggle: function(qn, o, i, force){
-            console.log(o);
-            o.editOptionText = o.optionText;
-            document.getElementById(this.generateQOEditId(i)).value = o.editOptionText;
+        editToggle: function(qn, o, i, force) {
+            console.log(o)
+            o.editOptionText = o.optionText
+            document.getElementById(this.generateQOEditId(i)).value = o.editOptionText
 
             let noEdits = document.getElementsByClassName(this.generateQONoEdit(i))
             let edits = document.getElementsByClassName(this.generateQOEdit(i))
-            if(!o.editing){
+            if (!o.editing) {
                 //Edit
-                for(let edit of edits){
-                    edit.style.display = "";
+                for (let edit of edits) {
+                    edit.style.display = ''
                 }
-                for(let noEdit of noEdits){
-                    noEdit.style.display = "none";
+                for (let noEdit of noEdits) {
+                    noEdit.style.display = 'none'
                 }
-                o.editing = !o.editing;
-            }else{
+                o.editing = !o.editing
+            } else {
                 //Cancel edit
-                if(force || confirm("Do you wish to cancel your edit?")){
-                    if(o.questionOptionId != null){
-                        for(let edit of edits){
-                            edit.style.display = "none";
+                if (force || confirm('Do you wish to cancel your edit?')) {
+                    if (o.questionOptionId != null) {
+                        for (let edit of edits) {
+                            edit.style.display = 'none'
                         }
-                        for(let noEdit of noEdits){
-                            noEdit.style.display = "";
+                        for (let noEdit of noEdits) {
+                            noEdit.style.display = ''
                         }
-                    }else{
+                    } else {
                         this.deleteOption(qn, o, true)
                     }
-                    o.editing = !o.editing;
+                    o.editing = !o.editing
                 }
             }
         },
-        editSave: function(qn, o, i){
-            if(o.optionText == o.editOptionText){
+        editSave: function(qn, o, i) {
+            if (o.optionText == o.editOptionText) {
                 this.editToggle(qn, o, i, true) //Update UI
-                o.editOptionText = "" //Reset
-                return;
+                o.editOptionText = '' //Reset
+                return
             }
-            if(confirm("Do you want to save?")){
+            if (confirm('Do you want to save?')) {
                 o.optionText = o.editOptionText
-                //TODO: Save
-                let questionOptionId = o.questionOptionId;
-                let data = { 
+                    //TODO: Save
+                let questionOptionId = o.questionOptionId
+                let data = {
                     questionOption: o,
                     session: getUserSession()
-                };
-                var xhr = new XMLHttpRequest();
-                xhr.vue = this;
-                let update = questionOptionId != null;
-                if(update){
-                    xhr.open("POST", API("/quiz/updateQuestionOption"), true);
-                }else{
-                    xhr.open("POST", API("/quiz/addQuestionOption"), true);
-                    data.questionId = qn.questionId;
                 }
-                xhr.setRequestHeader("Content-Type", "application/json");
+                var xhr = new XMLHttpRequest()
+                xhr.vue = this
+                let update = questionOptionId != null
+                if (update) {
+                    xhr.open('POST', API('/quiz/updateQuestionOption'), true)
+                } else {
+                    xhr.open('POST', API('/quiz/addQuestionOption'), true)
+                    data.questionId = qn.questionId
+                }
+                xhr.setRequestHeader('Content-Type', 'application/json')
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == XMLHttpRequest.DONE) {
                         if (xhr.status == 200) {
-                            alert("Successfully saved");
-                            if(!update){
-                                let dataJSON = JSON.parse(xhr.responseText);
-                                console.log(dataJSON);
-                                o.questionOptionId = dataJSON.questionOption.questionOptionId;
+                            alert('Successfully saved')
+                            if (!update) {
+                                let dataJSON = JSON.parse(xhr.responseText)
+                                console.log(dataJSON)
+                                o.questionOptionId = dataJSON.questionOption.questionOptionId
                             }
                             this.vue.editToggle(qn, o, i, true) //Update UI
-                            o.editOptionText = "" //Reset
-                            
-                        }else if(xhr.status == 401){
-                            sessionExpired();
-                            return;
+                            o.editOptionText = '' //Reset
+                        } else if (xhr.status == 401) {
+                            sessionExpired()
+                            return
                         } else {
-                            alert("An error has occured - " + xhr.status);
-                            console.log(xhr.responseText);
-                            return;
+                            alert('An error has occured - ' + xhr.status)
+                            console.log(xhr.responseText)
+                            return
                         }
                     }
-                };
-                xhr.send(JSON.stringify(data));
-                console.log(data);
+                }
+                xhr.send(JSON.stringify(data))
+                console.log(data)
             }
         },
-        deleteOption: function(qn, o, force){
-            if(o.questionOptionId == null){
-                if(o.tempQuestionOptionId == null){
-                    alert("Error: Unable to identify question option.")
+        deleteOption: function(qn, o, force) {
+            if (o.questionOptionId == null) {
+                if (o.tempQuestionOptionId == null) {
+                    alert('Error: Unable to identify question option.')
                     return
                 }
-                qn.questionOptions = qn.questionOptions.filter(function(_o) { return _o.tempQuestionOptionId != o.tempQuestionOptionId; });
+                qn.questionOptions = qn.questionOptions.filter(function(_o) {
+                    return _o.tempQuestionOptionId != o.tempQuestionOptionId
+                })
                 return
             }
-            if(force || confirm("Do you want to delete?")){
-                let data = { 
+            if (force || confirm('Do you want to delete?')) {
+                let data = {
                     questionOptionId: o.questionOptionId,
-                    session: getUserSession(),
-                };
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", API("/quiz/deleteQuestionOption"), true);
-                xhr.setRequestHeader("Content-Type", "application/json");
-                
+                    session: getUserSession()
+                }
+                var xhr = new XMLHttpRequest()
+                xhr.open('POST', API('/quiz/deleteQuestionOption'), true)
+                xhr.setRequestHeader('Content-Type', 'application/json')
+
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == XMLHttpRequest.DONE) {
                         if (xhr.status == 200) {
                             //Update UI
-                            qn.questionOptions = qn.questionOptions.filter(function(_o) { return _o.questionOptionId != o.questionOptionId; });
-                        }else if(xhr.status == 401){
-                            sessionExpired();
-                            return;
+                            qn.questionOptions = qn.questionOptions.filter(function(_o) {
+                                return _o.questionOptionId != o.questionOptionId
+                            })
+                        } else if (xhr.status == 401) {
+                            sessionExpired()
+                            return
                         } else {
-                            alert("An error has occured - " + xhr.status);
-                            console.log(xhr.responseText);
-                            return;
+                            alert('An error has occured - ' + xhr.status)
+                            console.log(xhr.responseText)
+                            return
                         }
                     }
-                };
-                xhr.send(JSON.stringify(data));
-                console.log(data);
+                }
+                xhr.send(JSON.stringify(data))
+                console.log(data)
             }
         },
-        generateQOId: function(i){
+        generateQOId: function(i) {
             return `${this.inputId}-QO-${i}`
         },
-        generateQOEditId: function(i){
+        generateQOEditId: function(i) {
             return `${this.inputId}-QONEI-${i}`
         },
-        generateQONoEdit: function(i){
+        generateQONoEdit: function(i) {
             return `${this.inputId}-QONE-${i}`
         },
-        generateQOEdit: function(i){
+        generateQOEdit: function(i) {
             return `${this.inputId}-QOE-${i}`
         }
     },
     computed: {
-        inputId: function(){
+        inputId: function() {
             return `QN-${this.qn.questionId}`
-        },
-    }, data(){
+        }
+    },
+    data() {
         return {
-            editOptionText: ""
+            editOptionText: ''
         }
     }
-});
+})
 
-Vue.component("q-input", {
+Vue.component('q-input', {
     props: {
         qn: {
             type: Object
         }
     },
-    template:  `
+    template: `
         <div>
             <div :id="ctnInputId" class="lms-input">
                 <label class="lms-input-label" v-text="qn.title"></label><span class="mandatory" v-show="qn.required">*</span> <i class="icon-alert fa fa-exclamation-circle" v-show="qn.failedValidation"></i>
@@ -394,32 +416,34 @@ Vue.component("q-input", {
         </div>
     `,
     methods: {
-        generateSV: function(data){
-            if(data != null){
-                if(typeof data === "string"){
-                    return data.split(";").map(v => { return { v: v.trim(), d: v.trim() } });
-                }else if(Array.isArray(data)){
+        generateSV: function(data) {
+            if (data != null) {
+                if (typeof data === 'string') {
+                    return data.split(';').map(v => {
+                        return { v: v.trim(), d: v.trim() }
+                    })
+                } else if (Array.isArray(data)) {
                     let sv = []
-                    for(d of data){
+                    for (d of data) {
                         sv.push({ v: d.questionId, d: d.optionText })
                     }
-                    console.log(sv);
-                    return sv;
+                    console.log(sv)
+                    return sv
                 }
             }
-            return [];
+            return []
         },
-        generateQOId: function(i){
+        generateQOId: function(i) {
             return `${this.inputId}-SV-${i}`
         }
     },
     computed: {
-        ctnInputId: function(){
+        ctnInputId: function() {
             return `CTN-${this.qn.questionId}`
         }
     }
-});
-Vue.component("edit-q-input", {
+})
+Vue.component('edit-q-input', {
     props: {
         qn: {
             type: Object
@@ -443,7 +467,7 @@ Vue.component("edit-q-input", {
         </div>
     `,
     computed: {
-        ctnInputId: function(){
+        ctnInputId: function() {
             return `CTN-${this.qn.questionId}`
         }
     }

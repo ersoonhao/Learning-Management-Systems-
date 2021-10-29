@@ -6,4 +6,8 @@ module.exports = app => {
     app.get('/chat', async(req,res)=>{
         res.sendFile(app._FRONT_END_PATH + "/chat/chat.html")
     })
+
+    app.get('/forum', async(req,res)=>{
+        res.sendFile(app._FRONT_END_PATH + "/forum/forum.html")
+    })
 }

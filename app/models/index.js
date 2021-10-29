@@ -17,14 +17,13 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     }
 });
 
-async function connect(){
+async function connect() {
     try {
         await sequelize.authenticate();
         await sequelize.sync();
 
         console.log('Connection to the database has been established successfully.');
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error.message);
         process.exit(-1);
     }
@@ -86,23 +85,23 @@ Sample - https://sequelize.org/v3/docs/associations/
     City.belongsTo(Country, {foreignKey: 'countryCode', targetKey: 'isoCode'});
 */
 
-db.Quiz.hasMany(db.Question, {foreignKey: 'quizId', sourceKey: 'quizId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.Question.belongsTo(db.Quiz, {foreignKey: 'quizId', targetKey: 'quizId'});
+db.Quiz.hasMany(db.Question, { foreignKey: 'quizId', sourceKey: 'quizId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Question.belongsTo(db.Quiz, { foreignKey: 'quizId', targetKey: 'quizId' });
 
-db.Question.hasMany(db.QuestionOption, {foreignKey: 'questionId', sourceKey: 'questionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.QuestionOption.belongsTo(db.Question, {foreignKey: 'questionId', targetKey: 'questionId'});
+db.Question.hasMany(db.QuestionOption, { foreignKey: 'questionId', sourceKey: 'questionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.QuestionOption.belongsTo(db.Question, { foreignKey: 'questionId', targetKey: 'questionId' });
 
-db.Thread.hasMany(db.Post, {foreignKey: 'threadId', sourceKey: 'threadId', onDelete: 'cascade' });
-db.Post.belongsTo(db.Thread, {foreignKey: 'threadId', targetKey: 'threadId'});
+db.Thread.hasMany(db.Post, { foreignKey: 'threadId', sourceKey: 'threadId', onDelete: 'cascade' });
+db.Post.belongsTo(db.Thread, { foreignKey: 'threadId', targetKey: 'threadId' });
 
-db.Post.hasMany(db.Comment, {foreignKey: 'postId', sourceKey: 'postId', onDelete: 'cascade' });
-db.Comment.belongsTo(db.Post, {foreignKey: 'postId', targetKey: 'postId'});
+db.Post.hasMany(db.Comment, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'cascade' });
+db.Comment.belongsTo(db.Post, { foreignKey: 'postId', targetKey: 'postId' });
 
-db.Course.hasMany(db.CoursePrerequisite, {foreignKey: 'courseId', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.CoursePrerequisite.belongsTo(db.Course, {foreignKey: 'courseId', targetKey: 'courseId'});
+db.Course.hasMany(db.CoursePrerequisite, { foreignKey: 'courseId', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.CoursePrerequisite.belongsTo(db.Course, { foreignKey: 'courseId', targetKey: 'courseId' });
 
-db.CoursePrerequisite.hasMany(db.PrerequisiteSet, {foreignKey: 'setNumber', sourceKey: 'setNumber', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.PrerequisiteSet.belongsTo(db.CoursePrerequisite, {foreignKey: 'setNumber', targetKey: 'setNumber'});
+db.CoursePrerequisite.hasMany(db.PrerequisiteSet, { foreignKey: 'setNumber', sourceKey: 'setNumber', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.PrerequisiteSet.belongsTo(db.CoursePrerequisite, { foreignKey: 'setNumber', targetKey: 'setNumber' });
 
 // ================== SYNC ==================
 db.sequelize.sync();

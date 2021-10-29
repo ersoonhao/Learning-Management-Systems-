@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+        <title>LMS</title>
+        <link rel="stylesheet" href="/style/master.css">
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <lms-head :session="session"></lms-head>
+            <div class="content">
+                <div class=container>
+                    <m-div :title="title" :subtitle="'For Thread ID: '+threadId">
+                        <div v-if="posts.length>0">
+                            <div v-for="post in posts" :key="post.postId" class = "card" style="margin-bottom:20px; padding-bottom:5px;">
+                                <div class="card-body">
+                                    {{post.body}}
+                                </div>
+                                <div v-for="comment in post.comments" :key="comment.commentId" class = "card">
+                                    <div class="card-text" style="padding-bottom:10px;">{{comment.body}}</div>
+                                </div>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <input id="Comment" v-model="comment" type="text" placeholder="Add comment" style="width:100%; height:100%;"/>
+                                        </div>
+                                        <div class="col-2">
+                                            <a :href="'/forum/addComment?postId=' + post.postId +'comment' + comment" class="btn btn-primary" style="align:right; height:35px">Add</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <textarea id="answer" v-model="answer" placeholder="Add your answer" style="width:100%; height:50px;"></textarea>
+                                <button class="btn btn-primary" @click="addAnswer">Add Answer</button>
+                            <div>
+                        </div>
+                        <div v-else>
+                            <h3>No Posts</h3>
+                        </div>
+                    </m-div>
+                    
+                </div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+        </script>
+        <script src="/js/lib/vue.js"></script>
+        <script src="/js/lms/main/master.js"></script>
+
+        <script>
+            const app = new Vue({
+                el: '#app',
+                data: {
+                    session: {accountId: 1},
+                    threadId: getParams("threadId"),
+                    title: null,
+                    active: null,
+                    comment: null,
+                    answer: null,
+                    posts: [],
+                    comments: [],
+                    submitSuccess: null,
+                    newId: ''
+                },
+                methods: {
+                    addAnswer(){
+                        var postObj = {
+                            post : {
+                                postType: 2,
+                                body: this.answer
+                            },
+                            threadId: this.threadId,
+                            accountId: 1
+
+                        }
+                        console.log(this.session.accountId);
+                    }
+                },
+                created: () => {
+                    this.threadId
+                }, mounted () {
+                    axios
+                    .get(API(`/forum/getThread/${this.threadId}`))
+                    .then(response => (
+                        this.title = response.data.thread.title,
+                        this.posts = response.data.thread.posts
+                        ))
+                 }
+                 
+            });
+        </script>
+    </body>
+</html>
