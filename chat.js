@@ -58,6 +58,39 @@ module.exports = function(io) {
  
 };
 
+async function postData(url, stringData) {
+  let resp = await axios({
+    method: 'post',
+    url: url,
+    data: stringData,
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    maxContentLength: 100000000,
+    maxBodyLength: 1000000000
+  }).catch(err => {
+    throw err;
+  })
+  console.log("postData: response:", resp.data);
+  return resp;
+}
+
+
+// function partialSearchAlgorithm(list, string_value){
+
+//     var result = []
+//     for(var i = 0; i < list.length; i++){
+//         if(list[i].toLowerCase().includes(string_value.toLowerCase())){
+//             result.push(list[i])
+//         }
+//     }
+
+//     console.log("answer is "+String(result))
+
+//     return result
+
+// }
+
+// partialSearchAlgorithm(["hello", "world", "how", "are", "you", "hell"], "he")
+
 // async function getData(url, stringData) {
 //   let resp = await axios({
 //     method: 'get',
@@ -73,20 +106,6 @@ module.exports = function(io) {
 //   return resp;
 // }
 
-async function postData(url, stringData) {
-  let resp = await axios({
-    method: 'post',
-    url: url,
-    data: stringData,
-    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-    maxContentLength: 100000000,
-    maxBodyLength: 1000000000
-  }).catch(err => {
-    throw err;
-  })
-  console.log("postData: response:", resp.data);
-  return resp;
-}
 
 // async function DeleteData(url, stringData) {
 //   let resp = await axios({
