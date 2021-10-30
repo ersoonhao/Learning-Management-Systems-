@@ -116,5 +116,15 @@ describe('The courses route and controller',()=>{
     )
   })
 
+  it('retrieves 4 course through post request with session username and session Id',(done)=>{
+    request(app).post('/api/course/all').send({"session":{ "username": "robin", "sessionId": "0q8l8" }}).end(
+      (err,response)=>{
+        console.log(response.body)
+        assert(response.body.length == 7)
+        done()
+      }
+    )
+  })
+
 })
 
