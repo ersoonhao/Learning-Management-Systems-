@@ -189,7 +189,7 @@ exports.getAllClassEnrollments = (req, res) => {
 }
 
 //==== Get: /getAllPendingEnrollments
-exports.getAllPendingEnrollments = (req, res) => {
+exports.getPendingEnrollments = (req, res) => {
     Enrollment.findAll({
             where: { enrolledDate: null },
             include: [{ model: Account }]
