@@ -2,6 +2,7 @@ const db = require("../models");
 const Message = db.Message;
 const Op = db.Sequelize.Op;
 const sequelize = db.sequelize;
+const AccountController = require("./account.controller");
 
 exports.create = (req,res) =>{
     if(!req.body){
@@ -243,4 +244,47 @@ exports.findAllById = (req, res) => {
     }
 
     res.send(messages)
+  }
+
+  exports.getMessagesUsernamebySessionId = async(req,res) =>{
+    console.log(req.body)
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(async(session) => {
+    var accountId = session.accountId
+    console.log(accountId)
+    // const [senders, metadata_senders] = await sequelize.query(`SELECT * FROM Messages INNER JOIN Accounts b ON Messages.senderAccountId=b.accountId WHERE Messages.senderAccountID = ${accountId} OR Messages.receiverAccountID = ${accountId}`);
+    const [user, metadata_user] = await sequelize.query(`SELECT a.username, a.accountId FROM Accounts a WHERE a.accountId=${accountId}`)
+    const [all_users, metadata_all_users] = await sequelize.query(`SELECT * FROM Accounts`);
+    const [messages_data, metadata_senders] = await sequelize.query(`SELECT a.messageId, a.text, a.senderAccountId, a.receiverAccountId, b.username as sender, c.username as receiver FROM Messages a LEFT JOIN Accounts b ON a.senderAccountId=b.accountId LEFT JOIN Accounts c ON a.receiverAccountId=c.accountId WHERE a.senderAccountId = ${accountId} OR a.receiverAccountId = ${accountId}`);
+
+    var messages = {}
+    messages['accountId']= user[0]['accountId']
+    messages['username'] = user[0]['username']
+    messages['messages'] = {}
+
+    for(var i=0; i< messages_data.length; i++){
+      if(messages_data[i]['sender']!=messages['username']){
+        if(messages['messages'][messages_data[i]['sender']]){
+          messages['messages'][messages_data[i]['sender']]['messages'].push(messages_data[i])
+        }else{
+          messages['messages'][messages_data[i]['sender']] = {messages: [messages_data[i]], accountId: messages_data[i]['senderAccountId']}
+        }
+      }else{
+        if(messages['messages'][messages_data[i]['receiver']]){
+          messages['messages'][messages_data[i]['receiver']]['messages'].push(messages_data[i])
+        }else{
+          messages['messages'][messages_data[i]['receiver']] = {messages: [messages_data[i]], accountId: messages_data[i]['receiverAccountId']}
+        }
+      }
+    }
+
+    for(var j=0; j<all_users.length; j++){
+      if(!messages['messages'].hasOwnProperty(all_users[j].username ) && all_users[j].accountId != messages['accountId']){
+        messages['messages'][all_users[j].username] = {messages: [], accountId:all_users[j].accountId}
+      }
+    }
+
+    res.send(messages)
+     })
+    
   }

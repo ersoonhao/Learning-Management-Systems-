@@ -23,6 +23,8 @@ module.exports = app => {
 
     router.get('/all/:id', message.getMessagesUsernamebyAccountId);
 
+    router.post('/all/session', message.getMessagesUsernamebySessionId);
+
     //======== END: CONTROLLER LOGIC ========
     
     app.use(ROUTE_PATH, router);
