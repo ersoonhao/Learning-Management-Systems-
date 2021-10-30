@@ -19,7 +19,7 @@ module.exports = function(io) {
       socket.on('chat message', async ({msg,senderAccountId,receiverAccountId}) => {
           // io.emit('chat message', msg);
           // var message_info = await postData("/api/message/create",{text: msg, senderAccountId: sender, receiverAccountId: receiver})
-
+          
           const message = {
             text: msg, 
             senderAccountId: senderAccountId, 
