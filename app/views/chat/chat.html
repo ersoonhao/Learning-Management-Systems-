@@ -41,9 +41,15 @@
                         <button type="button" class="btn btn-primary" v-on:click="connect($event)" value='2'>Connect as SoonHao</button>
                 <div class="row">
                   <div class="col-sm-3 col-md-6 col-lg-4" style="background-color:white;">
-                    
-                    <div v-for="(message_set, username, index)  in all_messages.messages" :key="index">
+                    <div>
+                      <input v-model="search_term" placeholder="Search for user" v-on:input="partialSearch">
+                    </div>
+                    <div v-if='search_term == ""' v-for="(message_set, username, index)  in all_messages.messages" :key="index">
                     <user v-bind:selected="selected == message_set.accountId" v-bind:account_id= "message_set.accountId" v-bind:username="username" v-bind:message_set="message_set" @update-select='updateSelect'></user>
+                    </div>
+
+                    <div v-if='search_term' v-for="(username, index) in searched_users" :key="username">
+                      <searched-user v-bind:username="username" @name-select='nameSelect'></searched-user>
                     </div>
 
                   </div>
@@ -103,6 +109,24 @@
             }
             })
 
+            Vue.component('searched-user',
+            {data: function () {
+            return {
+              
+            }},created:()=>{
+              
+            }, 
+            props: {username:String},
+            template: `<div class='user' @click="select() ">{{username}}</div>`,
+            methods:{
+              select() {
+                console.log(this.username)
+                this.$emit('name-select', this.username)
+              }
+            }
+            })
+
+
                var socket = io({autoConnect: false});
 
                 const app = new Vue({
@@ -114,7 +138,10 @@
                     newMessage: '',
                     accountId: '',
                     all_messages : [],
-                    selected: ''
+                    selected: '',
+                    search_term: '',
+                    searched_users: [],
+                    all_users : [],
                 }, created: () => {
                   
                   socket.on('chat message', function(msg) {
@@ -122,6 +149,7 @@
                     console.log(msg)
                     
                     for(const name in app.all_messages['messages']){
+                      
                       if(app.all_messages['messages'][name].accountId == msg.receiverAccountId || app.all_messages['messages'][name].accountId == msg.senderAccountId){
                         console.log('match found')
                         console.log(app.all_messages['messages'][name].messages)
@@ -151,10 +179,12 @@
                   .get(API(`/message/all/${accountId}`))
                   .then(response => (
                       console.log(response.data),
-                      app.all_messages = response.data
+                      app.all_messages = response.data,
+                      app.all_users = Object.keys(app.all_messages['messages'])
                       ))
                   socket.auth = {accountId};
                   socket.connect();
+
                 },
                 updateSelect:function(e){
                   // console.log('hi')
@@ -164,6 +194,28 @@
                       if(app.all_messages['messages'][name].accountId == app.selected){
                         console.log(app.all_messages['messages'][name].messages)
                         app.current_messages = app.all_messages['messages'][name].messages;
+                      }
+                    }
+                },partialSearch:function(){
+
+                  app.searched_users = []
+
+                    for(var i = 0; i < app.all_users.length; i++){
+                        if(app.all_users[i].toLowerCase().includes(app.search_term.toLowerCase())){
+                          app.searched_users.push(app.all_users[i])
+                        }
+                    }
+                },nameSelect:function(e){
+                  // console.log('hi')
+                  // console.log(e)
+                  app.searched_users = []
+                  app.search_term = ''
+                  
+                  for(const name in app.all_messages['messages']){
+                      if(name == e){
+                        console.log(app.all_messages['messages'][name].messages)
+                        app.current_messages = app.all_messages['messages'][name].messages;
+                        app.selected = app.all_messages['messages'][name].accountId
                       }
                     }
                 }
