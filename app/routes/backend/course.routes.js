@@ -7,7 +7,9 @@ module.exports = app => {
 
     router.post("/",course.create);
 
-    router.get("/", course.findAll);
+    router.get('/',course.findAll)
+
+    router.post("/all", course.findAllPost);
 
     router.get("/allid", course.findAllId);
 
