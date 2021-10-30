@@ -1,7 +1,6 @@
 const db = require("../models");
 const { Course, PrerequisiteSet, CoursePrerequisite } = require("../models");
 const Op = db.Sequelize.Op;
-const AccountController = require("./account.controller");
 
 exports.findOneCourse = (req,res)=>{
 
@@ -146,26 +145,6 @@ exports.findAll = (req, res) => {
         });
       });
   };
-
-exports.findAllPost = (req, res) => {
-
-  const permissions = [AccountController.PERM_ADMIN]
-    AccountController.validAuthNAccess(req, res, permissions).then(session => { 
-      if(session){
-        Course.findAll()
-        .then(data => {
-          res.send(data); //change this to render
-        })
-        .catch(err => {
-          res.status(500).send({
-            message: "Error retrieving Course with id=" + id
-          });
-        });
-      }
-    })
-  };
-
-  
 
 exports.findAllId = (req, res) => {
     var ids = []
