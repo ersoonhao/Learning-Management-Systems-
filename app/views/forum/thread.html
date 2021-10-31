@@ -1,104 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-            integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-            <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
-        <title>LMS</title>
-        <link rel="stylesheet" href="/style/master.css">
-        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    </head>
-    <body>
-        <div id="app">
-            <lms-head :session="session"></lms-head>
-            <div class="content">
-                <div class=container>
-                    <m-div :title="title" :subtitle="'For Thread ID: '+threadId">
-                        <div v-if="posts.length>0">
-                            <div v-for="post in posts" :key="post.postId" class = "card" style="margin-bottom:20px; padding-bottom:5px;">
-                                <div class="card-body">
-                                    {{post.body}}
-                                </div>
-                                <div v-for="comment in post.comments" :key="comment.commentId" class = "card">
-                                    <div class="card-text" style="padding-bottom:10px;">{{comment.body}}</div>
-                                </div>
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-10">
-                                            <input id="Comment" v-model="comment" type="text" placeholder="Add comment" style="width:100%; height:100%;"/>
-                                        </div>
-                                        <div class="col-2">
-                                            <a :href="'/forum/addComment?postId=' + post.postId +'comment' + comment" class="btn btn-primary" style="align:right; height:35px">Add</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <textarea id="answer" v-model="answer" placeholder="Add your answer" style="width:100%; height:50px;"></textarea>
-                                <button class="btn btn-primary" @click="addAnswer">Add Answer</button>
-                            <div>
-                        </div>
-                        <div v-else>
-                            <h3>No Posts</h3>
-                        </div>
-                    </m-div>
-                    
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <title>LMS</title>
+    <link rel="stylesheet" href="/style/master.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <lms-head :session="session"></lms-head>
+      <div class="content">
+        <div class=container>
+          <m-div :menu="menu">
+            <h1>{{title}}</h1>
+            <div v-if="posts.length>0">
+              <div v-for="post in posts" :key="post.postId" class="card" style="margin-bottom:20px; padding-bottom:5px;">
+                <h5 class="card-title" style="padding:5px;">
+                  {{post.body}}
+                </h5>
+                <div v-for="comment in post.comments" :key="comment.commentId" class="card">
+                  <div class="card-text" style="padding-bottom:10px;padding-left:10px">{{comment.body}}</div>
                 </div>
+                <div class="container">
+                  <div class="row" style="padding:10px">
+                    <div class="col-10">
+                      <input id="Comment" :name="'Parent: '+post.postId" v-model="comments[post.postId]" type="text" placeholder="Add comment" style="width:100%; height:100%" />
+                    </div>
+                    <div class="col-2">
+                      <button class="btn btn-primary" @click="addComment(post.postId)" style="align-content:right; height:35px">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <textarea id="answer" v-model="answer" placeholder="Add your answer" style="width:100%; height:50px"></textarea>
+                <button class="btn btn-primary" @click="addAnswer">Add Answer</button>
+              </div>
             </div>
+            <div v-else>
+              <h3>No Posts</h3>
+            </div>
+          </m-div>
         </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
-        </script>
-        <script src="/js/lib/vue.js"></script>
-        <script src="/js/lms/main/master.js"></script>
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="/js/lib/vue.js"></script>
+    <script src="/js/lms/main/master.js"></script>
+    <script src="/js/lms/forum/manage.js"></script>
+    <script>
+      const app = new Vue({
+        el: '#app',
+        data: {
+          session: getUserSession(),
+          menu: initMenu(MENU_SECTIONS_FORUM_GENERAL, 0),
+          threadId: getParams("threadId"),
+          find: getParams("find"),
+          title: "",
+          active: null,
+          answer: "",
+          ownerId: null,
+          posts: {},
+          comments: {},
+          submitSuccess: null
+        },
+        methods: {
+          addComment(postId) {
+            if (this.comments[postId] != null && this.comments[postId] != ""){
+              var commentObj = {
+              comment: {
+                body: this.comments[postId]
+              },
+              postId: parseInt(postId),
+              session: this.session
+              }
+              console.log(commentObj);
+              console.log(this.ownerId);
+              console.log(postId)
+              console.log(this.comments[postId])
 
-        <script>
-            const app = new Vue({
-                el: '#app',
-                data: {
-                    session: {accountId: 1},
-                    threadId: getParams("threadId"),
-                    title: null,
-                    active: null,
-                    comment: null,
-                    answer: null,
-                    posts: [],
-                    comments: [],
-                    submitSuccess: null,
-                    newId: ''
+              axios.post(API('/forum/addComment'), commentObj).then((response) => {
+                console.log(response);
+                if (response.status == 200) {
+                  this.submitSuccess = true
+                  this.comments[postId] = null
+                  this.loadThread()
+                }
+              }, (error) => {
+                console.log(error)
+              });
+            } else {
+              alert("Comment cannot be empty!")
+            }
+            
+          },
+          addAnswer() {
+            if (this.answer != ""){
+              var postObj = {
+                post: {
+                  postType: 2,
+                  body: this.answer
                 },
-                methods: {
-                    addAnswer(){
-                        var postObj = {
-                            post : {
-                                postType: 2,
-                                body: this.answer
-                            },
-                            threadId: this.threadId,
-                            accountId: 1
+                threadId: parseInt(this.threadId),
+                session: this.session
+              }
+              console.log(postObj);
+              axios.post(API('/forum/createAnswer'), postObj).then((response) => {
+                console.log(response);
+                if (response.status == 200) {
+                  this.submitSuccess = true
+                  this.answer = null
+                  this.loadThread()
+                }
+              }, (error) => {
+                console.log(error)
+              });
+            } else{
+              alert("Answer cannot be empty!")
+            }
+          },
+          loadThread() {
+            axios.get(API(`/forum/getThread/${this.threadId}`)).then(response => (this.title = response.data.thread.title, this.ownerId = response.data.thread.accountId, this.posts = response.data.thread.posts))
+          }
+        },
+        created: () => {
+          this.threadId
+        },
+        mounted() {
+          this.loadThread()
+        }
+      })
 
-                        }
-                        console.log(this.session.accountId);
-                    }
-                },
-                created: () => {
-                    this.threadId
-                }, mounted () {
-                    axios
-                    .get(API(`/forum/getThread/${this.threadId}`))
-                    .then(response => (
-                        this.title = response.data.thread.title,
-                        this.posts = response.data.thread.posts
-                        ))
-                 }
-                 
-            });
-        </script>
-    </body>
+    </script>
+  </body>
 </html>

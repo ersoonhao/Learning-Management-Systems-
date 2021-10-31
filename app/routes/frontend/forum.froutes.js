@@ -2,6 +2,9 @@ module.exports = app => {
     app.get('/forum', async(req, res) => {
         res.sendFile(app._FRONT_END_PATH + '/forum/forum.html')
     })
+    app.get('/forum/unanswered', async(req, res) => {
+        res.sendFile(app._FRONT_END_PATH + '/forum/unanswered.html')
+    })
     app.get('/forum/thread', async(req, res) => {
         res.sendFile(app._FRONT_END_PATH + '/forum/thread.html')
     })

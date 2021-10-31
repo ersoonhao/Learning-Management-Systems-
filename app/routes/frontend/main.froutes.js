@@ -1,13 +1,10 @@
 module.exports = app => {
-    app.get('/', async(req,res)=>{
+    app.get('/', async(req, res) => {
         res.sendFile(app._FRONT_END_PATH + "/main/index.html")
     })
 
-    app.get('/chat', async(req,res)=>{
+    app.get('/chat', async(req, res) => {
         res.sendFile(app._FRONT_END_PATH + "/chat/chat.html")
     })
 
-    app.get('/forum', async(req,res)=>{
-        res.sendFile(app._FRONT_END_PATH + "/forum/forum.html")
-    })
 }

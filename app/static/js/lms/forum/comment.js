@@ -1,14 +1,12 @@
-const Answer = {
-  template: `
-            <h1>{{formTitle}}</h1>
+const comment = {
+    template: `
             <div>
                 <input id="Comment" v-model="comment" type="text" placeholder="Comment"/>
             </div>`,
 
-  data () {
-    return {
-      comment: '',
-      formTitle: 'Create a comment'
+    data() {
+        return {
+            comment: ''
+        }
     }
-  }
 }

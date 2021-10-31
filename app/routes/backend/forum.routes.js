@@ -9,6 +9,7 @@ module.exports = app => {
 
     router.get("/getThread/:threadId", post.getThread);
     router.get("/getAllThreads", post.getAllThreads);
+    router.get("/getAllUnansweredThreads", post.getAllUnansweredThreads);
     router.post("/createThread", post.createThread);
     router.post("/createAnswer", post.createAnswer);
     router.post("/updatePost", post.updatePost);
