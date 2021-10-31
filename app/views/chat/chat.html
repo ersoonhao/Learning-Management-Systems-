@@ -56,9 +56,12 @@
                   <div class="col-sm-9 col-md-6 col-lg-8" style="background-color:white;">
                     
                     <ul id="messages">
-                      <li v-if="selected" v-for="(messageObj, index) in current_messages" :key="index">
+                      <!-- <li v-if="selected" v-for="(messageObj, index) in current_messages" :key="index">
                         {{ messageObj.text }} <span id='sender'>{{ messageObj.sender }}</span> <button class="btn btn-danger btn-sm" v-on:click="delete_msg(messageObj)">Delete Message</button>
-                      </li>
+                      </li> -->
+                      <div>
+                        <message v-if="selected" v-bind:account_id="accountId" v-for="(messageObj, index) in current_messages" :key="index" v-bind:msg_object='messageObj' @delete-msg='delete_msg'></message>
+                      </div>
                     </ul>
                     
                     <form id='form'>
@@ -124,6 +127,31 @@
                 this.$emit('name-select', this.username)
               }
             }
+            })
+
+            Vue.component('message',{
+              data: function () {
+                return {
+                  isSender: false,
+                }},
+              props: {msg_object: Object, account_id: String},
+              template: `<li>{{msg_object.text}} <span id='sender'>{{msg_object.sender}}</span><button v-if="sender" class="btn btn-danger btn-sm" @click="delete_msg()">Delete Message</button></li>`,
+              methods:{
+                delete_msg(){
+                  console.log(this.msg_object)
+                  this.$emit('delete-msg', this.msg_object)
+                }
+              },
+              computed: {
+                sender(){
+                  if(String(this.msg_object.senderAccountId) == String(this.account_id)){
+                    return true
+                  }
+                  else{
+                    return false
+                  }
+                }
+              }
             })
 
 
@@ -193,7 +221,7 @@
                   .then(response=>{
                     console.log(response.data)
                     app.all_messages = response.data
-                    app.all_users = response.data.users
+                    app.all_users = Object.keys(app.all_messages['messages'])
                     var accountId = String(response.data.accountId)
                     app.accountId = accountId
                     socket.auth = {accountId}
