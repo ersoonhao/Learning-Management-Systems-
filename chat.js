@@ -49,7 +49,7 @@ module.exports = function(io) {
           io.to(String(socket.handshake.auth.accountId)).to(String(receiverAccountId)).emit('chat message', {messageId, text, senderAccountId, receiverAccountId, sender_username, receiver_username})
           console.log('chat message')
           console.log({messageId, text, senderAccountId, receiverAccountId, sender_username, receiver_username})
-          // postData(`http://tbankonline.com/SMUtBank_API/Gateway?Header={"Header": {"serviceName": "sendEmail", "userID": "S9800980I", "PIN": "123456", "OTP": "999999"}}&Content={"Content": {"emailAddress": "${receiver_email}", "emailSubject": "Message from ${sender_username}", "emailBody": "You've received the message '${text}' from ${sender_username}"}}`,'')
+          postData(`http://tbankonline.com/SMUtBank_API/Gateway?Header={"Header": {"serviceName": "sendEmail", "userID": "S9800980I", "PIN": "123456", "OTP": "999999"}}&Content={"Content": {"emailAddress": "${receiver_email}", "emailSubject": "Message from ${sender_username}", "emailBody": "You've received the message '${text}' from ${sender_username}"}}`,'')
           });
         
         })
