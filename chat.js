@@ -75,6 +75,27 @@ module.exports = function(io) {
             });
         })
 
+        socket.on('edit message',async({senderAccountId, receiverAccountId, messageId, new_msg})=>{
+          console.log(`message Id is ${messageId}, sender account Id is ${senderAccountId}, receiver account Id is ${receiverAccountId} and new message is ${new_msg}`)
+          Message.update({text: new_msg}, {
+            where: { messageId: messageId }
+          })
+            .then(num => {
+              if (num == 1) {
+                io.to(String(senderAccountId)).to(String(receiverAccountId)).emit('edit message',{messageId, new_msg});
+              } else {
+                res.send({
+                  message: `Cannot update Message with messageId=${messageId}. Maybe Message was not found or req.body is empty!`
+                });
+              }
+            })
+            .catch(err => {
+              res.status(500).send({
+                message: "Error updating Message with messageId=" + messageId
+              });
+            });
+        })
+
       })
 
       
