@@ -54,7 +54,30 @@ module.exports = function(io) {
         
         })
 
+        socket.on('delete message',async({senderAccountId, receiverAccountId, messageId})=>{
+          console.log(`message Id is ${messageId}, sender account Id is ${senderAccountId}, receiver account Id is ${receiverAccountId}`)
+          Message.destroy({
+            where: { messageId: messageId }
+          })
+            .then(num => {
+              if (num == 1) {
+                io.to(String(senderAccountId)).to(String(receiverAccountId)).emit('delete message',messageId);
+              } else {
+                res.send({
+                  message: `Cannot delete Message with id=${messageId}. Maybe Message was not found!`
+                });
+              }
+            })
+            .catch(err => {
+              res.status(500).send({
+                message: "Could not delete Message with id=" + messageId
+              });
+            });
+        })
+
       })
+
+      
  
 };
 

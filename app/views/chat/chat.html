@@ -57,7 +57,7 @@
                     
                     <ul id="messages">
                       <li v-if="selected" v-for="(messageObj, index) in current_messages" :key="index">
-                        {{ messageObj.text }} <span id='sender'>{{ messageObj.sender }}</span>
+                        {{ messageObj.text }} <span id='sender'>{{ messageObj.sender }}</span> <button class="btn btn-danger btn-sm" v-on:click="delete_msg(messageObj)">Delete Message</button>
                       </li>
                     </ul>
                     
@@ -161,6 +161,17 @@
                   // app.current_messages.push({text:msg.msg,senderAccountId: msg.sender, receiverAccountId: msg.receiver})
                   });
 
+                  socket.on('delete message', function(messageId){
+                    console.log(messageId)
+                    for(const name in app.all_messages['messages']){
+                      for(const message of app.all_messages['messages'][name].messages){
+                        if(message.messageId == messageId){
+                          app.all_messages['messages'][name].messages.splice(app.all_messages['messages'][name].messages.indexOf(message), 1)
+                        }
+                      }
+                    }
+                  })
+
                 }, methods:{
                   sendMessage: function(event){
                     event.preventDefault()
@@ -233,6 +244,9 @@
                         app.selected = app.all_messages['messages'][name].accountId
                       }
                     }
+                },delete_msg:function(messageObj){
+                  console.log(messageObj.messageId, messageObj.senderAccountId, messageObj.receiverAccountId);
+                  socket.emit('delete message', {messageId: messageObj.messageId, receiverAccountId: messageObj.receiverAccountId, senderAccountId: messageObj.senderAccountId});
                 }
                 }
                         });
