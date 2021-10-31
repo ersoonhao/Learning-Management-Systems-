@@ -49,7 +49,7 @@ module.exports = function(io) {
           io.to(String(socket.handshake.auth.accountId)).to(String(receiverAccountId)).emit('chat message', {messageId, text, senderAccountId, receiverAccountId, sender_username, receiver_username})
           console.log('chat message')
           console.log({messageId, text, senderAccountId, receiverAccountId, sender_username, receiver_username})
-          // postData(`http://tbankonline.com/SMUtBank_API/Gateway?Header={"Header": {"serviceName": "sendEmail", "userID": "S9800980I", "PIN": "123456", "OTP": "999999"}}&Content={"Content": {"emailAddress": "${receiver_email}", "emailSubject": "Message from ${sender_username}", "emailBody": "You've received the message '${text}' from ${sender_username}"}}`,'')
+          postData(`http://tbankonline.com/SMUtBank_API/Gateway?Header={"Header": {"serviceName": "sendEmail", "userID": "S9800980I", "PIN": "123456", "OTP": "999999"}}&Content={"Content": {"emailAddress": "${receiver_email}", "emailSubject": "Message from ${sender_username}", "emailBody": "You've received the message '${text}' from ${sender_username}"}}`,'')
           });
         
         })
@@ -71,6 +71,27 @@ module.exports = function(io) {
             .catch(err => {
               res.status(500).send({
                 message: "Could not delete Message with id=" + messageId
+              });
+            });
+        })
+
+        socket.on('edit message',async({senderAccountId, receiverAccountId, messageId, new_msg})=>{
+          console.log(`message Id is ${messageId}, sender account Id is ${senderAccountId}, receiver account Id is ${receiverAccountId} and new message is ${new_msg}`)
+          Message.update({text: new_msg}, {
+            where: { messageId: messageId }
+          })
+            .then(num => {
+              if (num == 1) {
+                io.to(String(senderAccountId)).to(String(receiverAccountId)).emit('edit message',{messageId, new_msg});
+              } else {
+                res.send({
+                  message: `Cannot update Message with messageId=${messageId}. Maybe Message was not found or req.body is empty!`
+                });
+              }
+            })
+            .catch(err => {
+              res.status(500).send({
+                message: "Error updating Message with messageId=" + messageId
               });
             });
         })

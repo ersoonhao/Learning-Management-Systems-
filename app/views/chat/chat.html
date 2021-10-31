@@ -60,7 +60,7 @@
                         {{ messageObj.text }} <span id='sender'>{{ messageObj.sender }}</span> <button class="btn btn-danger btn-sm" v-on:click="delete_msg(messageObj)">Delete Message</button>
                       </li> -->
                       <div>
-                        <message v-if="selected" v-bind:account_id="accountId" v-for="(messageObj, index) in current_messages" :key="index" v-bind:msg_object='messageObj' @delete-msg='delete_msg'></message>
+                        <message v-if="selected" v-bind:account_id="accountId" v-for="(messageObj, index) in current_messages" :key="index" v-bind:msg_object='messageObj' @delete-msg='delete_msg' @finish-edit='finish_edit'></message>
                       </div>
                     </ul>
                     
@@ -132,14 +132,29 @@
             Vue.component('message',{
               data: function () {
                 return {
-                  isSender: false,
+                  ifEdit: false,
+                  new_msg: ''
                 }},
               props: {msg_object: Object, account_id: String},
-              template: `<li>{{msg_object.text}} <span id='sender'>{{msg_object.sender}}</span><button v-if="sender" class="btn btn-danger btn-sm" @click="delete_msg()">Delete Message</button></li>`,
+              template: `<div>
+                <li v-if="!ifEdit">{{msg_object.text}} <span id='sender'>{{msg_object.sender}}</span><button v-if="sender" class="btn btn-danger btn-sm" @click="delete_msg()">Delete Message</button><button v-if="sender" class="btn btn-warning btn-sm" @click="edit_msg()">Edit Message</button></li>
+                <li v-if="ifEdit"><textarea v-model="new_msg"></textarea><button class="btn btn-warning btn-sm" @click="finish_edit()">Finish Edit</button><button class="btn btn-secondary btn-sm" @click="cancel_edit()">Cancel Edit</button></li>
+                </div>`,
               methods:{
                 delete_msg(){
                   console.log(this.msg_object)
                   this.$emit('delete-msg', this.msg_object)
+                },
+                edit_msg(){
+                  this.ifEdit = true
+                  this.new_msg = this.msg_object.text
+                },
+                finish_edit(){
+                  this.ifEdit = false
+                  this.$emit('finish-edit', this.msg_object, this.new_msg)
+                },
+                cancel_edit(){
+                  this.ifEdit = false
                 }
               },
               computed: {
@@ -195,6 +210,17 @@
                       for(const message of app.all_messages['messages'][name].messages){
                         if(message.messageId == messageId){
                           app.all_messages['messages'][name].messages.splice(app.all_messages['messages'][name].messages.indexOf(message), 1)
+                        }
+                      }
+                    }
+                  })
+
+                  socket.on('edit message', function(msg){
+                    console.log(msg.messageId, msg.new_msg)
+                    for(const name in app.all_messages['messages']){
+                      for(const message of app.all_messages['messages'][name].messages){
+                        if(message.messageId == msg.messageId){
+                          message.text = msg.new_msg;
                         }
                       }
                     }
@@ -275,6 +301,9 @@
                 },delete_msg:function(messageObj){
                   console.log(messageObj.messageId, messageObj.senderAccountId, messageObj.receiverAccountId);
                   socket.emit('delete message', {messageId: messageObj.messageId, receiverAccountId: messageObj.receiverAccountId, senderAccountId: messageObj.senderAccountId});
+                },finish_edit:function(messageObj,new_msg){
+                  console.log(messageObj,new_msg)
+                  socket.emit('edit message', {messageId: messageObj.messageId, receiverAccountId: messageObj.receiverAccountId, senderAccountId: messageObj.senderAccountId, new_msg: new_msg});
                 }
                 }
                         });
