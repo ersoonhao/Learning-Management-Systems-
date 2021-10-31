@@ -132,7 +132,7 @@
             Vue.component('message',{
               data: function () {
                 return {
-                  isSender: false,
+                 
                 }},
               props: {msg_object: Object, account_id: String},
               template: `<li>{{msg_object.text}} <span id='sender'>{{msg_object.sender}}</span><button v-if="sender" class="btn btn-danger btn-sm" @click="delete_msg()">Delete Message</button></li>`,
