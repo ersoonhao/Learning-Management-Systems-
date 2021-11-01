@@ -2,6 +2,7 @@ const db = require("../models");
 const { Course, PrerequisiteSet, CoursePrerequisite } = require("../models");
 const Op = db.Sequelize.Op;
 const AccountController = require("./account.controller");
+const sequelize = db.sequelize;
 
 exports.findOneCourse = (req,res)=>{
   const permissions = []
@@ -11,9 +12,29 @@ exports.findOneCourse = (req,res)=>{
     Course.findOne({
       where: {courseId: id},
       include: [ { model: CoursePrerequisite, include: [PrerequisiteSet] } ]
-    }).then(data => {
-      res.send({ "course": data });
-  }).catch(err=>{
+    }).then(async(data) => {
+      var id_title_matching = {}
+    
+      for await(prereq of data['dataValues']['CoursePrerequisites']){
+        
+        for(var j=0; j<prereq['PrerequisiteSets'].length;j++){
+          // console.log(prereq['PrerequisiteSets'][j]['course_fk'])
+          var course_id = prereq['PrerequisiteSets'][j]['course_fk']
+          const [course_info, metadata_course] = await sequelize.query(`SELECT * FROM Courses WHERE courseId=${course_id}`);
+          // console.log(course_info[0]['title'])
+          var title = course_info[0]['title']
+          prereq['PrerequisiteSets'][j]['title'] = title
+          id_title_matching[course_id] = title
+          // console.log(prereq['PrerequisiteSets'][j]['title'])
+        }
+      }
+
+      return {data: data, id_title_matching: id_title_matching}
+  }).then(
+    async(data)=>{
+      res.send({ "course": data.data, "id_title_matching": data.id_title_matching});
+    }
+  ).catch(err=>{
       res.status(500).send({
           message: err.message || "Some error occured obtaining data"
       })
