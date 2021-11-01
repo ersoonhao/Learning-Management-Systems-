@@ -4,19 +4,22 @@ const Op = db.Sequelize.Op;
 const AccountController = require("./account.controller");
 
 exports.findOneCourse = (req,res)=>{
+  const permissions = []
+  AccountController.validAuthNAccess(req, res, permissions).then(session => {
+    const id = req.body.id;
 
-  const id = req.params.id;
-
-  Course.findOne({
-    where: {courseId: id},
-    include: [ { model: CoursePrerequisite, include: [PrerequisiteSet] } ]
-  }).then(data => {
-    res.send({ "course": data });
-}).catch(err=>{
-    res.status(500).send({
-        message: err.message || "Some error occured obtaining data"
-    })
-});
+    Course.findOne({
+      where: {courseId: id},
+      include: [ { model: CoursePrerequisite, include: [PrerequisiteSet] } ]
+    }).then(data => {
+      res.send({ "course": data });
+  }).catch(err=>{
+      res.status(500).send({
+          message: err.message || "Some error occured obtaining data"
+      })
+  });
+  })
+  
 }
 
 exports.create = (req,res) =>{
@@ -134,7 +137,8 @@ exports.create = (req,res) =>{
 }
 
 exports.findAll = (req, res) => {
-  
+  const permissions = []
+  AccountController.validAuthNAccess(req, res, permissions).then(session => {
     Course.findAll()
       .then(data => {
         res.send(data); //change this to render
@@ -145,9 +149,10 @@ exports.findAll = (req, res) => {
             err.message || "Some error occurred while retrieving courses."
         });
       });
-  };
+  })
+};
 
-exports.findAllPost = (req, res) => {
+exports.findAllPostAdmin = (req, res) => {
 
   const permissions = [AccountController.PERM_ADMIN]
     AccountController.validAuthNAccess(req, res, permissions).then(session => { 

@@ -57,12 +57,17 @@
                 data: {
                     session: getUserSession(),
                     menu: initMenu(MENU_SECTIONS_MANAGE_GENERAL, 0, 0),
-                    courses : null
+                    courses : []
                 }, created: () => {
-                    axios.post(API('/course/alladmin'),{session: getUserSession()}).then(response => (
-                        console.log(response.data),
-                        app.courses = response.data
-                        ))}
+                    axios.post(API('/course/all'),{session: getUserSession()}).then(response => {
+                        console.log(response.data)
+                        for(let i = 0; i < response.data.length; i++){
+                            if(response.data[i].active == true){
+                                app.courses.push(response.data[i])
+                            }
+                        }
+                }
+                        )}
                         }
                             );
         </script>

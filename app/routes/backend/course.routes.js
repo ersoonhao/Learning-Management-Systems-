@@ -7,17 +7,17 @@ module.exports = app => {
 
     router.post("/",course.create);
 
-    router.get('/',course.findAll)
+    router.post('/all',course.findAll)
 
-    router.post("/all", course.findAllPost);
+    router.post("/alladmin", course.findAllPostAdmin);
 
     router.get("/allid", course.findAllId);
 
     router.get("/allidtitle", course.findAllIdTitle);
 
-    router.get("/:id", course.findOne);
+    router.get("/", course.findOne);
 
-    router.get("/find/:id",course.findOneCourse);
+    router.post("/find",course.findOneCourse);
 
     router.post("/delete",course.delete)
 
