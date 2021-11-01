@@ -19,7 +19,9 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
-                        <h1>{{title}}</h1>
+                        <h1>{{title}}</h1> 
+                        <button class='button btn btn-danger btn-sm' v-on:click="deleteCourse">Delete Course</button>
+                        <button class='button btn btn-warning btn-sm'>Edit Course</button>
                         <p>Description: {{description}}</p>
                         <p>Active: {{active}}</p>
                         <div v-if="prerequisiteSets.length>1">
@@ -67,7 +69,7 @@
                     id_title_matching: {}
                 },
                 created: () => {
-                    this.courseId
+                    
                 }, mounted () {
     axios
       .post(API(`/course/find`), {session: getUserSession(), id: getParams("courseId")})
@@ -85,6 +87,17 @@
               }
           }
       })
+  },methods:{
+      deleteCourse:function(){
+        axios
+          .post(API(`/course/delete`), {session: getUserSession(), courseId: getParams("courseId")})
+          .then(response =>{
+            console.log(response.data)
+            if(response.data.message == "Course was deleted successfully!"){
+                window.location.href = "/manage/courses"
+            }
+          })
+      }
   }
             });
         </script>
