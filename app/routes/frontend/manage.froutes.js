@@ -12,7 +12,7 @@ module.exports = app => {
         res.sendFile(app._FRONT_END_PATH + "/manage/course/createCourse.html")
     })
 
-    app.get('/manage/course/avail', async(req,res)=>{
+    app.get('/manage/courses/avail', async(req,res)=>{
         res.sendFile(app._FRONT_END_PATH + "/manage/course/availCourses.html")
     })
 
