@@ -6,9 +6,11 @@ const app = express();
 app.use(express.json())
 
 
-// Multer & Upload related 
+// Multer & specifying upload directory  
 const multer  = require('multer')
 const upload = multer({ dest: 'uploads/' })
+
+
 const { uploadFile, getFileStream } = require('./s3')
 // end of Multer 
 
@@ -106,6 +108,22 @@ app.post('/images', upload.single('image'), async (req, res) => {
 
   })
 
+
+  app.post('/pdfs', upload.single('pdf'), async (req, res) => {
+    // req.file is the `avatar` file
+    // req.body will hold the text fields, if there were any
+
+    const file = req.file;
+    // console.log(file); 
+    const result= await uploadFile(file);
+    console.log(result);
+    const description = req.body.description 
+
+    res.status(200).send({pdfPath: `/pdfs/${result.Key}`}); 
+
+  })
+
+  
   // can embedded the image in 
 app.get('/images/:key', (req, res) => {
     console.log(req.params)
@@ -115,6 +133,13 @@ app.get('/images/:key', (req, res) => {
     readStream.pipe(res)
 })
 
+app.get('/pdfs/:key', (req, res) => {
+    console.log(req.params)
+    const key = req.params.key
+    const readStream = getFileStream(key)
+
+    readStream.pipe(res)
+})
 
 
 app.listen(PORT, () => {
