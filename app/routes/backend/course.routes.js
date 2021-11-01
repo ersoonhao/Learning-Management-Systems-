@@ -15,9 +15,9 @@ module.exports = app => {
 
     router.get("/allidtitle", course.findAllIdTitle);
 
-    router.get("/:id", course.findOne);
+    router.get("/", course.findOne);
 
-    router.get("/find/:id",course.findOneCourse);
+    router.post("/find",course.findOneCourse);
 
     router.post("/delete",course.delete)
 
