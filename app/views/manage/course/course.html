@@ -29,14 +29,17 @@
                             <div v-for="set in prerequisiteSets">
                                 <h4>Set {{set.setNumber}}</h4>
                                 <div v-for="PrerequisiteSet in set.PrerequisiteSets">
-                                    <p>Course {{ PrerequisiteSet.courseId }}</p>
+                                    <p>Course {{ PrerequisiteSet.course_fk }}</p>
                                 </div>
                             </div>
                         </div>
-                        <div v-else>
+                        <div v-else-if="prerequisiteSets.length==1">
                             <h3>Prerequisites for this course</h3>
                             <p>You have to complete the below courses to be able to do this course</p>
                             <p v-for="prereq in prerequisiteSets[0].PrerequisiteSets">Course {{prereq.course_fk}}</p>
+                        </div>
+                        <div v-else>
+                            <h3>No prerequisites</h3>
                         </div>
                     </m-div>
                     

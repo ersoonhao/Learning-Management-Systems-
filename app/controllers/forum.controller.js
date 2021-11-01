@@ -31,6 +31,21 @@ exports.getThread = (req, res) => {
   })
 }
 
+//==== Get: /getAllThreads
+exports.getAllThreads = (req, res) => {
+  Thread.findAll()
+    .then(data => {
+      res.send(data)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message ||
+          'Some errors occured while retrieving available threads'
+      })
+    })
+}
+
 //==== POST: /createPost
 exports.createThread = (req, res) => {
   let body = req.body
@@ -83,26 +98,6 @@ exports.createThread = (req, res) => {
       })
     })
 
-  /* //Init post
-  const post = Post.createPost(body.post, body.accountId)
-  if (post == null) {
-    res.status(400).send({
-      message: 'Invalid data format'
-    })
-    return
-  }
-
-  //Write to DB
-  Post.create(post)
-    .then(data => {
-      res.send({ post: data })
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message || 'Some error occured while creating'
-      })
-    }) */
-
   /* SAMPLE JSON BODY REQUEST
         {      
             "thread": {
@@ -113,7 +108,6 @@ exports.createThread = (req, res) => {
                 "acceptedAnswerId": null,
                 "closedDate": null,
                 "threadID": 1,
-                "title": "Test Title",
                 "body": "This is my question",
                 "upVotes": 0,
                 "downVotes": 0
@@ -136,7 +130,7 @@ exports.createAnswer = (req, res) => {
   //TODO: Get permissions
 
   //Init post
-  const post = Post.createPost(body.post, body.accountId, body.threadId,)
+  const post = Post.createPost(body.post, body.accountId, body.threadId)
   if (post == null) {
     res.status(400).send({
       message: 'Invalid data format'

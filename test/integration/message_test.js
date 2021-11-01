@@ -13,7 +13,7 @@ describe('The messsages route and controller',()=>{
   })
 
   it('creates one message through post request without message id',(done)=>{
-    request(app).post('/api/message/create').send({text: 'test message', senderAccountId:1, receiverAccountId:2}).end(
+    request(app).post('/api/message/create').send({text: 'test message', senderAccountId:1, receiverAccountId:2, senderUsername: 'robin', receiverUsername:'soonhao'}).end(
       (err,response)=>{
         assert(response.body.text == "test message")
         assert(response.body.senderAccountId == 1)
@@ -24,9 +24,8 @@ describe('The messsages route and controller',()=>{
   })
 
   it('creates one message through post request with message id',(done)=>{
-    request(app).post('/api/message/create').send({messageId: 9, text: 'test message', senderAccountId:1, receiverAccountId:2}).end(
+    request(app).post('/api/message/create').send({messageId: 13, text: 'test message', senderAccountId:1, receiverAccountId:2, senderUsername: 'robin', receiverUsername:'soonhao'}).end(
       (err,response)=>{
-        assert(response.body.messageId == 9)
         assert(response.body.text == "test message")
         assert(response.body.senderAccountId == 1)
         assert(response.body.receiverAccountId == 2)
@@ -36,7 +35,7 @@ describe('The messsages route and controller',()=>{
   })
 
   it('updates one message through post request with message id',(done)=>{
-    request(app).post('/api/message/update').send({messageId: 9, text: 'update message test'}).end(
+    request(app).post('/api/message/update').send({messageId: 13, text: 'update message test'}).end(
       (err,response)=>{
         console.log(response.body)
         assert(response.body.message == "Message was updated successfully.")
@@ -46,7 +45,7 @@ describe('The messsages route and controller',()=>{
   })
 
   it('deletes message 9 through post request',(done)=>{
-    request(app).post('/api/message/delete').send({messageId: 9}).end(
+    request(app).post('/api/message/delete').send({messageId: 13}).end(
       (err,response)=>{
         assert(response.body.message == "Message was deleted successfully!")
         done()
@@ -70,18 +69,18 @@ describe('The messsages route and controller',()=>{
     (err,response)=>{
       console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==9)
+      assert(response.body[0].messageId == 1)
       done()
     }
     )
   })
 
-  it('retrieves all message sent by account 4 and received by account 7 through post request', (done)=>{
+  it('retrieves all message sent by account 4 or received by account 7 through post request', (done)=>{
     request(app).post('/api/message/pair').send({senderAccountId:4, receiverAccountId: 7}).end(
     (err,response)=>{
       console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==2)
+      assert(response.body.length==4)
       done()
     }
     )
@@ -94,7 +93,7 @@ describe('The messsages route and controller',()=>{
     (err,response)=>{
       console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==3)
+      assert(response.body.length==6)
       done()
     }
     )
@@ -107,10 +106,34 @@ describe('The messsages route and controller',()=>{
     (err,response)=>{
       console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==4)
+      assert(response.body.length==6)
       done()
     }
     )
   })
+
+  // it('retrieves all message by account robin where he is both sender or receiver through post request', (done)=>{
+  //   request(app).post('/api/message/username').send({username: 'robin'}).end(
+  //   (err,response)=>{
+  //     console.log(response.body)
+  //     console.log(response.body['soonhao'].length)
+  //     assert(response.body['soonhao'].length==4)
+  //     assert(response.body['asher'].length==2)
+  //     assert(response.body['varun'].length==2)
+  //     done()
+  //   }
+  //   )
+  // })
+
+  // it('retrieves all message by account soonhao where he is both sender or receiver through post request', (done)=>{
+  //   request(app).post('/api/message/username').send({username: 'soonhao'}).end(
+  //   (err,response)=>{
+  //     console.log(response.body)
+  //     console.log(response.body['robin'].length)
+  //     assert(response.body['robin'].length==4)
+  //     done()
+  //   }
+  //   )
+  // })
 })
 

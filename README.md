@@ -45,7 +45,7 @@ local computer. If you haven't, do that first. You can find instructions in the 
 
         $ node server.js
 
-4. Open http://127.0.0.1:3000/ in a web browser to view your application.
+4. Open http://127.0.0.1:8081/ in a web browser to view your application.
 
 What Do I Do Next?
 ------------------
