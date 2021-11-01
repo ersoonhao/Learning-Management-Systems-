@@ -22,9 +22,11 @@ exports.findOneCourse = (req,res)=>{
           var course_id = prereq['PrerequisiteSets'][j]['course_fk']
           const [course_info, metadata_course] = await sequelize.query(`SELECT * FROM Courses WHERE courseId=${course_id}`);
           // console.log(course_info[0]['title'])
-          var title = course_info[0]['title']
-          prereq['PrerequisiteSets'][j]['title'] = title
-          id_title_matching[course_id] = title
+          if(course_info[0]['title']){
+            var title = course_info[0]['title']
+            prereq['PrerequisiteSets'][j]['title'] = title
+            id_title_matching[course_id] = title
+          }
           // console.log(prereq['PrerequisiteSets'][j]['title'])
         }
       }
@@ -244,7 +246,9 @@ exports.findAllId = (req, res) => {
       });
   };
 
-  exports.delete = (req, res) => {
+exports.delete = (req, res) => {
+  const permissions = [AccountController.PERM_ADMIN]
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
     const courseId = req.body.courseId;
   
     Course.destroy({
@@ -266,7 +270,9 @@ exports.findAllId = (req, res) => {
           message: "Could not delete Course with id=" + courseId
         });
       });
-  };
+    })
+    
+};
 
   exports.coursePrereqDelete = (req, res) => {
     const courseId = req.body.courseId;
