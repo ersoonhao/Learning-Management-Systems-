@@ -29,7 +29,7 @@
                             <div v-for="set in prerequisiteSets">
                                 <h4>Set {{set.setNumber}}</h4>
                                 <div v-for="PrerequisiteSet in set.PrerequisiteSets">
-                                    <p>Course {{ PrerequisiteSet.course_fk }}</p>
+                                    <p>Course {{ PrerequisiteSet.course_fk }}, Title: {{PrerequisiteSet.title}}</p>
                                 </div>
                             </div>
                         </div>
@@ -63,19 +63,28 @@
                     title: null,
                     description: null,
                     active: null,
-                    prerequisiteSets: []},
+                    prerequisiteSets: [],
+                    id_title_matching: {}
+                },
                 created: () => {
                     this.courseId
                 }, mounted () {
     axios
       .post(API(`/course/find`), {session: getUserSession(), id: getParams("courseId")})
-      .then(response => (
-          console.log(response.data.course.CoursePrerequisites),
-          this.title = response.data.course.title,
-          this.description = response.data.course.description,
-          this.active = response.data.course.active,
+      .then(response =>{
+        console.log(response.data.course.CoursePrerequisites)
+          this.title = response.data.course.title
+          this.description = response.data.course.description
+          this.active = response.data.course.active
           this.prerequisiteSets = response.data.course.CoursePrerequisites
-          ))
+          this.id_title_matching = response.data.id_title_matching
+
+          for(var i=0; i<this.prerequisiteSets.length; i++){
+              for(var j=0; j<this.prerequisiteSets[i].PrerequisiteSets.length; j++){
+                  this.prerequisiteSets[i].PrerequisiteSets[j]['title'] = this.id_title_matching[this.prerequisiteSets[i].PrerequisiteSets[j].course_fk]
+              }
+          }
+      })
   }
             });
         </script>
