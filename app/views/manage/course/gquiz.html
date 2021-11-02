@@ -43,7 +43,7 @@
                     template: function(){
                         //API CALL
                         let data = { 
-                            YOUR_DATA: YOUR_DATA,
+                            questionOption: YOUR_DATA,
                             session: getUserSession(),
                         };
                         var xhr = new XMLHttpRequest();
@@ -54,7 +54,8 @@
                             if (xhr.readyState == XMLHttpRequest.DONE) {
                                 if (xhr.status == 200) {
                                     //Successful
-
+                                    
+                                    
                                 }else if(xhr.status == 401){
                                     sessionExpired();
                                     return;

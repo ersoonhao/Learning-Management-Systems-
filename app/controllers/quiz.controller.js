@@ -56,6 +56,10 @@ exports.getQuizPackage = (req, res) => {
     */
 }
 
+function isTrainer(session){
+    
+}
+
 //==== POST: /createQuiz
 exports.createQuiz = (req,res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
