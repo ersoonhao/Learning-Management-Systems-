@@ -7,9 +7,20 @@ module.exports = app => {
 
     router.post("/",course.create);
 
-    router.get("/", course.findAll);
+    router.post('/all',course.findAll)
 
-    router.get("/:id", course.findOne);
+    router.post("/alladmin", course.findAllPostAdmin);
+
+    router.get("/allid", course.findAllId);
+
+    router.get("/allidtitle", course.findAllIdTitle);
+
+    router.get("/", course.findOne);
+
+    router.post("/find",course.findOneCourse);
+
+    router.post("/delete",course.delete)
+
 
     //======== END: CONTROLLER LOGIC ========
     

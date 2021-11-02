@@ -8,9 +8,19 @@ module.exports = app => {
     app.get('/manage/course', async(req,res)=>{
         res.sendFile(app._FRONT_END_PATH + "/manage/course/course.html")
     })
+
+    app.get('/course', async(req,res)=>{
+        res.sendFile(app._FRONT_END_PATH + "/manage/course/course_general.html")
+    })
+
     app.get('/manage/course/create', async(req,res)=>{
         res.sendFile(app._FRONT_END_PATH + "/manage/course/createCourse.html")
     })
+
+    app.get('/manage/courses/avail', async(req,res)=>{
+        res.sendFile(app._FRONT_END_PATH + "/manage/course/availCourses.html")
+    })
+
     app.get('/manage/gquiz', async(req,res)=>{
         res.sendFile(app._FRONT_END_PATH + "/manage/course/class/section/quiz.html")
     })

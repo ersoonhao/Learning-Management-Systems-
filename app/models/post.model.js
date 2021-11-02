@@ -27,11 +27,6 @@ module.exports = (sequelize, Sequelize) => {
       defaultValue: null
     },
 
-    title: {
-      type: Sequelize.STRING(),
-      defaultValue: null
-    },
-
     body: {
       type: Sequelize.STRING()
     },

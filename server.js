@@ -23,6 +23,10 @@ require("./app/routes/backend/quiz.routes")(app);
 require("./app/routes/backend/course.routes")(app);
 require("./app/routes/backend/class.routes")(app);
 require("./app/routes/backend/forum.routes")(app);
+require("./app/routes/backend/message.routes")(app);
+require("./app/routes/backend/prerequisiteSet.routes")(app);
+require("./app/routes/backend/enrollment.routes")(app);
+require("./app/routes/backend/coursePrerequisite.routes")(app);
 
 // port 8081
 

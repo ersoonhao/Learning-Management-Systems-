@@ -17,16 +17,16 @@ module.exports.SESSION_INVALID_SESSION = { username: "robin", sessionId: "00000"
 module.exports.load = () => {
     return db.sequelize.query(`
         INSERT INTO Accounts(accountId, username, email, isAdmin, isTrainer, password, sessionId) VALUES
-        (1, 'robin', 'robin.chong.2019@smu.edu.sg', 1, 1, 'a', '0q8l8'),
-        (2, 'soonhao', 'robin.chong.2019@smu.edu.sg', 1, 0, 'a', 'gee43'),
-        (3, 'john', 'robin.chong.2019@smu.edu.sg', 0, 1, 'a', 'daoi0'),
-        (4, 'varun', 'robin.chong.2019@smu.edu.sg', 0, 1, 'a', 'dsaw2'),
-        (5, 'joshua', 'robin.chong.2019@smu.edu.sg', 0, 1, 'a', 'eka31'),
-        (6, 'alvin', 'robin.chong.2019@smu.edu.sg', 0, 1, 'a', 'pr2o3'),
-        (7, 'asher', 'robin.chong.2019@smu.edu.sg', 0, 0, 'a', 'dsa98'),
-        (8, 'bob', 'robin.chong.2019@smu.edu.sg', 0, 0, 'a', '1cxm2'),
-        (9, 'sean', 'robin.chong.2019@smu.edu.sg', 0, 0, 'a', 'oei21'),
-        (10, 'george', 'robin.chong.2019@smu.edu.sg', 0, 0, 'a', 'csnm2');
+        (1, 'robin', 'john.d.cheong@gmail.com', 1, 1, 'a', '0q8l8'),
+        (2, 'soonhao', 'john.d.cheong@gmail.com', 1, 0, 'a', 'gee43'),
+        (3, 'john', 'john.d.cheong@gmail.com', 0, 1, 'a', 'daoi0'),
+        (4, 'varun', 'john.d.cheong@gmail.com', 0, 1, 'a', 'dsaw2'),
+        (5, 'joshua', 'john.d.cheong@gmail.com', 0, 1, 'a', 'eka31'),
+        (6, 'alvin', 'john.d.cheong@gmail.com', 0, 1, 'a', 'pr2o3'),
+        (7, 'asher', 'john.d.cheong@gmail.com', 0, 0, 'a', 'dsa98'),
+        (8, 'bob', 'john.d.cheong@gmail.com', 0, 0, 'a', '1cxm2'),
+        (9, 'sean', 'john.d.cheong@gmail.com', 0, 0, 'a', 'oei21'),
+        (10, 'george', 'john.d.cheong@gmail.com', 0, 0, 'a', 'csnm2');
 
         INSERT INTO Courses(courseId, title, description, active) VALUES
         (1, 'Physics', 'This course is about Physics', true),
@@ -67,6 +67,31 @@ module.exports.load = () => {
         (16, "reading a file", true, 5),
         (17, "True", true, 6),
         (18, "False", false, 6);
+
+        INSERT INTO Messages(messageId, text, senderAccountId, receiverAccountId) VALUES
+        (1, 'Hi SoonHao, Robin Here', 1, 2),
+        (2, "Hi Robin, WHat's up, I am Soon Hao", 2, 1),
+        (3, 'I love you Soon Hao', 1, 2),
+        (4, 'Hehe me too', 2, 1),
+        (5, 'Hi Varun, Robin Here', 1, 4),
+        (6, "Hi Robin, WHat's up, I am Varun", 4, 1),
+        (7, 'I love you Asher', 1, 7),
+        (8, 'Hehe me too', 7, 1),
+        (9, 'Hi Asher, Varun Here', 4, 7),
+        (10, "Hi Varun, WHat's up, I am Asher", 7, 4),
+        (11, 'I love you Asher', 4, 7),
+        (12, 'Hehe me too', 7, 4);
+
+        INSERT INTO PrerequisiteSets(setNumber, course_fk) VALUES
+        (1, 2),
+        (1, 4),
+        (2, 1),
+        (2, 3);
+
+        INSERT INTO CoursePrerequisites(setNumber, courseId) VALUES
+        (1, 1),
+        (2, 1),
+        (2, 2);
     `)
 };
 

@@ -27,8 +27,7 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Manage Course" subtitle="Overview">
-                        <h1>LIST OF COURSES</h1>
-                        <!-- <a href="/manage/course?courseId=1">Specific course</a> -->
+                        <h1>List Of Courses For Learner and Trainer</h1>
                         <div class="form-outline">
                             <input type="search" id="form1" class="form-control" placeholder="Search by title or id"
                             aria-label="Search" v-model="search_term" v-on:input="searchIdName"/>
@@ -38,21 +37,17 @@
                                 <div class="card-body">
                                   <h5 class="card-title">{{course.title}}</h5>
                                   <p class="card-text">{{course.description}}</p>
-                                  <p v-if="course.active" class="card-text">Course is active</p>
-                                  <p v-else>Course is not active</p>
-                                  <a :href="'/manage/course?courseId=' + course.courseId" class="btn btn-primary">Go to class page</a>
+                                  <a :href="'/course?courseId=' + course.courseId" class="btn btn-primary">Go to class page</a>
                                 </div>
                             </div>
                         </div>
-
                         <div class='courses' v-if='!search_term'>
+                    
                             <div v-for="course in courses" :key="course.courseId" class="card" style="width: 18rem;">
                                 <div class="card-body">
                                   <h5 class="card-title">{{course.title}}</h5>
                                   <p class="card-text">{{course.description}}</p>
-                                  <p v-if="course.active" class="card-text">Course is active</p>
-                                  <p v-else>Course is not active</p>
-                                  <a :href="'/manage/course?courseId=' + course.courseId" class="btn btn-primary">Go to class page</a>
+                                  <a :href="'/course?courseId=' + course.courseId" class="btn btn-primary">Go to class page</a>
                                 </div>
                             </div>
                             
@@ -86,14 +81,18 @@
                     search_term: '',
                     matching_search: []
                 }, created: () => {
-                    axios.post(API('/course/alladmin'),{session: getUserSession()}).then(response => {
+                    axios.post(API('/course/all'),{session: getUserSession()}).then(response => {
                         console.log(response.data)
-                        app.courses = response.data
-                    }
+                        for(let i = 0; i < response.data.length; i++){
+                            if(response.data[i].active == true){
+                                app.courses.push(response.data[i])
+                            }
+                        }
+                }
                         )},methods:{
                             searchIdName:function(){
                                 this.matching_search = []
-                                for(var i=0; i<this.courses.length; i++){
+                                for(var i = 0; i < this.courses.length; i++){
                                     if(this.courses[i].title.toLowerCase().includes(this.search_term.toLowerCase()) || this.courses[i].courseId.toString().includes(this.search_term)){
                                         this.matching_search.push(this.courses[i])
                                     }

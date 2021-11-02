@@ -7,6 +7,9 @@ module.exports.unload = () => {
         DELETE FROM Quizzes;
         DELETE FROM Courses;
         DELETE FROM Accounts;
+        DELETE FROM Messages;
+        DELETE FROM PrerequisiteSets;
+        DELETE FROM CoursePrerequisites;
     `);
 };
 

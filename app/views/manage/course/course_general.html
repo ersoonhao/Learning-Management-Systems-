@@ -20,8 +20,8 @@
                 <div class=container>
                     <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
                         <h1>{{title}}</h1> 
-                        <button class='button btn btn-danger btn-sm' v-on:click="deleteCourse">Delete Course</button>
-                        <button class='button btn btn-warning btn-sm'>Edit Course Information (Title, Description, Active status)</button>
+                        <!-- <button class='button btn btn-danger btn-sm' v-on:click="deleteCourse">Delete Course</button>
+                        <button class='button btn btn-warning btn-sm'>Edit Course Information (Title, Description, Active status)</button> -->
                         <p>Description: {{description}}</p>
                         <p>Active: {{active}}</p>
                         <div v-if="prerequisiteSets.length>1">
@@ -30,7 +30,6 @@
             
                             <div v-for="set in prerequisiteSets">
                                 <h4>Set {{set.setNumber}}</h4>
-                                <button class='button btn btn-danger btn-sm' v-on:click="deleteSet(set.setNumber)">Delete Set</button>
                                 <div v-for="PrerequisiteSet in set.PrerequisiteSets">
                                     <p>Course {{ PrerequisiteSet.course_fk }}, Title: {{PrerequisiteSet.title}}</p>
                                 </div>
@@ -96,16 +95,6 @@
             console.log(response.data)
             if(response.data.message == "Course was deleted successfully!"){
                 window.location.href = "/manage/courses"
-            }
-          })
-      },deleteSet:function(setNumber){
-          console.log(`delete set ${setNumber}`)
-          axios
-          .post(API(`/courseprereq/delete`), {session: getUserSession(), courseId: getParams("courseId"), setNumber: setNumber})
-          .then(response =>{
-            console.log(response.data)
-            if(response.data.message == "set was deleted successfully!"){
-                window.location.href = "/manage/course?courseId="+getParams("courseId")
             }
           })
       }

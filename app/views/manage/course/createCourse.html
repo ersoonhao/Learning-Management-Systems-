@@ -34,35 +34,41 @@
                                 
                                 <!-- form starts here -->
                     
-                                  <div class="field">
+                              
                                     <label class="label">Title</label>
-                                    <div class="control">
                                       <input v-model="form.title" class="input" type="text" placeholder="Text input">
-                                    </div>
-                                  </div>
-                                  <div class="field">
+            
                                     <label class="label">Description</label>
-                                    <div class="control">
                                       <input v-model="form.description" class="input" type="text" placeholder="Text input">
-                                    </div>
-                                  </div>
                                 
+                                    <br>
+                                    <label class="label">Is course active?</label>
+                                    <br>
+                                      <label class="label">Yes</label>
+                                      <input type="radio" v-model="form.active" v-bind:value="true">
+                                      <label class="label">No</label>
+                                      <input type="radio" v-model="form.active" v-bind:value="false">
+
+                                      <br>
+                                      <label class="label">How many course prerequisite sets are there?</label>
+                                      <br>
+
+                                      <div>
+                                        <input v-model="sets" class="input" type="number" placeholder="Number of sets">
+                                      </div>
+
+                                      <div v-if="sets">
+                                      <div v-for="index in parseInt(sets)" :key="index">
+                                        <coursesets v-bind:course-ids="courseIds" my-message="How many courses are in this set?" :set-number="index"></coursesets>
+                                      </div>
+                                      </div>
+                                    
                               </section>
                             </div>
                             <br>
                             <button v-on:click="onSubmit" class="btn btn-primary">Submit Class Creation</button>
-                            <!-- <div class="column">
-                              <section class="section" id="results">
-                                <div class="box">
-                                  <ul>           -->
-                                    <!-- loop through all the `form` properties and show their values -->
-                                    <!-- <li v-for="(item, k) in form">
-                                      <strong>{{ k }}:</strong> {{ item }}
-                                    </li>
-                                  </ul>
-                                </div>
-                              </section>
-                            </div> -->
+                           
+                                    
                             
                         </div>
                         <div class='content' v-if='submitSuccess'>
@@ -71,7 +77,7 @@
                             </h1>
                             <a href='/manage/courses' class="link-primary">Link to all classes</a>
                             <br>
-                            <a :href="'/manage/course?courseId=' + this.id">Link to created class with title: {{form.title}} and description: {{form.description}}</a>
+                            <a :href="'/manage/course?courseId=' + this.newId">Link to created class with title: {{form.title}} and description: {{form.description}}</a>
                         </div>
                     </m-div>
                 </div>
@@ -94,31 +100,90 @@
                     form : {
                         title: '',
                         description: '',
-                        id: ''
-
+                        id: '',
+                        active: null,
                     },
-                    submitSuccess: null
+                    submitSuccess: null,
+                    newId: '',
+                    sets: 0,
+                    courseIds: []
                 },methods: {
                     onSubmit() {
-                        console.log(app.form.title, app.form.description)
-                        var courseObj = {title: app.form.title, description: app.form.description}
+                        // console.log(app.form.title, app.form.description)
+                        // console.log(document.getElementsByClassName('length'))
+                        var lengths_html = document.getElementsByClassName('length')
+                        var lengths = []
+                        for(var i=0; i<lengths_html.length; i++){
+                          // console.log(lengths_html[i].value)
+                          var length_value = lengths_html[i].value
+                          lengths.push(length_value)
+                        }
+                        console.log(lengths)
+
+                        var select_html = document.getElementsByClassName('select_class')
+                        var preReqIds = []
+                        for(var i=0; i<select_html.length; i++){
+                          // console.log(lengths_html[i].value)
+                          var preReqId = select_html[i].options[select_html[i].selectedIndex].value
+                          preReqIds.push(preReqId)
+                        }
+                        console.log(preReqIds)
+
+                        var preReqSets = []
+                        var temp = preReqIds
+                        for(var i=0; i<lengths.length; i++){
+                          var set = temp.splice(0,lengths[i])
+                          preReqSets.push(set)
+                        }
+
+                        // console.log(preReqSets)
+
+                        var courseObj = {title: app.form.title, description: app.form.description, active: app.form.active, prerequisite: preReqSets}
+                        
                         axios.post(API('/course'), courseObj)
                         .then((response) => {
                         console.log(response);
                         if(response.status == 200){
                             this.submitSuccess = true
-                            this.id = response.data.courseId
+                            this.newId = response.data.course_data.courseId
                         }
                         }, (error) => {
                         console.log(error);
                         });
                     }},
                     created: () => {
-
+                      axios.get(API('/course/allidtitle')).then(response => (
+                        console.log(response.data),
+                        app.courseIds = response.data
+                        ))
                 }, mounted () {
     
                 }
             });
+
+            Vue.component('coursesets',
+            {data: function () {
+            return {
+              coursesPerSet: 0,
+              courses: []
+            }},created:()=>{
+              
+            }, 
+            props: {myMessage:String, courseIds: Array, setNumber:Number},
+            template: `<div class='blockOfSets'><h3>Set {{setNumber}}</h3><span>{{ myMessage }}</span><br><input v-model="coursesPerSet" class="length" type="number" placeholder="Number of sets">
+            <div v-if="coursesPerSet">
+            <div v-for="index in parseInt(coursesPerSet)" :key="index">
+            <span>indicate which course by id</span><br>
+            <select class='select_class' required>
+            <option :value="null">Please select one</option>
+            <option v-for="IdTitle in courseIds" v-bind:value="IdTitle.courseId">{{IdTitle.courseId}}, {{IdTitle.title}}</option>
+            </select>
+            </div>
+            </div>
+            </div>
+            `
+            })
+
         </script>
     </body>
 </html>

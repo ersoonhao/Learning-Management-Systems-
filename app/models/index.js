@@ -17,14 +17,13 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     }
 });
 
-async function connect(){
+async function connect() {
     try {
         await sequelize.authenticate();
         await sequelize.sync();
 
         console.log('Connection to the database has been established successfully.');
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error.message);
         process.exit(-1);
     }
@@ -55,8 +54,8 @@ db.Account = require("./account.model")(sequelize, Sequelize);
 
 //Course
 db.Course = require("./course.model")(sequelize, Sequelize);
-
-db.Class = require("./class.model")(sequelize, Sequelize);
+db.PrerequisiteSet = require("./prerequisiteSet.model")(sequelize, Sequelize);
+db.CoursePrerequisite = require("./coursePrerequisite.model")(sequelize, Sequelize);
 
 //Class
 db.Class = require("./class.model")(sequelize, Sequelize);
@@ -73,6 +72,11 @@ db.Thread = require("./thread.model")(sequelize, Sequelize);
 db.Post = require("./post.model")(sequelize, Sequelize);
 db.Comment = require("./comment.model")(sequelize, Sequelize);
 
+//Enrollment
+db.Enrollment = require("./enrollment.model")(sequelize, Sequelize);
+
+//Chat
+db.Message = require("./message.model")(sequelize, Sequelize);
 
 // ================== ASSOCIATIONS ======================
 /*
@@ -84,17 +88,35 @@ Sample - https://sequelize.org/v3/docs/associations/
     City.belongsTo(Country, {foreignKey: 'countryCode', targetKey: 'isoCode'});
 */
 
-db.Quiz.hasMany(db.Question, {foreignKey: 'quizId', sourceKey: 'quizId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.Question.belongsTo(db.Quiz, {foreignKey: 'quizId', targetKey: 'quizId'});
+db.Quiz.hasMany(db.Question, { foreignKey: 'quizId', sourceKey: 'quizId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Question.belongsTo(db.Quiz, { foreignKey: 'quizId', targetKey: 'quizId' });
 
-db.Question.hasMany(db.QuestionOption, {foreignKey: 'questionId', sourceKey: 'questionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.QuestionOption.belongsTo(db.Question, {foreignKey: 'questionId', targetKey: 'questionId'});
+db.Question.hasMany(db.QuestionOption, { foreignKey: 'questionId', sourceKey: 'questionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.QuestionOption.belongsTo(db.Question, { foreignKey: 'questionId', targetKey: 'questionId' });
 
-db.Thread.hasMany(db.Post, {foreignKey: 'threadId', sourceKey: 'threadId', onDelete: 'cascade' });
-db.Post.belongsTo(db.Thread, {foreignKey: 'threadId', targetKey: 'threadId'});
+db.Thread.hasMany(db.Post, { foreignKey: 'threadId', sourceKey: 'threadId', onDelete: 'cascade' });
+db.Post.belongsTo(db.Thread, { foreignKey: 'threadId', targetKey: 'threadId' });
 
-db.Post.hasMany(db.Comment, {foreignKey: 'postId', sourceKey: 'postId', onDelete: 'cascade' });
-db.Comment.belongsTo(db.Post, {foreignKey: 'postId', targetKey: 'postId'});
+db.Post.hasMany(db.Comment, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'cascade' });
+db.Comment.belongsTo(db.Post, { foreignKey: 'postId', targetKey: 'postId' });
+
+db.Course.hasMany(db.CoursePrerequisite, { foreignKey: 'courseId', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.CoursePrerequisite.belongsTo(db.Course, { foreignKey: 'courseId', targetKey: 'courseId' });
+
+db.Course.hasMany(db.Class, { foreignKey: 'courseId', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Class.belongsTo(db.Course, { foreignKey: 'courseId', targetKey: 'courseId' });
+
+db.CoursePrerequisite.hasMany(db.PrerequisiteSet, { foreignKey: 'setNumber', sourceKey: 'setNumber', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.PrerequisiteSet.belongsTo(db.CoursePrerequisite, { foreignKey: 'setNumber', targetKey: 'setNumber' });
+
+db.Class.hasMany(db.PrerequisiteSet, { foreignKey: 'course_fk', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.PrerequisiteSet.belongsTo(db.Class, { foreignKey: 'course_fk', targetKey: 'courseId' });
+
+db.Account.hasMany(db.Enrollment, { foreignKey: 'accountId', sourceKey: 'accountId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Enrollment.belongsTo(db.Account, { foreignKey: 'accountId', targetKey: 'accountId' });
+
+db.Class.hasMany(db.Enrollment, { foreignKey: 'classId', sourceKey: 'classId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Enrollment.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
 
 // ================== SYNC ==================
 db.sequelize.sync();
