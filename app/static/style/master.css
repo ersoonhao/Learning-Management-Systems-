@@ -431,6 +431,9 @@ a.zingoWidgetLink, a.zingoWidgetLink:hover, a.zingoWidgetLink:link, a.zingoWidge
     display: inline-block;
     color: #e74c3c;
 }
+.lms-text-alert{
+    color: #e74c3c;
+}
 .lms-input input[type="radio"], .lms-input input[type="checkbox"]{
     margin-top: 20px;
     margin-right: 15px;

@@ -71,7 +71,10 @@ exports.login = (req, res) => {
                 res.send({
                     status: 200,
                     message: "Successful login",
-                    session: { username: username, sessionId: sid }
+                    session: { 
+                        username: username, sessionId: sid, 
+                        isAdmin: data.isAdmin, isTrainer: data.isTrainer 
+                    }
                 });
             } else {
                 res.send({
