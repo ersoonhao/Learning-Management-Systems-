@@ -19,11 +19,33 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
-                        <h1>{{title}}</h1> 
-                        <button class='button btn btn-danger btn-sm' v-on:click="deleteCourse">Delete Course</button>
-                        <button class='button btn btn-warning btn-sm'>Edit Course Information (Title, Description, Active status)</button>
-                        <p>Description: {{description}}</p>
-                        <p>Active: {{active}}</p>
+                        <h1 v-if='!editing'>{{title}}</h1> 
+
+                        <div v-if='editing' class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroup-sizing">Title</span>
+                            </div>
+                            <input v-model='newTitle' type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                        </div>
+                        <div v-if='editing' class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroup-sizing">Description</span>
+                            </div>
+                            <input v-model='newDescription' type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                        </div>
+
+                        <div v-if='editing'>
+                        <label class="form-check-label" for="flexRadioDefault1">Active</label>
+                        <input class="form-check-input"  type="radio" v-model="newActive" v-bind:value="true" name="flexRadioDefault" id="flexRadioDefault1">
+                        <label class="form-check-label" for="flexRadioDefault2">Inactive</label>
+                        <input class="form-check-input" type="radio" v-model="newActive" v-bind:value="false" name="flexRadioDefault" id="flexRadioDefault2">
+                        </div>
+
+                        <p v-if='!editing'>Description: {{description}}</p>
+                        <p v-if='!editing'>Active: {{active}}</p>
+                        <button v-if='!editing' class='button btn btn-danger btn-sm' v-on:click="deleteCourse">Delete Course</button>
+                        <button v-if='!editing' class='button btn btn-warning btn-sm' v-on:click='editStart'>Edit Course Information (Title, Description, Active status)</button>
+                        <button v-if='editing' class='button btn btn-warning btn-sm' v-on:click='completeEdit'>Complete Edit</button>
                         <div v-if="prerequisiteSets.length>1">
                             <h3>Prerequisites for this course</h3>
                             <p>You have to complete either of the below sets of courses</p>
@@ -67,7 +89,11 @@
                     description: null,
                     active: null,
                     prerequisiteSets: [],
-                    id_title_matching: {}
+                    id_title_matching: {},
+                    editing: false,
+                    newTitle: '',
+                    newDescription: '',
+                    newActive: null,
                 },
                 created: () => {
                     
@@ -108,8 +134,23 @@
                 window.location.href = "/manage/course?courseId="+getParams("courseId")
             }
           })
+      },editStart:function(){
+          app.editing = true
+          app.newTitle = app.title
+          app.newDescription = app.description
+          app.newActive = app.active
+          console.log('edit started')
+      },completeEdit:function(){
+          app.editing=false;
+          axios.post(API(`/course/update`), {session: getUserSession(), courseId: getParams("courseId"), title: app.newTitle, description: app.newDescription, active: app.newActive})
+          .then(response =>{
+            console.log(response.data)
+            if(response.data.message == "Course was updated successfully."){
+                window.location.href = "/manage/course?courseId="+getParams("courseId")
+            }
+          })
       }
-  }
+    },
             });
         </script>
     </body>
