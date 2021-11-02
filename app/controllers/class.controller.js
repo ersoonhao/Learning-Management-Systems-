@@ -6,7 +6,7 @@ const Op = db.Sequelize.Op;
 exports.create = (req,res) => {
     if(!req.body.class.maxCapacity || !req.body.class.classStartDateTime || !req.body.class.classEndDateTime || !req.body.class.selfEnrollStartDateTime || !req.body.class.selfEnrollEndDateTime){
         res.status(400).send({
-            messgae: "Content cannot be empty! Fill it up"
+            message: "Content cannot be empty! Fill it up"
         });
         return;
     }

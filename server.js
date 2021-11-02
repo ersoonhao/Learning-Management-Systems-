@@ -22,6 +22,11 @@ require("./app/routes/backend/account.routes")(app);
 require("./app/routes/backend/quiz.routes")(app);
 require("./app/routes/backend/course.routes")(app);
 require("./app/routes/backend/class.routes")(app);
+require("./app/routes/backend/forum.routes")(app);
+require("./app/routes/backend/message.routes")(app);
+require("./app/routes/backend/prerequisiteSet.routes")(app);
+require("./app/routes/backend/enrollment.routes")(app);
+require("./app/routes/backend/coursePrerequisite.routes")(app);
 
 // port 8081
 
@@ -65,12 +70,20 @@ if(reset_db){
     db.sequelize.sync({ alter: true });
 }
 
+// ================ CHAT ================
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+require("./chat")(io)
+
 
 // ================ SETUP ================
 const PORT = process.env.PORT || 8081; //Set port, listen for requests
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
-module.exports = app;
+module.exports = server;
