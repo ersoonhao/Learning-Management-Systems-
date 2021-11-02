@@ -34,6 +34,30 @@ module.exports.load = () => {
         (3, 'Chemistry', 'This course is about Chemistry',  false),
         (4, 'Mathematics', 'This course is about Mathematics',  true);
 
+        INSERT INTO Classes(classId, selfEnrollStartDateTime, selfEnrollEndDateTime, classStartDateTime, classEndDateTime, maxCapacity, courseId, trnAccountId, adminAccountId) VALUES
+        (1, '2021-07-01', '2021-08-30', '2021-09-01', '2022-01-01', 50, 1, 3, 1),
+        (2, '2021-08-01', '2021-09-30', '2021-10-01', '2022-02-01', 50, 1, 3, 1),
+        (3, '2021-09-01', '2021-10-30', '2021-11-01', '2022-03-01', 50, 2, 3, 1),
+        (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 2, 3, 1);
+
+        INSERT INTO enrollments(enrollmentId, isSelfEnrollment, isEnrolled, dateCreated, enrolledDate, coursePassed, isWithdrawn, accountId, classId) VALUES
+        (1, 1, 0, '2021-07-01', NULL, NULL, NULL, 7, 1),
+        (2, 1, 0, '2021-07-01', NULL, NULL, NULL, 8, 1),
+        (3, 1, 0, '2021-07-01', NULL, NULL, NULL, 9, 1),
+        (4, 0, 1, '2021-07-01', NULL, NULL, NULL, 10, 1),
+        (5, 1, 0, '2021-07-01', NULL, NULL, NULL, 7, 2),
+        (6, 1, 0, '2021-07-01', NULL, NULL, NULL, 8, 2),
+        (7, 1, 0, '2021-07-01', NULL, NULL, NULL, 9, 2),
+        (8, 0, 1, '2021-07-01', NULL, NULL, NULL, 10, 2),
+        (9, 1, 0, '2021-07-01', NULL, NULL, NULL, 7, 3),
+        (10, 1, 0, '2021-07-01', NULL, NULL, NULL, 8, 3),
+        (11, 1, 0, '2021-07-01', NULL, NULL, NULL, 9, 3),
+        (12, 0, 1, '2021-07-01', NULL, NULL, NULL, 10, 3),
+        (13, 1, 0, '2021-07-01', NULL, NULL, NULL, 7, 4),
+        (14, 1, 0, '2021-07-01', NULL, NULL, NULL, 8, 4),
+        (15, 1, 0, '2021-07-01', NULL, NULL, NULL, 9, 4),
+        (16, 0, 1, '2021-07-01', NULL, NULL, NULL, 10, 4);
+
         INSERT INTO Quizzes(quizId, type, title, instructions, durationInMins, passScoreRequirement, active, courseId, sectionId) VALUES
         (1, 'UG', "Section 1 Quiz", "Please complete the quiz within the time limit", 10, null, false, 1, 1),
         (2, 'G', "Final Quiz", "Please complete the quiz within the time limit", 10, 0.7, false, 1, 1),

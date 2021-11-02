@@ -19,7 +19,7 @@ exports.getQuizPackage = (req, res) => {
                 })
                 return
             }
-
+            
             //TODO: Check if learner is enrolled & has completed previous sections
             
             //Get quiz data

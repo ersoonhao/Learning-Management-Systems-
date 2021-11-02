@@ -104,6 +104,56 @@ exports.login = (req, res) => {
     */
 }
 
+//==== POST: /getTrainers
+exports.getTrainers = (req, res) => {
+    const permissions = [this.PERM_ADMIN]
+    this.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
+            Account.findAll({
+                where: { isTrainer: 1 },
+            }).then(data => {
+                res.send({ "trainers": data });
+            }).catch(err=>{
+                res.status(500).send({
+                    message: err.message || "Some error occured obtaining data"
+                })
+            });
+        }
+    })
+    /* SAMPLE JSON BODY REQUEST
+    > POST | localhost:8081/api/account/getTrainers
+        {
+            "session": {
+                "username": "robin",
+                "sessionId": "0q8l8"
+            }
+        }
+    */
+}
+//==== POST: /getLearners
+exports.getLearners = (req, res) => {
+    const permissions = [this.PERM_ADMIN, this.PERM_TRAINER]
+    this.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
+            Account.findAll().then(data => {
+                res.send({ "learners": data });
+            }).catch(err=>{
+                res.status(500).send({
+                    message: err.message || "Some error occured obtaining data"
+                })
+            });
+        }
+    })
+    /* SAMPLE JSON BODY REQUEST
+    > POST | localhost:8081/api/account/getLearners
+        {
+            "session": {
+                "username": "robin",
+                "sessionId": "0q8l8"
+            }
+        }
+    */
+}
 
 // Create and Save a new account
 exports.create = (req, res) => {
