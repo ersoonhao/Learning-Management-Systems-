@@ -21,6 +21,7 @@ module.exports = app => {
 
     router.post("/delete",course.delete)
 
+    router.post('/update', course.update)
 
     //======== END: CONTROLLER LOGIC ========
     

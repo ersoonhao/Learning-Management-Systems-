@@ -298,3 +298,31 @@ exports.delete = (req, res) => {
         });
       });
   };
+
+  exports.update = (req, res) => {
+    const permissions = [AccountController.PERM_ADMIN]
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
+      const courseId = req.body.courseId;
+  
+    Course.update(req.body, {
+      where: { courseId: courseId }
+    })
+      .then(num => {
+        if (num == 1) {
+          res.send({
+            message: "Course was updated successfully."
+          });
+        } else {
+          res.send({
+            message: `Cannot update Course with id=${courseId}. Maybe Course was not found or req.body is empty!`
+          });
+        }
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Error updating Course with id=" + courseId
+        });
+      });
+    })
+    
+  };
