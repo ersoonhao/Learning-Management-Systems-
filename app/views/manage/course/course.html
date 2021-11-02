@@ -21,7 +21,7 @@
                     <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
                         <h1>{{title}}</h1> 
                         <button class='button btn btn-danger btn-sm' v-on:click="deleteCourse">Delete Course</button>
-                        <button class='button btn btn-warning btn-sm'>Edit Course</button>
+                        <button class='button btn btn-warning btn-sm'>Edit Course Information (Title, Description, Active status)</button>
                         <p>Description: {{description}}</p>
                         <p>Active: {{active}}</p>
                         <div v-if="prerequisiteSets.length>1">
