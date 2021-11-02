@@ -84,13 +84,13 @@ module.exports.load = () => {
 
         INSERT INTO PrerequisiteSets(setNumber, course_fk) VALUES
         (1, 2),
-        (1, 3),
         (1, 4),
         (2, 1),
         (2, 3);
 
         INSERT INTO CoursePrerequisites(setNumber, courseId) VALUES
         (1, 1),
+        (2, 1),
         (2, 2);
     `)
 };

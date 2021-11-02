@@ -17,7 +17,7 @@ describe('The prerequisites route and controller',()=>{
     (err,response)=>{
       console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==5)
+      assert(response.body.length==4)
       done()
     }
     )
@@ -41,13 +41,11 @@ describe('The prerequisites route and controller',()=>{
     (err,response)=>{
       console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==3)
+      assert(response.body.length==2)
       assert(response.body[0].setNumber===1)
       assert(response.body[0].course_fk===2)
       assert(response.body[1].setNumber===1)
-      assert(response.body[1].course_fk===3)
-      assert(response.body[2].setNumber===1)
-      assert(response.body[2].course_fk===4)
+      assert(response.body[1].course_fk===4)
       done()
     }
     )
