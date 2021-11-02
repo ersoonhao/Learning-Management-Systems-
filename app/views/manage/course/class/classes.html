@@ -18,8 +18,38 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Classes" :subtitle="'For Course ID: '+courseId">
-                        <h1>SHOW LIST OF CLASSES</h1>
-                        <a href="/manage/class?classId=1">Specific class</a>
+                        <h3 class="mb-3 lms-font-semibold" style="float: left;">All classes</h1>
+                        <a class="btn btn-secondary" style="float: right;" :href="'/manage/class?courseId='+courseId">Create Class</a>
+                        <!-- <a href="/manage/class?classId=1">Specific class</a> -->
+                        <div style="clear: both"></div>
+                        <table class="table">
+                            <thead class="lms-table-head lms-font-semibold">
+                                <tr>
+                                    <th>Class Id</th> 
+                                    <th>Trainer</th>
+                                    <th>Current Capacity</th>
+                                    <th>Max Capacity</th>
+                                    <th>Enrollment Start Date</th>
+                                    <th>Enrollment End Date</th>
+                                    <th>Class Start Date</th>
+                                    <th>Class End Date</th>
+                                    <td></td>
+                                 </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="c in classes">
+                                    <td>{{ c.classId }}</td>
+                                    <td>{{ c.Account.username }}</td>
+                                    <td>-</td>
+                                    <td>{{ c.maxCapacity }}</td> 
+                                    <td>{{ dateFormat(c.selfEnrollStartDateTime) }}</td>
+                                    <td>{{ dateFormat(c.selfEnrollEndDateTime) }}</td>
+                                    <td>{{ dateFormat(c.classStartDateTime) }}</td>
+                                    <td>{{ dateFormat(c.classEndDateTime) }}</td>
+                                    <td><a class="btn btn-primary" :href="'/manage/class?classId='+c.classId">View class</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </m-div>
                 </div>
             </div>
@@ -37,11 +67,49 @@
                 data: {
                     session: getUserSession(),
                     courseId: getParams("courseId"),
-                    menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 1)
+                    menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 1),
+                    classes: []
                 }, created: () => {
-                    this.courseId
-                }, methods: {
+                    //API CALL
+                    let data = { 
+                            courseId: getParams("courseId"),
+                            session: getUserSession(),
+                    };
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", API("/class/getCourseClasses"), true);
+                    xhr.setRequestHeader("Content-Type", "application/json");
                     
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == XMLHttpRequest.DONE) {
+                            if (xhr.status == 200) {
+                                //Successful
+                                let dataJSON = JSON.parse(xhr.responseText);
+                                let classes = dataJSON.classes;
+                                if(classes != null){
+                                    app.classes = classes
+                                }else{
+                                    alert("Unable to obtain classes")
+                                }
+                            }else if(xhr.status == 401){
+                                sessionExpired();
+                                return;
+                            } else {
+                                alert("An error has occured - " + xhr.status);
+                                console.log(xhr.responseText);
+                                return;
+                            }
+                        }
+                    };
+                    xhr.send(JSON.stringify(data));
+                    console.log(data);
+                }, methods: {
+                    dateFormat: (dStr) => {
+                        let d = new Date(Date.parse(dStr));
+                        if(!d){
+                            return "?";
+                        }
+                        return [(d.getDate(), d.getMonth()+1), d.getFullYear()].join('/')
+                    }
                 }
             });
         </script>
