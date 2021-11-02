@@ -17,20 +17,18 @@
         <div id="app">
             <lms-head :session="session"></lms-head>
             <div class="content">
-                <div class=container>
+                <div class="container">
                     <m-div :menu="menu">
-                        <h1>Unanswered</h1>
-                        <!-- <a href="/manage/course?courseId=1">Specific course</a> -->
-                        <div class='threads'>
-                    
+                        <div class='col-md-9 px-5'>
+                             <h1>Unresolved</h1>
                             <div v-for="thread in threads" :key="thread.threadId" class="card">
                                 <div class="card-body"> 
                                     <div class="container">
                                         <div class="row">
-                                            <div class="col-10">
+                                            <div class="col-sm-8">
                                                 <h5 class="card-title">{{thread.title}} </h5>
                                             </div>
-                                            <div class="col">
+                                            <div class="col-sm">
                                                 <div v-if="thread.acceptedAnswerId === null">
                                                     <span class="badge rounded-pill bg-danger"> Unresolved </span>
                                                 </div>

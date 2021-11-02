@@ -52,8 +52,7 @@ module.exports = (sequelize, Sequelize) => {
     function isValidThread(thread, isNew) {
         if (
             (isNew && thread.threadId != null) ||
-            (isNew && thread.title == null) ||
-            (!isNew && thread.accountId == null)
+            (isNew && thread.title == null)
         ) {
             console.log('Thread Error: 1')
             return false

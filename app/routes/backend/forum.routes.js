@@ -11,6 +11,8 @@ module.exports = app => {
     router.get("/getAllThreads", post.getAllThreads);
     router.get("/getAllUnansweredThreads", post.getAllUnansweredThreads);
     router.post("/createThread", post.createThread);
+    router.post("/checkOwnership", post.checkOwnership);
+    router.post("/updateThread", post.updateThread);
     router.post("/createAnswer", post.createAnswer);
     router.post("/updatePost", post.updatePost);
     router.post("/deletePost", post.deletePost);

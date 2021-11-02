@@ -116,25 +116,25 @@ exports.createThread = (req, res) => {
     })
 
     /* SAMPLE JSON BODY REQUEST
-          {      
-              "thread": {
-                  "title": "Test Title"
-              },
-              "post": {
-                  "postType": 1,
-                  "acceptedAnswerId": null,
-                  "closedDate": null,
-                  "threadID": 1,
-                  "body": "This is my question",
-                  "upVotes": 0,
-                  "downVotes": 0
-              }, 
-              "session": {
-                  "username": "robin",
-                  "sessionId": "0q8l8"
-              }
-          }
-      */
+                {      
+                    "thread": {
+                        "title": "Test Title"
+                    },
+                    "post": {
+                        "postType": 1,
+                        "acceptedAnswerId": null,
+                        "closedDate": null,
+                        "threadID": 1,
+                        "body": "This is my question",
+                        "upVotes": 0,
+                        "downVotes": 0
+                    }, 
+                    "session": {
+                        "username": "robin",
+                        "sessionId": "0q8l8"
+                    }
+                }
+            */
 }
 
 //==== POST: /createAnswer
@@ -175,6 +175,104 @@ exports.createAnswer = (req, res) => {
                 })
         }
     })
+}
+
+//==== POST: /checkOwnership
+exports.checkOwnership = (req, res) => {
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
+        //Access control
+        if (session) {
+            let body = req.body
+            if (!body) {
+                res.status(400).send({
+                    message: 'Request body is empty!'
+                })
+                return
+            }
+            //Access control
+            //TODO: Get permissions
+            console.log('ID: ' + session.accountId)
+
+            //Init post
+
+            if (body.ownerId == session.accountId) {
+                res.send({
+                    isOwner: true
+                })
+            } else {
+                res.send({
+                    isOwner: false
+                })
+            }
+        }
+    })
+}
+
+//==== POST: /updateThread
+exports.updateThread = (req, res) => {
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
+        //Access control
+        if (session) {
+            let body = req.body
+            if (!body) {
+                res.status(400).send({
+                    message: 'Request body is empty!'
+                })
+                return
+            }
+            //Access control
+            //TODO: Get permissions
+
+            //Init quiz
+            const thread = Thread.updateThread(body.thread)
+            if (thread == null) {
+                res.status(400).send({
+                    message: 'Invalid thread data format'
+                })
+                return
+            }
+            console.log(`Updating: ${thread}`)
+
+            //Update DB
+            let id = thread.threadId
+
+            Thread.update(thread, {
+                    where: { threadId: id }
+                })
+                .then(num => {
+                    if (num == 1) {
+                        res.send({
+                            message: 'Successfully updated.'
+                        })
+                    } else {
+                        res.send({
+                            message: `Cannot update with id=${id}.`
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.status(500).send({
+                        message: 'Error updating with id=' + id
+                    })
+                })
+        }
+    })
+
+    /* SAMPLE JSON BODY REQUEST
+                {
+                    "thread": {
+                        "threadId": 1,
+                        "acceptedAnswerId": 1,                 
+                    }, 
+                    "session": {
+                      "username": "robin",
+                      "sessionId": "0q8l8"
+                  }
+                }
+            */
 }
 
 //==== POST: /updatePost
@@ -230,20 +328,20 @@ exports.updatePost = (req, res) => {
     })
 
     /* SAMPLE JSON BODY REQUEST
-          {
-              "post": {
-                  "postType": 1,
-                  "acceptedAnswerId": null,
-                  "parentID": 1,
-                  "closedDate": null,
-                  "title": "Test Title",
-                  "body": "This is my question",
-                  "upVotes": 10,
-                  "downVotes": 1
-                  
-              }, 
-          }
-      */
+                {
+                    "post": {
+                        "postType": 1,
+                        "acceptedAnswerId": null,
+                        "parentID": 1,
+                        "closedDate": null,
+                        "title": "Test Title",
+                        "body": "This is my question",
+                        "upVotes": 10,
+                        "downVotes": 1
+                        
+                    }, 
+                }
+            */
 }
 
 //==== POST: /deletePost
@@ -293,10 +391,10 @@ exports.deletePost = (req, res) => {
     })
 
     /* SAMPLE JSON BODY REQUEST
-          {
-              "postId": 1
-          }
-      */
+                {
+                    "postId": 1
+                }
+            */
 }
 
 //=== POST: /addComment
@@ -342,18 +440,18 @@ exports.addComment = (req, res) => {
         })
 
         /* SAMPLE JSON BODY REQUEST
-                  {
-                      "comment": {
-                          "commentId": 1,
-                          "body": "This is a comment",
-                      }, 
-                      "postId": 1,
-                      "session": {
-                          "username": "robin",
-                          "sessionId": "0q8l8"
-                      }
-                  }
-              */
+                                    {
+                                        "comment": {
+                                            "commentId": 1,
+                                            "body": "This is a comment",
+                                        }, 
+                                        "postId": 1,
+                                        "session": {
+                                            "username": "robin",
+                                            "sessionId": "0q8l8"
+                                        }
+                                    }
+                                */
     }
     //==== POST: /updateComment
 exports.updateComment = (req, res) => {
@@ -408,18 +506,18 @@ exports.updateComment = (req, res) => {
     })
 
     /* SAMPLE JSON BODY REQUEST
-          {
-              "comment": {
-                  "commentId": 1,
-                  "body": "This is an updated comment",
-              }, 
-              "postId": 1,
-              "session": {
-                  "username": "robin",
-                  "sessionId": "0q8l8"
-              }
-          }
-      */
+                {
+                    "comment": {
+                        "commentId": 1,
+                        "body": "This is an updated comment",
+                    }, 
+                    "postId": 1,
+                    "session": {
+                        "username": "robin",
+                        "sessionId": "0q8l8"
+                    }
+                }
+            */
 }
 
 //==== POST: /deleteComment
@@ -462,10 +560,10 @@ exports.deleteComment = (req, res) => {
             })
         })
         /* SAMPLE JSON BODY REQUEST
-                        {
-                            "commentId": 1
-                        }
-                    */
+                                          {
+                                              "commentId": 1
+                                          }
+                                      */
 }
 
 /* exports.getQuizPackage = (req, res) => {
