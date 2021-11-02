@@ -38,6 +38,8 @@
                                 <div class="card-body">
                                   <h5 class="card-title">{{course.title}}</h5>
                                   <p class="card-text">{{course.description}}</p>
+                                  <p v-if="course.active" class="card-text">Course is active</p>
+                                  <p v-else>Course is not active</p>
                                   <a :href="'/manage/course?courseId=' + course.courseId" class="btn btn-primary">Go to class page</a>
                                 </div>
                             </div>
@@ -48,6 +50,8 @@
                                 <div class="card-body">
                                   <h5 class="card-title">{{course.title}}</h5>
                                   <p class="card-text">{{course.description}}</p>
+                                  <p v-if="course.active" class="card-text">Course is active</p>
+                                  <p v-else>Course is not active</p>
                                   <a :href="'/manage/course?courseId=' + course.courseId" class="btn btn-primary">Go to class page</a>
                                 </div>
                             </div>
