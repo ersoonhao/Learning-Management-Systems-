@@ -136,15 +136,12 @@ function registerSession(session){
     window.sessionStorage.setItem("isAdmin", session.isAdmin);
     window.sessionStorage.setItem("isTrainer", session.isTrainer);
 }
-function logout(){
-    sessionExpired();
-    window.location = "/login";
-}
 function sessionExpired(){
     window.sessionStorage.removeItem("username");
     window.sessionStorage.removeItem("sessionId");
     window.sessionStorage.removeItem("isAdmin");
     window.sessionStorage.removeItem("isTrainer");
+    window.location = "/login";
 }
 
 
@@ -167,7 +164,7 @@ Vue.component("lms-head", {
                 <li v-show="session" class="dropdown show">
                     <a id="userMenu" href="#" role="button" data-toggle="dropdown" class="dropdown-toggle"><i class="fa fa-user"></i></a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="javascript:logout()" style="color: black">Logout</a>
+                        <a class="dropdown-item" href="javascript:sessionExpired()" style="color: black">Logout</a>
                     </div>
                     </li>
                 <li v-show="!session"><a href="/login">Login</a></li>
