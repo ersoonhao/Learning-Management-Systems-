@@ -239,7 +239,7 @@ Vue.component("hs-course-item", {
         </a>
     `, methods: {
         dateFormat: (d) => {
-            return [(d.getMonth()+1), d.getDate(), d.getFullYear()].join('/')
+            return [d.getDate(), (d.getMonth()+1), d.getFullYear()].join('/')
         }
     }
 })

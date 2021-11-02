@@ -108,7 +108,7 @@
                         if(!d){
                             return "?";
                         }
-                        return [(d.getDate(), d.getMonth()+1), d.getFullYear()].join('/')
+                        return [d.getDate(), (d.getMonth()+1), d.getFullYear()].join('/')
                     }
                 }
             });
