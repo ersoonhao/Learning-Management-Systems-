@@ -172,7 +172,12 @@
             props: {myMessage:String, courseIds: Array, setNumber:Number},
             template: `<div class='blockOfSets'><h3>Set {{setNumber}}</h3><span>{{ myMessage }}</span><br><input v-model="coursesPerSet" class="length" type="number" placeholder="Number of sets">
             <div v-if="coursesPerSet">
-            <div v-for="index in parseInt(coursesPerSet)" :key="index"><span>indicate which course by id</span><br><select class='select_class' required><option :value="null">Please select one</option><option v-for="IdTitle in courseIds" v-bind:value="IdTitle.courseId">{{IdTitle.courseId}}, {{IdTitle.title}}</option></select>
+            <div v-for="index in parseInt(coursesPerSet)" :key="index">
+            <span>indicate which course by id</span><br>
+            <select class='select_class' required>
+            <option :value="null">Please select one</option>
+            <option v-for="IdTitle in courseIds" v-bind:value="IdTitle.courseId">{{IdTitle.courseId}}, {{IdTitle.title}}</option>
+            </select>
             </div>
             </div>
             </div>
