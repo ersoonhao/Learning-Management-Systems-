@@ -92,7 +92,7 @@ function PROCESS_login(vueInstance, username, password, result){ //result(succes
                 let dataJSON = JSON.parse(xhr.responseText);
                 let session = dataJSON.session;
                 if(session != null){
-                    registerSession(session.username, session.sessionId);
+                    registerSession(session);
                     result(vueInstance, true);
                 }else{
                     result(vueInstance, false, "An error has occured");
@@ -115,6 +115,12 @@ function _getSession(){
     let isAdmin = window.sessionStorage.getItem("isAdmin");
     let isTrainer = window.sessionStorage.getItem("isTrainer");
     if(username != null && sessionId != null){
+        console.log({
+            username: username,
+            sessionId: sessionId,
+            isAdmin: isAdmin,
+            isTrainer: isTrainer
+        });
         return {
             username: username,
             sessionId: sessionId,
