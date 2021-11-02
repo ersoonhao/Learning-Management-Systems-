@@ -1,22 +1,144 @@
-_SESSION = {
-    accountId: "U100001",
-    username: "robin",
-    isAdmin: true,
-    isTrainer: true,
-    dateCreated: new Date(),
-    dateUpdated: new Date(),
-    sessionId: "0q8l8"
-}
-function getUserSession(){
-    return _SESSION
-}
+$(document).ready(function(){
+    setupLogin();
+    $('.dropdown-toggle').dropdown();
+    if(window.location.pathname == "/login"){
+        $('#ctnLoginPrompt').modal('show');
+    }
+});
 
+function getUserSession(){
+    let _SESSION = _getSession();
+    if (!_SESSION){
+        window.location = "/login"
+        return
+    }
+    return _SESSION;
+}
+function setupLogin(){
+    let loginPrompt = document.createElement("div");
+    loginPrompt.innerHTML = renderLoginPrompt();
+    document.body.appendChild(loginPrompt);
+    
+    new Vue({
+        el: "#ctnLoginPrompt",
+        data: {
+            username: "",
+            password: "",
+            message: "Kindly enter your username and password",
+            messageClass: ""
+        },
+        methods: {
+            enter: function(event){
+                event.preventDefault();
+                if(event.keyCode === 13){
+                    this.login();
+                }
+            },
+            login: function(_){
+                console.log("Login", this.username, this.password);
+                if(this.username.length == 0 ||  this.password.length == 0){
+                    this.message = "Kindly enter your username and password";
+                    this.messageClass = "lms-text-alert";
+                    return
+                }
+                PROCESS_login(this, this.username, this.password, function(instance, success, message){
+                    if(success){
+                        instance.message = "Okay, give us a moment..";
+                        instance.messageClass = "";
+                        window.location = "/";
+                    }else{
+                        instance.message = message;
+                        instance.messageClass = "lms-text-alert";
+                        instance.password = "";
+                    }
+                });
+            }
+        }
+    });
+}
+function renderLoginPrompt(){
+    return `
+        <div class="modal fade" id="ctnLoginPrompt" data-backdrop="static" data-keyboard="false" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content" style="padding: 25px;">
+                    <div style="text-align: right;">
+                        <button type="button" class="btn" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    <h4 class="lms-font-bold">Welcome back</h4>
+                    <p v-text="message" :class="messageClass"></p>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input class="form-control tbLoginField" placeholder="Username" v-model="username">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="password" class="form-control tbLoginField" placeholder="Password" v-model="password" @keyup="enter">
+                    </div>
+                    <div class="form-group">
+                        <input type="button" class="btn bg-highlight text-white" value="Login" style="padding: 10px 40px;" @click="login"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+function PROCESS_login(vueInstance, username, password, result){ //result(success, msg)
+    let json = { "username": username, "password": password }
+    const jsonString = JSON.stringify(json)
+    console.log(jsonString);
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            let response = JSON.parse(xhr.responseText);
+            if(response.status == 200){
+                let dataJSON = JSON.parse(xhr.responseText);
+                let session = dataJSON.session;
+                if(session != null){
+                    registerSession(session.username, session.sessionId);
+                    result(vueInstance, true);
+                }else{
+                    result(vueInstance, false, "An error has occured");
+                }
+            }else{
+                result(vueInstance, false, response.message);
+            }
+        }
+    }
+    xhr.open("POST", API("/account/login"), true); //"http://localhost:8005/login"
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(jsonString);
+}
 function API(path){
     return "/api" + path;
 }
-
+function _getSession(){
+    let username = window.sessionStorage.getItem("username");
+    let sessionId = window.sessionStorage.getItem("sessionId");
+    let isAdmin = window.sessionStorage.getItem("isAdmin");
+    let isTrainer = window.sessionStorage.getItem("isTrainer");
+    if(username != null && sessionId != null){
+        return {
+            username: username,
+            sessionId: sessionId,
+            isAdmin: isAdmin,
+            isTrainer: isTrainer
+        };
+    }
+    return null;
+}
+function registerSession(session){
+    window.sessionStorage.setItem("username", session.username);
+    window.sessionStorage.setItem("sessionId", session.sessionId);
+    window.sessionStorage.setItem("isAdmin", session.isAdmin);
+    window.sessionStorage.setItem("isTrainer", session.isTrainer);
+}
+function logout(){
+    sessionExpired();
+    window.location = "/login";
+}
 function sessionExpired(){
-    _SESSION = null;
+    window.sessionStorage.removeItem("username");
+    window.sessionStorage.removeItem("sessionId");
+    window.sessionStorage.removeItem("isAdmin");
+    window.sessionStorage.removeItem("isTrainer");
 }
 
 
@@ -36,7 +158,12 @@ Vue.component("lms-head", {
                 <li v-show="session"><a href="/chat">Chat</a></li>
                 <li v-show="session"><a href="/mycourses">My Courses</a></li>
                 <li v-show="session && (session.isAdmin || session.isTrainer)"><a href="/manage">Manage</a></li>
-                <li v-show="session"><a href="javascript: loadUserProfile();"><i class="fa fa-user"></i></a></li>
+                <li v-show="session" class="dropdown show">
+                    <a id="userMenu" href="#" role="button" data-toggle="dropdown" class="dropdown-toggle"><i class="fa fa-user"></i></a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="javascript:logout()" style="color: black">Logout</a>
+                    </div>
+                    </li>
                 <li v-show="!session"><a href="/login">Login</a></li>
             </ul>
         </header>
@@ -47,7 +174,7 @@ Vue.component("zingo-hs", {
     template: `
         <div class="lms-wrapper horizontal-wrapper">
             <div class="clearfix">
-                <h6 class="title listing-font-bold" v-text="title"></h6>
+                <h6 class="title lms-font-bold" v-text="title"></h6>
                 <div class="action float-right d-block"><a :href="href">View all</a></div>
             </div>
             <div class="content">
