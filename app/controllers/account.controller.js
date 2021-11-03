@@ -32,7 +32,15 @@ exports.validAuthNAccess = (req, res, requiredPerms) => {
         q.sessionId = req.body.session.sessionId
         Account.findOne({ where: q }).then(data => {
             if(data == null){
-                res.status(401).send({ message: failed })
+                Account.findOne({ where: { username: q.username, sessionId: q.sessionId } }).then(data => {
+                    if(data == null){
+                        res.status(401).send({ message: failed })
+                    }else{
+                        res.status(403).send({ message: failed })
+                    }
+                }).catch(err => {
+                    res.status(401).send({ message: failed })
+                })
                 return
             }
             resolve(data);
@@ -135,7 +143,9 @@ exports.getLearners = (req, res) => {
     const permissions = [this.PERM_ADMIN, this.PERM_TRAINER]
     this.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if(session){
-            Account.findAll().then(data => {
+            Account.findAll({
+                order: ['username']
+            }).then(data => {
                 res.send({ "learners": data });
             }).catch(err=>{
                 res.status(500).send({

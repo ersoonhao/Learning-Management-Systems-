@@ -168,7 +168,7 @@ Vue.component("lms-head", {
                 <li v-show="session"><a href="/chat">Chat</a></li>
                 <li v-show="session"><a href="/mycourses">My Courses</a></li>
                 <li v-show="session"><a href="/forum">Forum</a></li>
-                <li v-show="session && (session.isAdmin || session.isTrainer)"><a href="/manage">Manage</a></li>
+                <li v-show="session != null && (session.isAdmin || session.isTrainer)"><a href="/manage">Manage</a></li>
                 <li v-show="session" class="dropdown show">
                     <a id="userMenu" href="#" role="button" data-toggle="dropdown" class="dropdown-toggle"><i class="fa fa-user"></i></a>
                     <div class="dropdown-menu">

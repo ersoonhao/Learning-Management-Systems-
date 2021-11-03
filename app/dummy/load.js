@@ -41,22 +41,22 @@ module.exports.load = () => {
         (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 2, 3, 1);
 
         INSERT INTO enrollments(enrollmentId, isSelfEnrollment, isEnrolled, dateCreated, enrolledDate, coursePassed, isWithdrawn, accountId, classId) VALUES
-        (1, 1, 0, '2021-07-01', NULL, NULL, NULL, 7, 1),
-        (2, 1, 0, '2021-07-01', NULL, NULL, NULL, 8, 1),
-        (3, 1, 0, '2021-07-01', NULL, NULL, NULL, 9, 1),
-        (4, 0, 1, '2021-07-01', NULL, NULL, NULL, 10, 1),
-        (5, 1, 0, '2021-07-01', NULL, NULL, NULL, 7, 2),
-        (6, 1, 0, '2021-07-01', NULL, NULL, NULL, 8, 2),
-        (7, 1, 0, '2021-07-01', NULL, NULL, NULL, 9, 2),
-        (8, 0, 1, '2021-07-01', NULL, NULL, NULL, 10, 2),
-        (9, 1, 0, '2021-07-01', NULL, NULL, NULL, 7, 3),
-        (10, 1, 0, '2021-07-01', NULL, NULL, NULL, 8, 3),
-        (11, 1, 0, '2021-07-01', NULL, NULL, NULL, 9, 3),
-        (12, 0, 1, '2021-07-01', NULL, NULL, NULL, 10, 3),
-        (13, 1, 0, '2021-07-01', NULL, NULL, NULL, 7, 4),
-        (14, 1, 0, '2021-07-01', NULL, NULL, NULL, 8, 4),
-        (15, 1, 0, '2021-07-01', NULL, NULL, NULL, 9, 4),
-        (16, 0, 1, '2021-07-01', NULL, NULL, NULL, 10, 4);
+        (1, 1, 0, '2021-07-01', NULL, 0, 0, 7, 1),
+        (2, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 1),
+        (3, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 1),
+        (4, 0, 1, '2021-07-01', NULL, 0, 0, 10, 1),
+        (5, 1, 0, '2021-07-01', NULL, 0, 0, 7, 2),
+        (6, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 2),
+        (7, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 2),
+        (8, 0, 1, '2021-07-01', NULL, 0, 0, 10, 2),
+        (9, 1, 0, '2021-07-01', NULL, 0, 0, 7, 3),
+        (10, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 3),
+        (11, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 3),
+        (12, 0, 1, '2021-07-01', NULL, 0, 0, 10, 3),
+        (13, 1, 0, '2021-07-01', NULL, 0, 0, 7, 4),
+        (14, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 4),
+        (15, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 4),
+        (16, 0, 1, '2021-07-01', NULL, 0, 0, 10, 4);
 
         INSERT INTO Quizzes(quizId, type, title, instructions, durationInMins, passScoreRequirement, active, courseId, sectionId) VALUES
         (1, 'UG', "Section 1 Quiz", "Please complete the quiz within the time limit", 10, null, false, 1, 1),
