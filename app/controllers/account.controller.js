@@ -143,7 +143,9 @@ exports.getLearners = (req, res) => {
     const permissions = [this.PERM_ADMIN, this.PERM_TRAINER]
     this.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if(session){
-            Account.findAll().then(data => {
+            Account.findAll({
+                order: ['username']
+            }).then(data => {
                 res.send({ "learners": data });
             }).catch(err=>{
                 res.status(500).send({
