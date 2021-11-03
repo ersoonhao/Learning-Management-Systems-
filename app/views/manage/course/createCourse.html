@@ -48,6 +48,9 @@
                                       <input type="radio" v-model="form.active" v-bind:value="true">
                                       <label class="label">No</label>
                                       <input type="radio" v-model="form.active" v-bind:value="false">
+                                    <br>
+                                    <label class="label">Course Image Link</label>
+                                    <input v-model="form.image" class="input" type="text" placeholder="Text input">
 
                                       <br>
                                       <label class="label">How many course prerequisite sets are there?</label>
@@ -102,6 +105,7 @@
                         description: '',
                         id: '',
                         active: null,
+                        image: ''
                     },
                     submitSuccess: null,
                     newId: '',
@@ -138,7 +142,7 @@
 
                         // console.log(preReqSets)
 
-                        var courseObj = {title: app.form.title, description: app.form.description, active: app.form.active, prerequisite: preReqSets}
+                        var courseObj = {session: app.session, title: app.form.title, description: app.form.description, active: app.form.active, prerequisite: preReqSets, courseImage: app.form.image}
                         
                         axios.post(API('/course'), courseObj)
                         .then((response) => {

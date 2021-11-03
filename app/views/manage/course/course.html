@@ -20,7 +20,7 @@
                 <div class=container>
                     <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
                         <h1 v-if='!editing'>{{title}}</h1> 
-
+                        <img v-if='!editing' :src="img_url" alt="pic" style="width:800px;height:300px;">
                         <div v-if='editing' class="input-group">
                             <div class="input-group-prepend">
                               <span class="input-group-text" id="inputGroup-sizing">Title</span>
@@ -33,7 +33,12 @@
                             </div>
                             <input v-model='newDescription' type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
                         </div>
-
+                        <div v-if='editing' class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroup-sizing">Image URL</span>
+                            </div>
+                            <input v-model='new_img_url' type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                        </div>
                         <div v-if='editing'>
                         <label class="form-check-label" for="flexRadioDefault1">Active</label>
                         <input class="form-check-input"  type="radio" v-model="newActive" v-bind:value="true" name="flexRadioDefault" id="flexRadioDefault1">
@@ -127,7 +132,9 @@
                     newDescription: '',
                     newActive: null,
                     adding: null,
-                    courseIds: []
+                    courseIds: [],
+                    img_url: '',
+                    new_img_url: '',
                 },
                 created: () => {
                     
@@ -138,12 +145,13 @@
           console.log(response)
           
           if(response.status == 200){
-            console.log(response.data.course.CoursePrerequisites)
+          console.log(response.data.course.CoursePrerequisites)
           this.title = response.data.course.title
           this.description = response.data.course.description
           this.active = response.data.course.active
           this.prerequisiteSets = response.data.course.CoursePrerequisites
           this.id_title_matching = response.data.id_title_matching
+          this.img_url = response.data.course.courseImage
 
           for(var i=0; i<this.prerequisiteSets.length; i++){
               for(var j=0; j<this.prerequisiteSets[i].PrerequisiteSets.length; j++){
@@ -184,10 +192,11 @@
           app.newTitle = app.title
           app.newDescription = app.description
           app.newActive = app.active
+          app.new_img_url = app.img_url
           console.log('edit started')
       },completeEdit:function(){
           app.editing=false;
-          axios.post(API(`/course/update`), {session: getUserSession(), courseId: getParams("courseId"), title: app.newTitle, description: app.newDescription, active: app.newActive})
+          axios.post(API(`/course/update`), {session: getUserSession(), courseId: getParams("courseId"), title: app.newTitle, description: app.newDescription, active: app.newActive, courseImage: app.new_img_url})
           .then(response =>{
             console.log(response.data)
             if(response.data.message == "Course was updated successfully."){
