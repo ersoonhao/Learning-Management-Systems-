@@ -78,6 +78,43 @@ exports.isEligibleForCourse = (req, res) => {
     })
 }
 
+//==== POST: /getMyEnrollmentByCourse
+exports.getMyEnrollmentByCourse = (req, res) => {
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
+        //Access control
+        if (session) {
+            let body = req.body
+            if (!body) {
+                res.status(400).send({
+                    message: 'Request body is empty!'
+                })
+                return
+            }
+            const courseId = body.courseId
+            Course.findOne({
+                where: { courseId: courseId },
+                include: {
+                    model: Class,
+                    include: {
+                        model: Enrollment,
+                        where: { accountId: session.accountId }
+                    }
+                }
+            }).then(data => {
+                res.send({
+                    "data": data
+                });
+            }).catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occured obtaining data"
+                })
+            });
+        }
+    })
+}
+
+
 
 //==== POST: /findEnrollmentbyId
 exports.findEnrollmentbyId = (req, res) => {
@@ -110,6 +147,7 @@ exports.findEnrollmentbyId = (req, res) => {
 
 }
 
+
 //==== POST: /getMyEnrolledClasses
 exports.getMyEnrolledClasses = (req, res) => {
     const permissions = []
@@ -125,17 +163,32 @@ exports.getMyEnrolledClasses = (req, res) => {
 
             const accountId = session.accountId
             let stmt
+            if (body.classId) {
+                if (body.type == 'ongoing') {
+                    stmt = { classId: body.classId, accountId: accountId, coursePassed: null, isWithdrawn: false, isEnrolled: true }
+                } else if (body.type == 'passed') {
+                    stmt = { classId: body.classId, accountId: accountId, coursePassed: true }
+                } else if (body.type == 'failed') {
+                    stmt = { classId: body.classId, accountId: accountId, coursePassed: false }
+                } else if (body.type == 'withdrawn') {
+                    stmt = { classId: body.classId, accountId: accountId, isWithdrawn: true }
+                } else {
+                    stmt = { classId: body.classId, accountId: accountId }
+                }
 
-            if (body.type == 'ongoing') {
-                stmt = { accountId: accountId, coursePassed: null, isWithdrawn: false, isEnrolled: true }
-            } else if (body.type == 'passed') {
-                stmt = { accountId: accountId, coursePassed: true }
-            } else if (body.type == 'failed') {
-                stmt = { accountId: accountId, coursePassed: false }
-            } else if (body.type == 'withdrawn') {
-                stmt = { accountId: accountId, isWithdrawn: true }
             } else {
-                stmt = { accountId: accountId }
+
+                if (body.type == 'ongoing') {
+                    stmt = { accountId: accountId, coursePassed: null, isWithdrawn: false, isEnrolled: true }
+                } else if (body.type == 'passed') {
+                    stmt = { accountId: accountId, coursePassed: true }
+                } else if (body.type == 'failed') {
+                    stmt = { accountId: accountId, coursePassed: false }
+                } else if (body.type == 'withdrawn') {
+                    stmt = { accountId: accountId, isWithdrawn: true }
+                } else {
+                    stmt = { accountId: accountId }
+                }
             }
 
             Enrollment.findAll({
@@ -152,8 +205,6 @@ exports.getMyEnrolledClasses = (req, res) => {
                 })
         }
     })
-
-
 
     /* SAMPLE JSON BODY REQUEST
               {      
@@ -406,27 +457,33 @@ function _updateEnrollment(body, res) {
 
 //==== POST: /deleteEnrollment
 exports.deleteEnrollment = (req, res) => {
-    const enrollmentId = req.body.enrollmentId
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if (session) {
+            const enrollmentId = req.body.enrollmentId
 
-    Enrollment.destroy({
-            where: { enrollmentId: enrollmentId }
-        })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: 'Course was deleted successfully!'
+            Enrollment.destroy({
+                    where: { enrollmentId: enrollmentId }
                 })
-            } else {
-                res.send({
-                    message: `Cannot delete Enrollment with id=${enrollmentId}. Maybe Enrollment was not found!`
+                .then(num => {
+                    if (num == 1) {
+                        res.send({
+                            message: 'Course was deleted successfully!'
+                        })
+                    } else {
+                        res.send({
+                            message: `Cannot delete Enrollment with id=${enrollmentId}. Maybe Enrollment was not found!`
+                        })
+                    }
                 })
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: 'Could not delete Enrollment with id=' + enrollmentId
-            })
-        })
+                .catch(err => {
+                    res.status(500).send({
+                        message: 'Could not delete Enrollment with id=' + enrollmentId
+                    })
+                })
+        }
+    })
+
 
     /* SAMPLE JSON BODY REQUEST
               {      
