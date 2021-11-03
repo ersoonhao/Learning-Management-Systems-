@@ -43,26 +43,32 @@ exports.isEligibleForCourse = (req, res) => {
                 if (data.CoursePrerequisites.length == 0) {
                     eligible = true
                 } else {
-                    reqset = data.CoursePrerequisites[0].PrerequisiteSets
-                    reqset.forEach(set => {
-                        if (!prereqDict[set.dataValues.setNumber]) {
-                            prereqDict[set.dataValues.setNumber] = true
+                    data.CoursePrerequisites.forEach(set => {
+                        if (!prereqDict[set.setNumber]) {
+                            prereqDict[set.setNumber] = {}
                         }
-                        if (set.dataValues.Class == null) {
-                            prereqDict[set.dataValues.setNumber] = false
-                        }
+                        set.PrerequisiteSets.forEach(prereq => {
+                            prereqDict[set.setNumber][prereq.course_fk] = !(prereq.Class == null)
+                        });
                     });
-                    console.log(prereqDict)
-                }
-                for (var key in prereqDict) {
-                    var value = prereqDict[key];
-                    if (value) {
-                        eligible = true
+                    var temp = true
+                    for (var setNum in prereqDict) {
+                        for (var course in prereqDict[setNum]) {
+                            if (!prereqDict[setNum][course]) {
+                                temp = false
+                            }
+                        }
+                        if (temp) {
+                            eligible = true
+                        }
+                        // do something with "key" and "value" variables
                     }
-                    // do something with "key" and "value" variables
-                }
 
-                res.send({ "eligible": eligible });
+                }
+                res.send({
+                    "eligible": eligible,
+                    "prereqDict": prereqDict
+                });
             }).catch(err => {
                 res.status(500).send({
                     message: err.message || "Some error occured obtaining data"
@@ -117,7 +123,7 @@ exports.getMyEnrolledClasses = (req, res) => {
                 return
             }
 
-            const accountId = body.accountId
+            const accountId = session.accountId
             let stmt
 
             if (body.type == 'ongoing') {
