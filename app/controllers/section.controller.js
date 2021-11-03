@@ -42,6 +42,48 @@ function isSectionTrainer (Account, SectionId){
 
 
 
+
+
+
+
+
+// Create and Save a Section 
+exports.addCourseMaterial = (req, res) => {
+    // Validate request
+    if (!req.body.title || !req.body.subtitle ) {
+      res.status(400).send({
+        message: "Content can not be empty!"
+      });
+      return;
+    }
+  
+  
+    const section = {
+      username: req.body.username,
+      email: req.body.email,
+      title: req.body.title,
+      title: req.body.subtitle,
+      order: req.body.order
+    };
+    console.log(section)
+    
+    Section.create(section)
+      .then(data => {
+        res.status(200).send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while creating the Section"
+        });
+      });
+  };
+  
+
+
+
+
+
 exports.getSectionPackage = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
