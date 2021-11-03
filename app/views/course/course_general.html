@@ -63,7 +63,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="c in classes">
+                    <tr v-for="c in classes" :key="c.classId">
                       <td>{{ c.classId }}</td>
                       <td>{{ c.Account.username }}</td>
                       <td>-</td>
@@ -72,12 +72,16 @@
                       <td>{{ dateFormat(c.selfEnrollEndDateTime) }}</td>
                       <td>{{ dateFormat(c.classStartDateTime) }}</td>
                       <td>{{ dateFormat(c.classEndDateTime) }}</td>
-                      <td v-if="applied == c.classId">
+                      <td v-if="Date.now() < new Date(c.selfEnrollStartDateTime) || Date.now() > new Date(c.selfEnrollEndDateTime)">
+                        <a class="btn btn-secondary">Closed</a>
+                      </td>
+                      <td v-else-if="applied == c.classId">
                         <a class="btn btn-primary" @click="withdraw()">Withdraw</a>
                       </td>
                       <td v-else-if="applied == null">
                         <a class="btn btn-primary" @click="enroll(c.classId)">Apply</a>
                       </td>
+                      
                     </tr>
                   </tbody>
                 </table>
@@ -176,7 +180,6 @@
             }, (error) => {
               console.log(error);
             });
-           
             let data = {
               courseId: getParams("courseId"),
               session: getUserSession(),
@@ -223,7 +226,6 @@
             }, (error) => {
               console.log(error);
             });
-            
           },
           withdraw() {
             console.log(app.enrollmentId);
@@ -241,7 +243,6 @@
             }, (error) => {
               console.log(error);
             });
-            
           }
         }
       });
