@@ -5,7 +5,7 @@ const AccountController = require("./account.controller");
 const sequelize = db.sequelize;
 
 exports.findOneCourse = (req,res)=>{
-  const permissions = []
+  const permissions = [AccountController.PERM_ADMIN]
   AccountController.validAuthNAccess(req, res, permissions).then(session => {
     const id = req.body.id;
 
@@ -46,6 +46,8 @@ exports.findOneCourse = (req,res)=>{
 }
 
 exports.create = (req,res) =>{
+  const permissions = [AccountController.PERM_ADMIN]
+  AccountController.validAuthNAccess(req, res, permissions).then(session => {
     if(!req.body){
         res.status(400).send({
             message: "Request body is empty!"
@@ -58,7 +60,8 @@ exports.create = (req,res) =>{
         courseId : req.body.courseId,
         title: req.body.title, 
         description: req.body.description, 
-        active: req.body.active
+        active: req.body.active,
+        courseImage: req.body.courseImage
     }
     Course.create(course)
     .then(courseData=>{
@@ -108,7 +111,8 @@ exports.create = (req,res) =>{
       const course = {
         title: req.body.title, 
         description: req.body.description, 
-        active: req.body.active
+        active: req.body.active,
+        courseImage: req.body.courseImage
     }
     Course.create(course)
     .then(courseData=>{
@@ -156,7 +160,7 @@ exports.create = (req,res) =>{
     })
     }
 
-    
+  })
 }
 
 exports.findAll = (req, res) => {
