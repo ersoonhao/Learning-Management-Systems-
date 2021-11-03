@@ -245,25 +245,25 @@
                     app.newMessage = '';
                 }
                   }, 
-                  connect: function(event){
-                  // console.log(app.session.username)
-                  // var username = app.session.username
+                  // connect: function(event){
+                  // // console.log(app.session.username)
+                  // // var username = app.session.username
                   
-                  const username_sessionId = event.target.value.split("_")
-                  console.log(username_sessionId)
-                  var sessionObj = {session:{username: username_sessionId[0], sessionId: username_sessionId[1]}}
-                  console.log(sessionObj)
-                  axios
-                  .post(API(`/message/all/session`), sessionObj)
-                  .then(response=>{
-                    console.log(response.data)
-                    app.all_messages = response.data
-                    app.all_users = Object.keys(app.all_messages['messages'])
-                    var accountId = String(response.data.accountId)
-                    app.accountId = accountId
-                    socket.auth = {accountId}
-                    socket.connect()
-                  })
+                  // const username_sessionId = event.target.value.split("_")
+                  // console.log(username_sessionId)
+                  // var sessionObj = {session:{username: username_sessionId[0], sessionId: username_sessionId[1]}}
+                  // console.log(sessionObj)
+                  // axios
+                  // .post(API(`/message/all/session`), sessionObj)
+                  // .then(response=>{
+                  //   console.log(response.data)
+                  //   app.all_messages = response.data
+                  //   app.all_users = Object.keys(app.all_messages['messages'])
+                  //   var accountId = String(response.data.accountId)
+                  //   app.accountId = accountId
+                  //   socket.auth = {accountId}
+                  //   socket.connect()
+                  // })
                   // app.accountId = event.target.value
                   // var accountId = app.accountId
                   // axios
@@ -276,7 +276,7 @@
                   // socket.auth = {accountId};
                   // socket.connect();
 
-                },
+                // },
                 updateSelect:function(e){
                   // console.log('hi')
                   // console.log(e)
