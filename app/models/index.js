@@ -60,7 +60,12 @@ db.CoursePrerequisite = require("./coursePrerequisite.model")(sequelize, Sequeli
 //Class
 db.Class = require("./class.model")(sequelize, Sequelize);
 
+
+//Course Progress 
+db.CourseProgress = require("./courseprogress.model")(sequelize, Sequelize);
+
 //Section
+db.Section=require("./section.model")(sequelize,Sequelize);
 
 //Quiz
 db.Quiz = require("./quiz.model")(sequelize, Sequelize);
