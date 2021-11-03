@@ -54,7 +54,7 @@ exports.createClass = (req,res) => {
                 "selfEnrollStartDateTime": "2021-11-03",
                 "selfEnrollEndDateTime": "2021-11-04",
                 "maxCapacity": 50,
-                "trnAccountId": 1,
+                "trnAccountId": 1
             },
             "session": {
                 "username": "robin",
