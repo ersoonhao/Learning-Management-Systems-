@@ -62,9 +62,16 @@
                             <h3>Prerequisites for this course</h3>
                             <p>You have to complete the below courses to be able to do this course</p>
                             <p v-for="prereq in prerequisiteSets[0].PrerequisiteSets">Course {{prereq.course_fk}}, Title: {{prereq.title}}</p>
+                            <button class='button btn btn-danger btn-sm' v-on:click="deleteSet(prerequisiteSets[0].setNumber)">Delete Set</button>
                         </div>
                         <div v-else>
                             <h3>No prerequisites</h3>
+                        </div>
+                        <button v-if='!adding' class='button btn btn-success btn-sm' v-on:click="startAdd">Add Prerequisite</button>
+                        <div v-if='adding'>
+                            <h3>Adding a prerequisite to this course.</h3>
+                            <coursesets v-bind:course-ids="courseIds" my-message="How many courses are in this set?"></coursesets>
+                            <button class='button btn btn-success btn-sm' v-on:click="addPrerequisite">Complete Prerequisite adding</button>
                         </div>
                     </m-div>
                     
@@ -79,6 +86,31 @@
         <script src="/js/lms/main/master.js"></script>
         <script src="/js/lms/main/manage.js"></script>
         <script>
+
+            Vue.component('coursesets',
+            {data: function () {
+            return {
+              coursesPerSet: 0,
+              courses: []
+            }},created:()=>{
+              
+            }, 
+            props: {myMessage:String, courseIds: Array, setNumber:Number},
+            template: `<div class='blockOfSets'>
+            <span>{{ myMessage }}</span><br><input v-model="coursesPerSet" class="length" type="number" placeholder="Number of sets">
+            <div v-if="coursesPerSet">
+            <div v-for="index in parseInt(coursesPerSet)" :key="index">
+            <span>indicate which course by id</span><br>
+            <select class='select_class' required>
+            <option :value="null">Please select one</option>
+            <option v-for="IdTitle in courseIds" v-bind:value="IdTitle.courseId">{{IdTitle.courseId}}, {{IdTitle.title}}</option>
+            </select>
+            </div>
+            </div>
+            </div>
+            `
+            })
+
             const app = new Vue({
                 el: '#app',
                 data: {
@@ -94,6 +126,8 @@
                     newTitle: '',
                     newDescription: '',
                     newActive: null,
+                    adding: null,
+                    courseIds: []
                 },
                 created: () => {
                     
@@ -149,8 +183,34 @@
                 window.location.href = "/manage/course?courseId="+getParams("courseId")
             }
           })
-      }
-    },
+      },startAdd:function(){
+          app.adding = true
+          console.log('add started')
+          axios.get(API('/course/allidtitle')).then(response => (
+                        console.log(response.data),
+                        app.courseIds = response.data
+                        ))
+      },addPrerequisite:function(){
+          app.adding = false
+          var select_html = document.getElementsByClassName('select_class')
+          var preReqIds = []
+          for(var i=0; i<select_html.length; i++){
+                          // console.log(lengths_html[i].value)
+                          var preReqId = select_html[i].options[select_html[i].selectedIndex].value
+                          preReqIds.push(parseInt(preReqId))
+          }
+          console.log(preReqIds)
+            axios.post(API(`/prereqset/new`), {session: getUserSession(), courseId: getParams("courseId"), prerequisite: preReqIds}).then(
+                response =>{
+                    console.log('add completed')
+                    console.log(response.data)
+                    if(response.data.message == "Course Prerequisites were created successfully"){
+                        window.location.href = "/manage/course?courseId="+getParams("courseId")
+                    }
+                })
+        
+    }
+    }
             });
         </script>
     </body>
