@@ -160,42 +160,42 @@ exports.getMyEnrolledClasses = (req, res) => {
 exports.getAllClassEnrollments = (req, res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
-        if (session) {
-            const body = req.body
-            if (!body || !body.classId) {
-                res.status(400).send({
-                    message: 'Request body is empty!'
-                })
-                return
-            }
+            if (session) {
+                const body = req.body
+                if (!body || !body.classId) {
+                    res.status(400).send({
+                        message: 'Request body is empty!'
+                    })
+                    return
+                }
 
-            const classId = body.classId
+                const classId = body.classId
 
-            Enrollment.findAll({
-                where: { classId: classId },
-                include: [{ model: Account }],
-                order: ['isEnrolled']
-            })
-            .then(data => {
-                res.send({ enrollment: data })
-            })
-            .catch(err => {
-                res.status(500).send({
-                    message: err.message || 'Some error occured obtaining data'
-                })
-            })
-        }
-    })
-    /* SAMPLE JSON BODY REQUEST
-    > localhost:8081/api/enrollment/getAllClassEnrollments
-        {
-            "classId": 1,
-            "session": {
-                "username": "robin",
-                "sessionId": "0q8l8"
+                Enrollment.findAll({
+                        where: { classId: classId },
+                        include: [{ model: Account }],
+                        order: ['isEnrolled']
+                    })
+                    .then(data => {
+                        res.send({ enrollment: data })
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: err.message || 'Some error occured obtaining data'
+                        })
+                    })
             }
-        }
-    */
+        })
+        /* SAMPLE JSON BODY REQUEST
+        > localhost:8081/api/enrollment/getAllClassEnrollments
+            {
+                "classId": 1,
+                "session": {
+                    "username": "robin",
+                    "sessionId": "0q8l8"
+                }
+            }
+        */
 }
 
 //==== Get: /getAllPendingEnrollments
@@ -220,6 +220,7 @@ exports.applyCourseClass = (req, res) => {
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
             let body = req.body
+            console.log("test")
             if (!body || !body.classId) {
                 res.status(400).send({
                     message: 'Request body is empty!'
@@ -229,11 +230,11 @@ exports.applyCourseClass = (req, res) => {
 
             //Access control
             //TODO: Get permissions
-            body.enrollment = {
+            enroll = {
                 isSelfEnrollment: false
             };
             const enrollment = Enrollment.createEnrollment(
-                body.enrollment,
+                enroll,
                 session.accountId,
                 body.classId
             )
@@ -293,7 +294,7 @@ exports.enrollLearner = (req, res) => {
                         body.accountId,
                         body.classId
                     )
-                
+
                     if (enrollment == null) {
                         res.status(400).send({
                             message: 'Invalid data format'
@@ -303,7 +304,7 @@ exports.enrollLearner = (req, res) => {
                     date = new Date()
                     enrollment.enrolledDate = date.toISOString()
                     enrollment.isEnrolled = true
-                
+
                     //Write to DB
                     Enrollment.create(enrollment)
                         .then(data => {
@@ -356,6 +357,7 @@ exports.respondApplication = (req, res) => {
             }
         */
 }
+
 function _updateEnrollment(body, res) {
     if (!body) {
         res.status(400).send({
