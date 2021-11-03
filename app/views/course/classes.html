@@ -19,8 +19,8 @@
                 <div class=container>
                     <m-div :menu="menu" title="Classes" :subtitle="'For Course ID: '+courseId">
                         <h3 class="mb-3 lms-font-semibold" style="float: left;">All classes</h1>
-                        <a class="btn btn-secondary" style="float: right;" :href="'/manage/class?courseId='+courseId">Create Class</a>
-                        <!-- <a href="/manage/class?classId=1">Specific class</a> -->
+                        <!-- <a class="btn btn-secondary" style="float: right;" :href="'/manage/class?courseId='+courseId">Create Class</a>
+                        <a href="/manage/class?classId=1">Specific class</a> -->
                         <div style="clear: both"></div>
                         <table class="table">
                             <thead class="lms-table-head lms-font-semibold">
@@ -46,7 +46,7 @@
                                     <td>{{ dateFormat(c.selfEnrollEndDateTime) }}</td>
                                     <td>{{ dateFormat(c.classStartDateTime) }}</td>
                                     <td>{{ dateFormat(c.classEndDateTime) }}</td>
-                                    <td><a class="btn btn-primary" :href="'/manage/class?classId='+c.classId">View class</a></td>
+                                    <td><a class="btn btn-primary" :href="'/course/class?classId='+c.classId">Enroll</a></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -67,7 +67,7 @@
                 data: {
                     session: getUserSession(),
                     courseId: getParams("courseId"),
-                    menu: initMenu(generateMenuSections_Course(getParams("courseId")), 0, 1),
+                    menu: initMenu(generateMenuSections_CourseGeneral(getParams("courseId")), 0, 1),
                     classes: []
                 }, created: () => {
                     //API CALL

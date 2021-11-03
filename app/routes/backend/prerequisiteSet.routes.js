@@ -11,6 +11,8 @@ module.exports = app => {
 
     router.post("/setnumber", prerequisiteSet.findAllBySetNumber)
 
+    router.post("/new",prerequisiteSet.newPrerequisiteSetCoursePrereq)
+
     //======== END: CONTROLLER LOGIC ========
     
     app.use(ROUTE_PATH, router);

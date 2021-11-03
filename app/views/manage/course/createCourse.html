@@ -48,6 +48,9 @@
                                       <input type="radio" v-model="form.active" v-bind:value="true">
                                       <label class="label">No</label>
                                       <input type="radio" v-model="form.active" v-bind:value="false">
+                                    <br>
+                                    <label class="label">Course Image Link</label>
+                                    <input v-model="form.image" class="input" type="text" placeholder="Text input">
 
                                       <br>
                                       <label class="label">How many course prerequisite sets are there?</label>
@@ -57,9 +60,10 @@
                                         <input v-model="sets" class="input" type="number" placeholder="Number of sets">
                                       </div>
 
+                                      <div v-if="sets">
                                       <div v-for="index in parseInt(sets)" :key="index">
                                         <coursesets v-bind:course-ids="courseIds" my-message="How many courses are in this set?" :set-number="index"></coursesets>
-
+                                      </div>
                                       </div>
                                     
                               </section>
@@ -101,6 +105,7 @@
                         description: '',
                         id: '',
                         active: null,
+                        image: ''
                     },
                     submitSuccess: null,
                     newId: '',
@@ -137,7 +142,7 @@
 
                         // console.log(preReqSets)
 
-                        var courseObj = {title: app.form.title, description: app.form.description, active: app.form.active, prerequisite: preReqSets}
+                        var courseObj = {session: app.session, title: app.form.title, description: app.form.description, active: app.form.active, prerequisite: preReqSets, courseImage: app.form.image}
                         
                         axios.post(API('/course'), courseObj)
                         .then((response) => {
@@ -169,7 +174,18 @@
               
             }, 
             props: {myMessage:String, courseIds: Array, setNumber:Number},
-            template: `<div class='blockOfSets'><h3>Set {{setNumber}}</h3><span>{{ myMessage }}</span><br><input v-model="coursesPerSet" class="length" type="number" placeholder="Number of sets"><div v-for="index in parseInt(coursesPerSet)" :key="index"><span>indicate which course by id</span><br><select class='select_class' required><option :value="null">Please select one</option><option v-for="IdTitle in courseIds" v-bind:value="IdTitle.courseId">{{IdTitle.courseId}}, {{IdTitle.title}}</option></select></div></div>`
+            template: `<div class='blockOfSets'><h3>Set {{setNumber}}</h3><span>{{ myMessage }}</span><br><input v-model="coursesPerSet" class="length" type="number" placeholder="Number of sets">
+            <div v-if="coursesPerSet">
+            <div v-for="index in parseInt(coursesPerSet)" :key="index">
+            <span>indicate which course by id</span><br>
+            <select class='select_class' required>
+            <option :value="null">Please select one</option>
+            <option v-for="IdTitle in courseIds" v-bind:value="IdTitle.courseId">{{IdTitle.courseId}}, {{IdTitle.title}}</option>
+            </select>
+            </div>
+            </div>
+            </div>
+            `
             })
 
         </script>

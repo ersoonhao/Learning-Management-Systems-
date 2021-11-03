@@ -105,6 +105,7 @@ db.Post.belongsTo(db.Thread, { foreignKey: 'threadId', targetKey: 'threadId' });
 db.Post.hasMany(db.Comment, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'cascade' });
 db.Comment.belongsTo(db.Post, { foreignKey: 'postId', targetKey: 'postId' });
 
+/* Course */
 db.Course.hasMany(db.CoursePrerequisite, { foreignKey: 'courseId', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.CoursePrerequisite.belongsTo(db.Course, { foreignKey: 'courseId', targetKey: 'courseId' });
 
@@ -114,11 +115,16 @@ db.Class.belongsTo(db.Course, { foreignKey: 'courseId', targetKey: 'courseId' })
 db.CoursePrerequisite.hasMany(db.PrerequisiteSet, { foreignKey: 'setNumber', sourceKey: 'setNumber', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.PrerequisiteSet.belongsTo(db.CoursePrerequisite, { foreignKey: 'setNumber', targetKey: 'setNumber' });
 
+/* Class */
 db.Class.hasMany(db.PrerequisiteSet, { foreignKey: 'course_fk', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.PrerequisiteSet.belongsTo(db.Class, { foreignKey: 'course_fk', targetKey: 'courseId' });
 
+db.Account.hasMany(db.Class, { foreignKey: 'trnAccountId', sourceKey: 'accountId', onDelete: 'cascade', onUpdate: 'NO ACTION' })
+db.Class.belongsTo(db.Account, { foreignKey: 'trnAccountId', targetKey: 'accountId' }); //Trainer
+
+/* Enrollment */
 db.Account.hasMany(db.Enrollment, { foreignKey: 'accountId', sourceKey: 'accountId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.Enrollment.belongsTo(db.Account, { foreignKey: 'accountId', targetKey: 'accountId' });
+db.Enrollment.belongsTo(db.Account, { foreignKey: 'accountId', targetKey: 'accountId' }); //Learner
 
 db.Class.hasMany(db.Enrollment, { foreignKey: 'classId', sourceKey: 'classId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.Enrollment.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });

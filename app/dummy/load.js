@@ -17,7 +17,7 @@ module.exports.SESSION_INVALID_SESSION = { username: "robin", sessionId: "00000"
 module.exports.load = () => {
     return db.sequelize.query(`
         INSERT INTO Accounts(accountId, username, email, isAdmin, isTrainer, password, sessionId) VALUES
-        (1, 'robin', 'john.d.cheong@gmail.com', 1, 1, 'a', '0q8l8'),
+        (1, 'robin', 'wafturerobin@gmail.com', 1, 1, 'a', '0q8l8'),
         (2, 'soonhao', 'john.d.cheong@gmail.com', 1, 0, 'a', 'gee43'),
         (3, 'john', 'john.d.cheong@gmail.com', 0, 1, 'a', 'daoi0'),
         (4, 'varun', 'john.d.cheong@gmail.com', 0, 1, 'a', 'dsaw2'),
@@ -28,11 +28,35 @@ module.exports.load = () => {
         (9, 'sean', 'john.d.cheong@gmail.com', 0, 0, 'a', 'oei21'),
         (10, 'george', 'john.d.cheong@gmail.com', 0, 0, 'a', 'csnm2');
 
-        INSERT INTO Courses(courseId, title, description, active) VALUES
-        (1, 'Physics', 'This course is about Physics', true),
-        (2, 'Biology', 'This course is about Biology', true),
-        (3, 'Chemistry', 'This course is about Chemistry',  false),
-        (4, 'Mathematics', 'This course is about Mathematics',  true);
+        INSERT INTO Courses(courseId, title, description, active, courseImage) VALUES
+        (1, 'Physics', 'This course is about Physics', true, 'https://i.picsum.photos/id/236/800/800.jpg?hmac=-m1crl44KO9L8Rs4QGYJq6nuXo0R6V-Zc3v48BUc8WE'),
+        (2, 'Biology', 'This course is about Biology', true, 'https://i.picsum.photos/id/427/800/800.jpg?hmac=C9qE9ogOx2qI05D2zGZ362KkduRWpt7xDT4DXcfcSDk'),
+        (3, 'Chemistry', 'This course is about Chemistry', false,  'https://i.picsum.photos/id/66/800/800.jpg?hmac=QwjZxiyFrWQI9G4d8F44wFqjxZ66zIPLlzeRRiiYrpk'),
+        (4, 'Mathematics', 'This course is about Mathematics', false,'https://i.picsum.photos/id/882/800/800.jpg?hmac=No5hTPTge2_1GgssUGsE2qrhWTzL_mJRIhmQxKj6zUE');
+
+        INSERT INTO Classes(classId, selfEnrollStartDateTime, selfEnrollEndDateTime, classStartDateTime, classEndDateTime, maxCapacity, courseId, trnAccountId, adminAccountId) VALUES
+        (1, '2021-07-01', '2021-08-30', '2021-09-01', '2022-01-01', 50, 1, 3, 1),
+        (2, '2021-08-01', '2021-09-30', '2021-10-01', '2022-02-01', 50, 1, 3, 1),
+        (3, '2021-09-01', '2021-10-30', '2021-11-01', '2022-03-01', 50, 2, 3, 1),
+        (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 2, 3, 1);
+
+        INSERT INTO enrollments(enrollmentId, isSelfEnrollment, isEnrolled, dateCreated, enrolledDate, coursePassed, isWithdrawn, accountId, classId) VALUES
+        (1, 1, 0, '2021-07-01', NULL, 0, 0, 7, 1),
+        (2, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 1),
+        (3, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 1),
+        (4, 0, 1, '2021-07-01', NULL, 0, 0, 10, 1),
+        (5, 1, 0, '2021-07-01', NULL, 0, 0, 7, 2),
+        (6, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 2),
+        (7, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 2),
+        (8, 0, 1, '2021-07-01', NULL, 0, 0, 10, 2),
+        (9, 1, 0, '2021-07-01', NULL, 0, 0, 7, 3),
+        (10, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 3),
+        (11, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 3),
+        (12, 0, 1, '2021-07-01', NULL, 0, 0, 10, 3),
+        (13, 1, 0, '2021-07-01', NULL, 0, 0, 7, 4),
+        (14, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 4),
+        (15, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 4),
+        (16, 0, 1, '2021-07-01', NULL, 0, 0, 10, 4);
 
         INSERT INTO Quizzes(quizId, type, title, instructions, durationInMins, passScoreRequirement, active, courseId, sectionId) VALUES
         (1, 'UG', "Section 1 Quiz", "Please complete the quiz within the time limit", 10, null, false, 1, 1),
@@ -84,13 +108,13 @@ module.exports.load = () => {
 
         INSERT INTO PrerequisiteSets(setNumber, course_fk) VALUES
         (1, 2),
-        (1, 3),
         (1, 4),
         (2, 1),
         (2, 3);
 
         INSERT INTO CoursePrerequisites(setNumber, courseId) VALUES
         (1, 1),
+        (2, 1),
         (2, 2);
     `)
 };

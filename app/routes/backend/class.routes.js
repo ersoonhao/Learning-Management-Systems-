@@ -9,16 +9,23 @@ module.exports = app => {
     //======== START: CONTROLLER LOGIC ========
     const Class = require("../../controllers/class.controller.js");
 
+    router.post("/getCourseClasses", Class.getCourseClasses);
+    router.post("/getCourseClass", Class.getCourseClass);
+    
+    router.post("/createClass", Class.createClass);
 
-    //Create Class
-    router.post("/", Class.create);
+    router.post("/updateClass", Class.updateClass);
 
     //Get available classes
-    router.get("/", Class.findAll);
+    // router.get("/", Class.findAll);
 
-    //Update ClassStartDateTime using classId
-    router.put("/:classId", Class.update);
+    // // Get available classes according to courseId
+    // router.post("/:courseId", Class.getCourseClasses);
 
+    // //Update ClassStartDateTime using classId
+    // router.post("/:classId", Class.updateClass);
+
+    //Check if section trainer is true
 
 
     //======== END: CONTROLLER LOGIC ========

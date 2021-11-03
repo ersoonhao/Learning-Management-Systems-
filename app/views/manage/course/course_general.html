@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+        <title>LMS</title>
+        <link rel="stylesheet" href="/style/master.css">
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <lms-head :session="session"></lms-head>
+            <div class="content">
+                <div class=container>
+                    <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
+                        <h1>{{title}}</h1> 
+                        <!-- <button class='button btn btn-danger btn-sm' v-on:click="deleteCourse">Delete Course</button>
+                        <button class='button btn btn-warning btn-sm'>Edit Course Information (Title, Description, Active status)</button> -->
+                        <p>Description: {{description}}</p>
+                        <p>Active: {{active}}</p>
+                        <div v-if="prerequisiteSets.length>1">
+                            <h3>Prerequisites for this course</h3>
+                            <p>You have to complete either of the below sets of courses</p>
+            
+                            <div v-for="set in prerequisiteSets">
+                                <h4>Set {{set.setNumber}}</h4>
+                                <div v-for="PrerequisiteSet in set.PrerequisiteSets">
+                                    <p>Course {{ PrerequisiteSet.course_fk }}, Title: {{PrerequisiteSet.title}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else-if="prerequisiteSets.length==1">
+                            <h3>Prerequisites for this course</h3>
+                            <p>You have to complete the below courses to be able to do this course</p>
+                            <p v-for="prereq in prerequisiteSets[0].PrerequisiteSets">Course {{prereq.course_fk}}, Title: {{prereq.title}}</p>
+                        </div>
+                        <div v-else>
+                            <h3>No prerequisites</h3>
+                        </div>
+                    </m-div>
+                    
+                </div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+        </script>
+        <script src="/js/lib/vue.js"></script>
+        <script src="/js/lms/main/master.js"></script>
+        <script src="/js/lms/main/manage.js"></script>
+        <script>
+            const app = new Vue({
+                el: '#app',
+                data: {
+                    session: getUserSession(),
+                    courseId: getParams("courseId"),
+                    menu: initMenu(generateMenuSections_CourseGeneral(getParams("courseId")), 0, 0),
+                    title: null,
+                    description: null,
+                    active: null,
+                    prerequisiteSets: [],
+                    id_title_matching: {}
+                },
+                created: () => {
+                    
+                }, mounted () {
+    axios
+      .post(API(`/course/find`), {session: getUserSession(), id: getParams("courseId")})
+      .then(response =>{
+        console.log(response.data.course.CoursePrerequisites)
+          this.title = response.data.course.title
+          this.description = response.data.course.description
+          this.active = response.data.course.active
+          this.prerequisiteSets = response.data.course.CoursePrerequisites
+          this.id_title_matching = response.data.id_title_matching
+
+          for(var i=0; i<this.prerequisiteSets.length; i++){
+              for(var j=0; j<this.prerequisiteSets[i].PrerequisiteSets.length; j++){
+                  this.prerequisiteSets[i].PrerequisiteSets[j]['title'] = this.id_title_matching[this.prerequisiteSets[i].PrerequisiteSets[j].course_fk]
+              }
+          }
+      })
+  },methods:{
+      deleteCourse:function(){
+        axios
+          .post(API(`/course/delete`), {session: getUserSession(), courseId: getParams("courseId")})
+          .then(response =>{
+            console.log(response.data)
+            if(response.data.message == "Course was deleted successfully!"){
+                window.location.href = "/manage/courses"
+            }
+          })
+      }
+  }
+            });
+        </script>
+    </body>
+</html>
