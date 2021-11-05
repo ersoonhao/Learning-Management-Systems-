@@ -1,0 +1,73 @@
+<!-- contributor: John Cheong -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/qunit/2.4.0/qunit.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<div id="app">
+</div>
+
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qunit/2.4.0/qunit.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+function getUserSession() {
+    return {"session":"test"}
+}
+
+function initMenu(sections, focus_section_index, focus_link_index) {
+    return {
+        sections: sections,
+        focus_section_index: focus_section_index,
+        focus_link_index: focus_link_index
+    }
+}
+const MENU_SECTIONS_MANAGE_GENERAL = [{
+    id: "T1",
+    title: "Tools",
+    subtitle: "Management Tools",
+    links: [
+        { title: "Course", link: "/manage/courses", completed: false }
+    ]
+}]
+
+function API(path) {
+    return "/api" + path;
+}
+
+
+</script>
+<script src='/js/lms/chat/chat.js'></script>
+    <script type="text/javascript">
+        QUnit.test('can set search term', function (assert) {
+        app.search_term = 'john'
+        console.log(app)
+        assert.equal(app.search_term, 'john');
+        app.search_term = ''
+});
+
+        QUnit.test('can set all users', function (assert) {
+        app.all_users = ['robin', 'john', 'varun', 'joshua', 'alvin', 'asher', 'bob', 'sean', 'george']
+        console.log(app.all_users)
+        assert.deepEqual(app.all_users, ['robin', 'john', 'varun', 'joshua', 'alvin', 'asher', 'bob', 'sean', 'george']);
+        app.all_users = []
+});
+
+QUnit.test('can search for user john successfully', function (assert) {
+        app.all_users = ['robin', 'john', 'varun', 'joshua', 'alvin', 'asher', 'bob', 'sean', 'george']
+        app.search_term = 'john'
+        app.partialSearch()
+        assert.deepEqual(app.searched_users, ['john']);
+});
+    </script>
+</body>
+</html>
