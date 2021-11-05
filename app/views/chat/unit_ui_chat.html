@@ -194,7 +194,7 @@ QUnit.test('can search for user SoonHao with middle of name letters successfully
         app.all_users = []
 });
 
-QUnit.test('can update selected user', function(assert){
+QUnit.test('can update selected user by Account ID', function(assert){
     app.all_messages = all_messages
     app.updateSelect('3')
     assert.equal(app.selected, '3')
@@ -203,7 +203,7 @@ QUnit.test('can update selected user', function(assert){
 
 })
 
-QUnit.test('can select user by name',function(assert){
+QUnit.test('can select user by username',function(assert){
     app.all_messages = all_messages
     app.nameSelect('john')
     assert.deepEqual(app.searched_users, [])
