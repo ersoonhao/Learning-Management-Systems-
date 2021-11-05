@@ -10,4 +10,8 @@ module.exports = app => {
         res.sendFile(app._FRONT_END_PATH + "/chat/chat.html")
     })
 
+    app.get('/chat_test', async(req, res) => {
+        res.sendFile(app._FRONT_END_PATH + "/chat/unit_ui_chat.html")
+    })
+
 }
