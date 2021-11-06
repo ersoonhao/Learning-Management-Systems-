@@ -112,6 +112,28 @@ describe('The messsages route and controller',()=>{
     )
   })
 
+  it('retrieves all messages by session ID of admin SoonHao through post request', (done)=>{
+    request(app).post('/api/message/all/session').send({session:dummy_reload.SESSION_ADMIN}).end(
+    (err,response)=>{
+      console.log(response.body)
+      assert(response.body.accountId==2)
+      assert(response.body.username=='soonhao')
+      done()
+    }
+    )
+  })
+
+  it('retrieves all messages by session ID of admin Robin through post request', (done)=>{
+    request(app).post('/api/message/all/session').send({session:dummy_reload.SESSION_ADMIN_TRAINER}).end(
+    (err,response)=>{
+      console.log(response.body)
+      assert(response.body.accountId==1)
+      assert(response.body.username=='robin')
+      done()
+    }
+    )
+  })
+
   // it('retrieves all message by account robin where he is both sender or receiver through post request', (done)=>{
   //   request(app).post('/api/message/username').send({username: 'robin'}).end(
   //   (err,response)=>{
