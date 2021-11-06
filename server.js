@@ -8,6 +8,7 @@ app.use(express.json())
 // ================ Routes ================
 app._FRONT_END_PATH = __dirname + '/app/views/';
 //app.use(express.static(app._FRONT_END_PATH));
+app._TEST_PATH = __dirname + '/test/';
 
 app.use(express.static(__dirname + "/app/static/"));
 
