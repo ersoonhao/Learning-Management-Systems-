@@ -11,7 +11,7 @@ module.exports = app => {
     })
 
     app.get('/chat_test', async(req, res) => {
-        res.sendFile(app._FRONT_END_PATH + "/chat/unit_ui_chat.html")
+        res.sendFile(app._TEST_PATH + "/unit/unit_ui_chat.html")
     })
 
 }
