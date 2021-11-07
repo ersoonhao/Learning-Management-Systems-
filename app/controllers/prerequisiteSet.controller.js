@@ -88,7 +88,12 @@ exports.newPrerequisiteSetCoursePrereq = async(req, res) => {
         order: [ [ 'setNumber', 'DESC' ]],
         
         }).then(reqset=>{
-          var lastSet = reqset.setNumber
+          console.log(reqset)
+          if(reqset!=null){
+            var lastSet = reqset.setNumber
+          }else{
+            var lastSet = 0
+          }
           var prerequisite = req.body.prerequisite
           var prerequisiteSet = []
           var setNumbers = {courseId: courseId, setNumber: lastSet + 1}
