@@ -6,6 +6,7 @@ const AccountController = require("./account.controller");
 
 // LNR | View Course Progress SPM-44
 // body.courseProgressId
+// enrollmentid , quizid , Section
 exports.getMyCourseProgress = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => {

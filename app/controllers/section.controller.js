@@ -1,3 +1,26 @@
+// DotEnv is a lightweight npm package that automatically loads environment variables from a . env file into the process.
+require('dotenv').config()
+
+// s3 imports statement 
+const fs =require('fs')
+const S3=require('aws-sdk/clients/s3')
+
+// S3 Keys 
+
+// const bucketName="spm-files-upload"
+// const region="ap-southeast-1"
+const accessKeyId= "AKIARW74HBZIRY7PNJ5G"
+const secretAccessKey="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" 
+
+// s3 init
+// const s3= new S3({
+//     region,
+//     accessKeyId,
+//     secretAccessKey
+// })
+
+
+
 const db = require("../models");
 
 // need to create an account table
@@ -10,13 +33,9 @@ async function hash(password) {
 }
 
 
-// private functions 
-function isSectionTrainer (Account, SectionId){
-    // ??? 
 
 
-    return true; 
-}
+
 
 // Q
 // what is section package? 
@@ -36,86 +55,133 @@ function isSectionTrainer (Account, SectionId){
 // deleteAllSection X 
 
 // S3 related NOT DONE 
-// addCourseMaterial
-// updateCoursematerial 
-// deleteCourseMater 
+// addCourseMaterial - Not linked to Upload middleware yet. 
+// updateCoursematerial Skipped 
+// deleteCourseMaterial X 
+
+
+// private functions 
+function isSectionTrainer (Account, SectionId){
+    // ??? 
+    Course.findOne({
+        where: { courseId: courseId },
+        include: {
+            model: Class,
+            include: {
+                model: Enrollment,
+                where: { accountId: session.accountId }
+            }
+        }
+    }).then(data => {
+        res.send({
+            "data": data
+        });
+    }).catch(err => {
+        res.status(500).send({
+            message: err.message || "Some error occured obtaining data"
+        })
+    });
+
+    return true; 
+}
 
 
 
 
 
-
-
+//======== START: COURSE MATERIAL  ========
 
 // Create and Save a Section 
 exports.addCourseMaterial = (req, res) => {
     // Validate request
-    if (!req.body.title || !req.body.subtitle ) {
-      res.status(400).send({
-        message: "Content can not be empty!"
-      });
-      return;
-    }
-  
-  
-    const section = {
-      username: req.body.username,
-      email: req.body.email,
-      title: req.body.title,
-      title: req.body.subtitle,
-      order: req.body.order
-    };
-    console.log(section)
-    
-    Section.create(section)
-      .then(data => {
-        res.status(200).send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while creating the Section"
-        });
-      });
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if (session) {
+            if (!req.body.title || !req.body.order || !req.body.source ) {
+                res.status(400).send({
+                  message: "Content can not be empty!"
+                });
+                return;
+              }
+        
+              const coursematerial = {
+                title: req.body.title,
+                instructions: req.body.instructions,
+                source: req.body.source,
+                type: req.body.type, //file type.
+                order: req.body.order
+              };
+              console.log(coursematerial);
+              
+              CourseMaterial.create(coursematerial)
+                .then(data => {
+                  res.status(200).send(data);
+                })
+                .catch(err => {
+                  res.status(500).send({
+                    message:
+                      err.message || "Some error occurred while creating the Section"
+                  });
+                });
+        }
+    })
   };
-  
+
+// delete by ID
+  exports.deleteCourseMaterial = (req, res) => {
+    // Validate request
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if (session) {
+            if (!req.body.title || !req.body.order || !req.body.source ) {
+                res.status(400).send({
+                  message: "Content can not be empty!"
+                });
+                return;
+              }
+              const courseMaterialId= req.body.courseMaterialId; 
+              
+
+              CourseMaterial.destroy({
+                  where: {CourseMaterialId : courseMaterialId}
+              })
+                .then(data => {
+                  res.status(200).send(data);
+                })
+                .catch(err => {
+                  res.status(500).send({
+                    message:
+                      err.message || "Some error occurred while creating the deleting the Course Matertial with ID" + courseMaterialId
+                  });
+                });
+        }
+    })
+  };
+
+
+//======== END: COURSE MATERIAL  ========
 
 
 
-
-
+//======== START: SECTION  ========
 exports.getSectionPackage = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if(session){
             let body = req.body;
-            let quizId = body.quizId; //For specific quiz
-            let courseId = body.courseId; //For graded quiz
-            let sectionId = body.sectionId; //For ungraded quiz
-            
-            console.log(req.body);
-            if(!quizId && !courseId && !sectionId){
+            let classId = params.classId;
+
+            if(!classId){
                 res.status(400).send({
                     message: "Invalid data format"
                 })
                 return
             }
-
+            
             //TODO: Check if learner is enrolled & has completed previous sections
             
-            //Get quiz data
-            let q;
-            if(quizId){
-                q = { quizId: quizId }
-            }else if(courseId){
-                q = { courseId: courseId, type: Quiz.QUIZ_TYPES_GRADED }
-            }else if(sectionId){
-                q = { sectionId: sectionId, type: Quiz.QUIZ_TYPES_UNGRADED }
-            }
-            console.log(q);
-            Quiz.findOne({
-                where: q,
-                include: [ { model: Question, include: [QuestionOption] } ]
+            Section.findAll({
+                where: { classId: classId }
             }).then(data => {
                 res.send({ "quiz": data });
             }).catch(err=>{
@@ -127,145 +193,231 @@ exports.getSectionPackage = (req, res) => {
     })
 }
 
+
+
+
+
+
+// routed 
 // Create and Save a Section 
 exports.createSection = (req, res) => {
   // Validate request
-  if (!req.body.title || !req.body.subtitle ) {
-    res.status(400).send({
-      message: "Content can not be empty!"
-    });
-    return;
-  }
-
-
-  const section = {
-    username: req.body.username,
-    email: req.body.email,
-    title: req.body.title,
-    title: req.body.subtitle,
-    order: req.body.order
-  };
-  console.log(section)
-  
-  Section.create(section)
-    .then(data => {
-      res.status(200).send(data);
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if (session) {
+            if ( !req.body.subtitle || !req.body.description || !req.body.order) {
+                res.status(400).send({
+                  message: "Content can not be empty!"
+                });
+                return;
+              }
+              const section = {
+                title: req.body.title,
+                subtitle: req.body.subtitle,
+                order: req.body.order
+              };
+              console.log(section)
+              
+              Section.create(section)
+                .then(data => {
+                  res.status(200).send(data);
+                })
+                .catch(err => {
+                  res.status(500).send({
+                    message:
+                      err.message || "Some error occurred while creating the Section"
+                  });
+                });
+        }
     })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the Section"
-      });
-    });
+ 
 };
 
-// Retrieve all Tutorials from the database.
+
+
+
+// routed 
 exports.findAllSection = (req, res) => {
-//   const title = req.query.username;
-//   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if (session) {
+            if (!req.body.subtitle || !req.body.description || !req.body.order) {
+                res.status(400).send({
+                  message: "Content can not be empty!"
+                });
+                return;
+              }
+              // handle the request
+              Section.findAll()
+              .then(data => {
+                res.status(200).send(data);
+              })
+              .catch(err => {
+                res.status(500).send({
+                  message:
+                    err.message || "Some error occurred while retrieving section."
+                });
+              });
 
-  Section.findAll()
-    .then(data => {
-      res.status(200).send(data);
+
+              // end of the request
+        }
     })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving username."
-      });
-    });
-};
+}
 
-// Find a single section with an id
+
+
+
+
+
 exports.findOne = (req, res) => {
-  const id = req.params.sectionId;
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if (session) {
+        
+            if (!req.params.id) {
+                res.status(400).send({
+                  message: "Content can not be empty!"
+                });
+                return;
+              }
 
-  Section.findByPk(id)
-    .then(data => {
-      res.status(200).send(data);
+              // handle the request
+              const id = req.params.id;
+
+              Section.findByPk(id)
+                .then(data => {
+                  res.status(200).send(data);
+                })
+                .catch(err => {
+                  res.status(500).send({
+                    message: "Error retrieving Account with id=" + id
+                  });
+                });
+              // end of the request
+        }
     })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving Account with id=" + id
-      });
-    });
-};
+}
 
-
-
-
+// routed 
 exports.deleteSection = (req, res) => {
-//   const id = req.params.id;
-const id = req.params.sectionId;
-  Section.destroy({
-    where: { sectionId: id }
-  })
-    .then(result => { 
-      if (result == 1) {
-        res.send({
-          status: 200,  
-          message: `Section ${id} deleted successfully`
-        });
-      } else {
-        res.send({
-          status: 401,  
-          message: `Cannot delete Section ${id}. Section not found`
-        });
-      }
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if (session) {
+            if ( !req.body.sectionId) {
+                res.status(400).send({
+                  message: "Content can not be empty!"
+                });
+                return;
+              }
+              // handle the request
+              const id = req.body.sectionId;
+              Section.destroy({
+                where: { sectionId: id }
+              })
+                .then(result => { 
+                  if (result == 1) {
+                    res.send({
+                      status: 200,  
+                      message: `Section ${id} deleted successfully`
+                    });
+                  } else {
+                    res.send({
+                      status: 401,  
+                      message: `Cannot delete Section ${id}. Section not found`
+                    });
+                  }
+                })
+                .catch(err => {
+                  res.status(500).send({
+                    message: "Error deleting Section" + id
+                  });
+                });
+              // end of the request
+        }
     })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error deleting Section" + id
-      });
-    });
-};
+}
 
 
 
+
+
+
+// routed 
 // Update Section why need account?
 // update based on req.body
 // validation not done hence throw error if something goes wrong
+
+
+
 exports.updateSection = (req, res) => {
-    const id = req.params.id;
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if (session) {
+            if (!req.body.id || !req.body.subtitle || !req.body.description || !req.body.order) {
+                res.status(400).send({
+                  message: "Content can not be empty!"
+                });
+                return;
+              }
+              // handle the request
+              const id = req.body.id;
     
-    Section.update(req.body, {
-      where: { id: id }
-    })
-      .then(num => {
-        if (num == 1) {
-          res.status(200).send({
-            message: `Section ${id} was updated successfully.`
-          });
-        } else {
-          res.status(401).send({
-            message: `Cannot update Section ${id}. Section was not found or req.body is empty!`
-          });
+              Section.update(req.body, {
+                where: { id: id }
+              })
+                .then(num => {
+                  if (num == 1) {
+                    res.status(200).send({
+                      message: `Section ${id} was updated successfully.`
+                    });
+                  } else {
+                    res.status(401).send({
+                      message: `Cannot update Section ${id}. Section was not found or req.body is empty!`
+                    });
+                  }
+                })
+                .catch(err => {
+                  res.status(500).send({
+                    message: "Error updating Section with id=" + id
+                  });
+                });
+
+              // end of the request
         }
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Error updating Section with id=" + id
-        });
-      });
-  };
-
-
-
-// Delete all Tutorials from the database.
-exports.deleteAllSection = (req, res) => {
-    Section.destroy({
-    where: {},
-    truncate: false
-  })
-    .then(nums => {
-      res.send({ message: `${nums} Section were deleted successfully!` });
     })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while removing all tutorials."
-      });
-    });
-};
+}
 
+
+
+// routed 
+exports.deleteAllSection = (req, res) => {
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if (session) {
+
+            // handle the request
+            Section.destroy({
+                where: {},
+                truncate: false
+              })
+                .then(num => {
+                  res.status(200).send({
+                    message: `${num} Section were deleted successfully.`
+                  });
+                })
+                .catch(err => {
+                  res.status(500).send({
+                    message: "Error deleting Section"
+                  });
+                });
+              // end of the request
+        }
+    })
+}
+
+
+
+
+//======== END: SECTION  ========
 

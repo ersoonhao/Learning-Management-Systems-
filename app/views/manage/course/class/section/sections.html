@@ -18,7 +18,38 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Classes" :subtitle="'For Class ID: '+classId">
-                        <h1>SHOW LIST OF Sections</h1>
+                        <h1>Course of Sections</h1>
+                        
+                   
+                        <!-- START OF LIST OF SECTIONS -->
+                        
+
+                        <ul class="list-group text-center">
+                           <li v-for="section in " :key="section.title"  class="list-group-item justify-content-center"></v-for> 
+                                <h1 class="">{{section.title}} </h1>
+                                <h2>{{section.subtitle}}</h2>
+                                <h2>{{section.order}}</h2>
+                                
+                                
+
+                    
+                                <button type="button" class="btn btn-danger text-right">Delete Section</button>
+                            </li>
+
+                            <!-- <li class="list-group-item disabled" aria-disabled="true">A disabled item</li>
+                            <li class="list-group-item">A second item</li>
+                            <li class="list-group-item">A third item</li>
+                            <li class="list-group-item">A fourth item</li> -->
+                            <!-- <li class="list-group-item">And a fifth one</li> -->
+                          </ul>
+                          <button type="button" class="btn btn-primary">Add Section</button>
+                          <button type="button" class="btn btn-primary">Add Section</button>
+
+                        <!-- END OF LIST OF SECTION -->
+
+
+
+
                         <a href="/manage/section?sectionId=1">Specific section</a>
                     </m-div>
                 </div>
@@ -37,9 +68,47 @@
                 data: {
                     session: getUserSession(),
                     classId: getParams("classId"),
-                    menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 2)
+                    menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 2),
+                    sections: [
+                        {title: "Section 1",subtitle: "Subtitle 1", order: 1, classId: 1},
+                        {title: "Section 2",subtitle: "Subtitle 2", order: 3, classId: 1},
+                        {title: "Section 2",subtitle: "Subtitle 2", order: 2, classId: 1}
+                    ]
                 }, created: () => {
                     
+                },
+                mounted: () => {
+
+                axios.get(API(`/section/section/:id`), {
+                    session: getUserSession(),
+                    id: getParams("courseId")
+                }).then(response => {
+                    this.title = response.data.course.title
+                    this.description = response.data.course.description
+                    this.active = response.data.course.active
+                    this.prerequisiteSets = response.data.course.CoursePrerequisites
+                    this.id_title_matching = response.data.id_title_matching
+                    for (var i = 0; i < this.prerequisiteSets.length; i++) {
+                    for (var j = 0; j < this.prerequisiteSets[i].PrerequisiteSets.length; j++) {
+                        this.prerequisiteSets[i].PrerequisiteSets[j]['title'] = this.id_title_matching[this.prerequisiteSets[i].PrerequisiteSets[j].course_fk]
+                    }
+                }
+
+
+
+                })
+
+
+
+
+                // closing brace of mounted    
+                },
+                computed: {
+                    orderdSections: function (sections) {
+                        return this.sections.sort((a, b) => {
+                            return a.order - b.order
+                        })
+                    }
                 }
             });
         </script>

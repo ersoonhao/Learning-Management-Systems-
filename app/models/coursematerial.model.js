@@ -25,6 +25,9 @@ module.exports = (sequelize, Sequelize) => {
         // Order is the positions 
         order: {
             type: Sequelize.INTEGER
+        },
+        sectionId: {
+            type: Sequelize.INTEGER
         }
     });
     return CourseMaterial; 

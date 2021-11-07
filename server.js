@@ -11,6 +11,8 @@ const multer  = require('multer')
 const upload = multer({ dest: 'uploads/' })
 
 
+
+
 const { uploadFile, getFileStream } = require('./s3')
 // end of Multer 
 
@@ -102,8 +104,8 @@ app.post('/images', upload.single('image'), async (req, res) => {
     // req.body will hold the text fields, if there were any
 
     const file = req.file;
-    // console.log(file); 
-    const result= await uploadFile(file);
+    const extension=".jpeg"
+    const result= await uploadFile(file,extension);
     console.log(result);
     const description = req.body.description 
 
@@ -112,13 +114,11 @@ app.post('/images', upload.single('image'), async (req, res) => {
   })
 
 
-  app.post('/pdfs', upload.single('pdf'), async (req, res) => {
-    // req.file is the `avatar` file
-    // req.body will hold the text fields, if there were any
-
+  app.post('/pdfs', upload.single('pdf'), async (req, res) => {    
     const file = req.file;
+    const extension=".pdf"
     // console.log(file); 
-    const result= await uploadFile(file);
+    const result= await uploadFile(file,extension);
     console.log(result);
     const description = req.body.description 
 
@@ -126,7 +126,21 @@ app.post('/images', upload.single('image'), async (req, res) => {
 
   })
 
-  
+  app.post('/docs', upload.single('docx'), async (req, res) => {
+    // req.file is the `avatar` file
+    // req.body will hold the text fields, if there were any
+    
+    const file = req.file;
+    const extension=".docx"
+    // console.log(file); 
+    const result= await uploadFile(file,extension);
+    console.log(result);
+    const description = req.body.description 
+
+    res.status(200).send({pdfPath: `/docs/${result.Key}`}); 
+
+  })
+
   // can embedded the image in 
 app.get('/images/:key', (req, res) => {
     console.log(req.params)

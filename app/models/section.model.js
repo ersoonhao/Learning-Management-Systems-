@@ -6,9 +6,6 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true,
             primaryKey: true
         },
-        username:{
-            type:Sequelize.STRING
-        },
         title:{
             type:Sequelize.STRING
         },
@@ -16,6 +13,9 @@ module.exports = (sequelize, Sequelize) => {
             type:Sequelize.STRING
         },
         order: {
+            type: Sequelize.INTEGER
+        },
+        classId: {
             type: Sequelize.INTEGER
         }
     });
