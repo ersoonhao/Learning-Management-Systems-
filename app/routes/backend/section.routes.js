@@ -7,7 +7,7 @@ module.exports = app => {
 
     
     router.get("/allsections", section.findAllSection);
-    router.get("/section/:id", section.getSectionPackage);
+    router.post("/getall", section.getSectionPackage);
     router.get("/:id", section.findOne);
 
     router.post("/",section.createSection);

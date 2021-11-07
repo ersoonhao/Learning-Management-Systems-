@@ -11,6 +11,7 @@ const S3=require('aws-sdk/clients/s3')
 // const region="ap-southeast-1"
 const accessKeyId= "AKIARW74HBZIRY7PNJ5G"
 const secretAccessKey="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" 
+const AccountController = require("./account.controller");
 
 // s3 init
 // const s3= new S3({
@@ -169,7 +170,7 @@ exports.getSectionPackage = (req, res) => {
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if(session){
             let body = req.body;
-            let classId = params.classId;
+            let classId = req.body.classId;
 
             if(!classId){
                 res.status(400).send({
@@ -183,7 +184,7 @@ exports.getSectionPackage = (req, res) => {
             Section.findAll({
                 where: { classId: classId }
             }).then(data => {
-                res.send({ "quiz": data });
+                res.send({ "sections": data });
             }).catch(err=>{
                 res.status(500).send({
                     message: err.message || "Some error occured obtaining data"
@@ -238,15 +239,8 @@ exports.createSection = (req, res) => {
 
 // routed 
 exports.findAllSection = (req, res) => {
-    const permissions = []
-    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
-        if (session) {
-            if (!req.body.subtitle || !req.body.description || !req.body.order) {
-                res.status(400).send({
-                  message: "Content can not be empty!"
-                });
-                return;
-              }
+
+        
               // handle the request
               Section.findAll()
               .then(data => {
@@ -258,12 +252,12 @@ exports.findAllSection = (req, res) => {
                     err.message || "Some error occurred while retrieving section."
                 });
               });
-
+}
 
               // end of the request
-        }
-    })
-}
+        
+    
+
 
 
 
