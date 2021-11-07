@@ -1,16 +1,16 @@
 // DotEnv is a lightweight npm package that automatically loads environment variables from a . env file into the process.
-//require('dotenv').config()
+require('dotenv').config()
 
 // s3 imports statement 
-const fs = require('fs')
-const S3 = require('aws-sdk/clients/s3')
+const fs =require('fs')
+const S3=require('aws-sdk/clients/s3')
 
 // S3 Keys 
 
 // const bucketName="spm-files-upload"
 // const region="ap-southeast-1"
-const accessKeyId = "AKIARW74HBZIRY7PNJ5G"
-const secretAccessKey = "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"
+const accessKeyId= "AKIARW74HBZIRY7PNJ5G"
+const secretAccessKey="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" 
 const AccountController = require("./account.controller");
 
 // s3 init
@@ -62,7 +62,7 @@ async function hash(password) {
 
 
 // private functions 
-function isSectionTrainer(Account, SectionId) {
+function isSectionTrainer (Account, SectionId){
     // ??? 
     Course.findOne({
         where: { courseId: courseId },
@@ -83,7 +83,7 @@ function isSectionTrainer(Account, SectionId) {
         })
     });
 
-    return true;
+    return true; 
 }
 
 
@@ -98,64 +98,66 @@ exports.addCourseMaterial = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.title || !req.body.order || !req.body.source) {
+            if (!req.body.title || !req.body.order || !req.body.source ) {
                 res.status(400).send({
-                    message: "Content can not be empty!"
+                  message: "Content can not be empty!"
                 });
                 return;
-            }
-
-            const coursematerial = {
+              }
+        
+              const coursematerial = {
                 title: req.body.title,
                 instructions: req.body.instructions,
                 source: req.body.source,
                 type: req.body.type, //file type.
                 order: req.body.order
-            };
-            console.log(coursematerial);
-
-            CourseMaterial.create(coursematerial)
+              };
+              console.log(coursematerial);
+              
+              CourseMaterial.create(coursematerial)
                 .then(data => {
-                    res.status(200).send(data);
+                  res.status(200).send(data);
                 })
                 .catch(err => {
-                    res.status(500).send({
-                        message: err.message || "Some error occurred while creating the Section"
-                    });
+                  res.status(500).send({
+                    message:
+                      err.message || "Some error occurred while creating the Section"
+                  });
                 });
         }
     })
-};
+  };
 
 // delete by ID
-exports.deleteCourseMaterial = (req, res) => {
+  exports.deleteCourseMaterial = (req, res) => {
     // Validate request
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.title || !req.body.order || !req.body.source) {
+            if (!req.body.title || !req.body.order || !req.body.source ) {
                 res.status(400).send({
-                    message: "Content can not be empty!"
+                  message: "Content can not be empty!"
                 });
                 return;
-            }
-            const courseMaterialId = req.body.courseMaterialId;
+              }
+              const courseMaterialId= req.body.courseMaterialId; 
+              
 
-
-            CourseMaterial.destroy({
-                    where: { CourseMaterialId: courseMaterialId }
-                })
+              CourseMaterial.destroy({
+                  where: {CourseMaterialId : courseMaterialId}
+              })
                 .then(data => {
-                    res.status(200).send(data);
+                  res.status(200).send(data);
                 })
                 .catch(err => {
-                    res.status(500).send({
-                        message: err.message || "Some error occurred while creating the deleting the Course Matertial with ID" + courseMaterialId
-                    });
+                  res.status(500).send({
+                    message:
+                      err.message || "Some error occurred while creating the deleting the Course Matertial with ID" + courseMaterialId
+                  });
                 });
         }
     })
-};
+  };
 
 
 //======== END: COURSE MATERIAL  ========
@@ -166,24 +168,24 @@ exports.deleteCourseMaterial = (req, res) => {
 exports.getSectionPackage = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
-        if (session) {
+        if(session){
             let body = req.body;
             let classId = req.body.classId;
 
-            if (!classId) {
+            if(!classId){
                 res.status(400).send({
                     message: "Invalid data format"
                 })
                 return
             }
-
+            
             //TODO: Check if learner is enrolled & has completed previous sections
-
+            
             Section.findAll({
                 where: { classId: classId }
             }).then(data => {
                 res.send({ "sections": data });
-            }).catch(err => {
+            }).catch(err=>{
                 res.status(500).send({
                     message: err.message || "Some error occured obtaining data"
                 })
@@ -200,35 +202,36 @@ exports.getSectionPackage = (req, res) => {
 // routed 
 // Create and Save a Section 
 exports.createSection = (req, res) => {
-    // Validate request
+  // Validate request
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.subtitle || !req.body.description || !req.body.order) {
+            if ( !req.body.subtitle || !req.body.description || !req.body.order) {
                 res.status(400).send({
-                    message: "Content can not be empty!"
+                  message: "Content can not be empty!"
                 });
                 return;
-            }
-            const section = {
+              }
+              const section = {
                 title: req.body.title,
                 subtitle: req.body.subtitle,
                 order: req.body.order
-            };
-            console.log(section)
-
-            Section.create(section)
+              };
+              console.log(section)
+              
+              Section.create(section)
                 .then(data => {
-                    res.status(200).send(data);
+                  res.status(200).send(data);
                 })
                 .catch(err => {
-                    res.status(500).send({
-                        message: err.message || "Some error occurred while creating the Section"
-                    });
+                  res.status(500).send({
+                    message:
+                      err.message || "Some error occurred while creating the Section"
+                  });
                 });
         }
     })
-
+ 
 };
 
 
@@ -237,22 +240,23 @@ exports.createSection = (req, res) => {
 // routed 
 exports.findAllSection = (req, res) => {
 
-
-    // handle the request
-    Section.findAll()
-        .then(data => {
-            res.status(200).send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving section."
-            });
-        });
+        
+              // handle the request
+              Section.findAll()
+              .then(data => {
+                res.status(200).send(data);
+              })
+              .catch(err => {
+                res.status(500).send({
+                  message:
+                    err.message || "Some error occurred while retrieving section."
+                });
+              });
 }
 
-// end of the request
-
-
+              // end of the request
+        
+    
 
 
 
@@ -264,27 +268,27 @@ exports.findOne = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-
+        
             if (!req.params.id) {
                 res.status(400).send({
-                    message: "Content can not be empty!"
+                  message: "Content can not be empty!"
                 });
                 return;
-            }
+              }
 
-            // handle the request
-            const id = req.params.id;
+              // handle the request
+              const id = req.params.id;
 
-            Section.findByPk(id)
+              Section.findByPk(id)
                 .then(data => {
-                    res.status(200).send(data);
+                  res.status(200).send(data);
                 })
                 .catch(err => {
-                    res.status(500).send({
-                        message: "Error retrieving Account with id=" + id
-                    });
+                  res.status(500).send({
+                    message: "Error retrieving Account with id=" + id
+                  });
                 });
-            // end of the request
+              // end of the request
         }
     })
 }
@@ -294,36 +298,36 @@ exports.deleteSection = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.sectionId) {
+            if ( !req.body.sectionId) {
                 res.status(400).send({
-                    message: "Content can not be empty!"
+                  message: "Content can not be empty!"
                 });
                 return;
-            }
-            // handle the request
-            const id = req.body.sectionId;
-            Section.destroy({
-                    where: { sectionId: id }
-                })
-                .then(result => {
-                    if (result == 1) {
-                        res.send({
-                            status: 200,
-                            message: `Section ${id} deleted successfully`
-                        });
-                    } else {
-                        res.send({
-                            status: 401,
-                            message: `Cannot delete Section ${id}. Section not found`
-                        });
-                    }
+              }
+              // handle the request
+              const id = req.body.sectionId;
+              Section.destroy({
+                where: { sectionId: id }
+              })
+                .then(result => { 
+                  if (result == 1) {
+                    res.send({
+                      status: 200,  
+                      message: `Section ${id} deleted successfully`
+                    });
+                  } else {
+                    res.send({
+                      status: 401,  
+                      message: `Cannot delete Section ${id}. Section not found`
+                    });
+                  }
                 })
                 .catch(err => {
-                    res.status(500).send({
-                        message: "Error deleting Section" + id
-                    });
+                  res.status(500).send({
+                    message: "Error deleting Section" + id
+                  });
                 });
-            // end of the request
+              // end of the request
         }
     })
 }
@@ -346,34 +350,34 @@ exports.updateSection = (req, res) => {
         if (session) {
             if (!req.body.id || !req.body.subtitle || !req.body.description || !req.body.order) {
                 res.status(400).send({
-                    message: "Content can not be empty!"
+                  message: "Content can not be empty!"
                 });
                 return;
-            }
-            // handle the request
-            const id = req.body.id;
-
-            Section.update(req.body, {
-                    where: { id: id }
-                })
+              }
+              // handle the request
+              const id = req.body.id;
+    
+              Section.update(req.body, {
+                where: { id: id }
+              })
                 .then(num => {
-                    if (num == 1) {
-                        res.status(200).send({
-                            message: `Section ${id} was updated successfully.`
-                        });
-                    } else {
-                        res.status(401).send({
-                            message: `Cannot update Section ${id}. Section was not found or req.body is empty!`
-                        });
-                    }
+                  if (num == 1) {
+                    res.status(200).send({
+                      message: `Section ${id} was updated successfully.`
+                    });
+                  } else {
+                    res.status(401).send({
+                      message: `Cannot update Section ${id}. Section was not found or req.body is empty!`
+                    });
+                  }
                 })
                 .catch(err => {
-                    res.status(500).send({
-                        message: "Error updating Section with id=" + id
-                    });
+                  res.status(500).send({
+                    message: "Error updating Section with id=" + id
+                  });
                 });
 
-            // end of the request
+              // end of the request
         }
     })
 }
@@ -388,20 +392,20 @@ exports.deleteAllSection = (req, res) => {
 
             // handle the request
             Section.destroy({
-                    where: {},
-                    truncate: false
-                })
+                where: {},
+                truncate: false
+              })
                 .then(num => {
-                    res.status(200).send({
-                        message: `${num} Section were deleted successfully.`
-                    });
+                  res.status(200).send({
+                    message: `${num} Section were deleted successfully.`
+                  });
                 })
                 .catch(err => {
-                    res.status(500).send({
-                        message: "Error deleting Section"
-                    });
+                  res.status(500).send({
+                    message: "Error deleting Section"
+                  });
                 });
-            // end of the request
+              // end of the request
         }
     })
 }
@@ -410,3 +414,4 @@ exports.deleteAllSection = (req, res) => {
 
 
 //======== END: SECTION  ========
+
