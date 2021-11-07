@@ -59,6 +59,11 @@ module.exports.load = () => {
         (14, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 4),
         (15, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 4),
         (16, 0, 1, '2021-07-01', NULL, 0, 0, 10, 4);
+        
+        INSERT INTO Sections(sectionId, title, subtitle, ordering, classId) VALUES
+        (1,"Intro to Newton Laws" , "Newton's Laws 1", 1, 1),
+        (2,"Intro to Newton Laws" , "Newton's Laws 2", 2, 1),
+        (3,"Intro to Newton Laws" , "Newton's Laws 3", 3, 1);
 
         INSERT INTO Quizzes(quizId, type, title, instructions, durationInMins, passScoreRequirement, active, courseId, sectionId) VALUES
         (1, 'UG', "Section 1 Quiz", "Please complete the quiz within the time limit", 10, null, false, 1, 1),
