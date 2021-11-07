@@ -6,10 +6,10 @@ module.exports = app => {
     const withdrawal = require("../../controllers/withdrawal.controller.js");
 
     //Learner self-withdrawal
-    router.put("/:enrollmentId", withdrawal.withdraw);
+    router.put("/SelfWithdraw", withdrawal.withdraw);
 
     //HR Withdraw
-    router.put("/:enrollmentId", withdrawal.HRWithdraw);
+    router.put("/HRWithdraw", withdrawal.HRWithdraw);
 
     app.use(ROUTE_PATH, router);
 };

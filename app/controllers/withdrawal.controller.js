@@ -22,13 +22,15 @@ exports.withdraw = (req, res) => {
                 return
             }
             const enrollmentId = req.body.enrollmentId;
-            const isWithdrawn = req.body.isWithdrawn;
+            // const isWithdrawn = req.body.isWithdrawn;
             // Basically NOW must be before selfEnrollEndDateTime to self-withdraw
             Enrollment.update({
                     isWithdrawn: true
                 }, {
                     where: {
-                        enrollmentId: enrollmentId
+                        enrollmentId: enrollmentId,
+                        accountId: session.accountId
+                        //whoever logging in has the same accountId as the enrollmentId
                     },
                     include: {
                         model: Class,
