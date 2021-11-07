@@ -26,15 +26,12 @@
                         
 
                         <ul class="list-group text-center">
-                           <li v-for="section in sections" :key="section.title"  class="list-group-item justify-content-center"> 
-                                <h1 class="">{{section.title}} </h1>
+                            <!-- :key="section.title" -->
+                           <li v-for="section in sortedArray"   class="list-group-item justify-content-center"> 
+                                <h1 class="text-uppercase">{{section.title}} </h1>
                                 <h2>{{section.subtitle}}</h2>
                                 <h2>{{section.order}}</h2>
-                                
-                                
-
-                    
-                                <button type="button" class="btn btn-danger text-right">Delete Section</button>
+                                <button class="button btn btn-danger btn-sm" @click="deleteSection({{section.sectionId}})" >Delete Section</button>
                             </li>
 
                             <!-- <li class="list-group-item disabled" aria-disabled="true">A disabled item</li>
@@ -44,7 +41,7 @@
                             <!-- <li class="list-group-item">And a fifth one</li> -->
                           </ul>
                           <button type="button" class="btn btn-primary">Add Section</button>
-                          <button type="button" class="btn btn-primary">Add Section</button>
+                         
 
                         <!-- END OF LIST OF SECTION -->
 
@@ -68,7 +65,7 @@
                 el: '#app',
                 data: {
                     session: getUserSession(),
-                    clasesId: getParams("classId"),
+                    classId: getParams("classId"),
                     menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 2),
                     sections2: [
                         {title: "Section 1",subtitle: "Subtitle 1", order: 1, classId: 1},
@@ -87,19 +84,9 @@
                 }).then(response => {
               
                     // console.log("LOOK HERE", response.data);
+                    app.sections = response.data.sections;
+                    // console.log("Vue Section data", this.sections);
                   
-                        
-                        this.sections = response.data.section;
-                        // for(var i=0; i<response.data.sections.length; i++){
-                        //     console.log("cb kia ",response.data.sections[i]); 
-                        //     this.sections.push(response.data.sections[i]);
-                        // }
-                        // this.sections = response.data.sections;
-                        console.log("Vue Section data", this.sections);
-                        // console.log("response Section data", response.data);
-                    
-
-
                 })
                 // closing brace of mounted    
                 },
@@ -114,6 +101,16 @@
                             return 0;
                             }
                             return this.sections.sort(compare);
+                    }
+                },
+                methods:{
+                    deleteSection: function(inputSectionId){
+                        axios.post(API(`/section//delete`), {
+                    session: getUserSession(),
+                    sectionId: inputSectionId
+                }).then(response => {
+                    app.sections = response.data.sections;
+                })
                     }
                 }
             });

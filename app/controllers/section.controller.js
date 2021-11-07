@@ -1,5 +1,5 @@
 // DotEnv is a lightweight npm package that automatically loads environment variables from a . env file into the process.
-require('dotenv').config()
+// require('dotenv').config()
 
 // s3 imports statement 
 const fs =require('fs')
@@ -104,7 +104,7 @@ exports.addCourseMaterial = (req, res) => {
                 });
                 return;
               }
-        
+              
               const coursematerial = {
                 title: req.body.title,
                 instructions: req.body.instructions,
@@ -178,9 +178,7 @@ exports.getSectionPackage = (req, res) => {
                 })
                 return
             }
-            
             //TODO: Check if learner is enrolled & has completed previous sections
-            
             Section.findAll({
                 where: { classId: classId }
             }).then(data => {
