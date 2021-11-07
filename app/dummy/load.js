@@ -16,6 +16,8 @@ module.exports.SESSION_INVALID_SESSION = { username: "robin", sessionId: "00000"
 
 module.exports.load = () => {
     return db.sequelize.query(`
+     
+ 
         INSERT INTO Accounts(accountId, username, email, isAdmin, isTrainer, password, sessionId) VALUES
         (1, 'robin', 'wafturerobin@gmail.com', 1, 1, 'a', '0q8l8'),
         (2, 'soonhao', 'john.d.cheong@gmail.com', 1, 0, 'a', 'gee43'),
@@ -111,6 +113,7 @@ module.exports.load = () => {
         (2, 1),
         (2, 2);
 
+     
         INSERT INTO PrerequisiteSets(setNumber, course_fk) VALUES
         (1, 2),
         (1, 4),

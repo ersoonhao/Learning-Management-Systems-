@@ -18,7 +18,35 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Classes" :subtitle="'For Class ID: '+classId">
-                        <h1>SHOW LIST OF Sections</h1>
+                        <h1>Course of Sections</h1>
+                        
+                   
+                        <!-- START OF LIST OF SECTIONS -->
+                        
+
+                        <ul class="list-group text-center">
+                            <!-- :key="section.title" -->
+                           <li v-for="section in sortedArray"   class="list-group-item justify-content-center"> 
+                                <h1 class="text-uppercase">{{section.title}} </h1>
+                                <h2>{{section.subtitle}}</h2>
+                                <h2>{{section.order}}</h2>
+                                <button class="button btn btn-danger btn-sm" @click="deleteSection({{section.sectionId}})" >Delete Section</button>
+                            </li>
+
+                            <!-- <li class="list-group-item disabled" aria-disabled="true">A disabled item</li>
+                            <li class="list-group-item">A second item</li>
+                            <li class="list-group-item">A third item</li>
+                            <li class="list-group-item">A fourth item</li> -->
+                            <!-- <li class="list-group-item">And a fifth one</li> -->
+                          </ul>
+                          <button type="button" class="btn btn-primary">Add Section</button>
+                         
+
+                        <!-- END OF LIST OF SECTION -->
+
+
+
+
                         <a href="/manage/section?sectionId=1">Specific section</a>
                     </m-div>
                 </div>
@@ -37,9 +65,52 @@
                 data: {
                     session: getUserSession(),
                     classId: getParams("classId"),
-                    menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 2)
+                    menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 2),
+                    sections2: [
+                        {title: "Section 1",subtitle: "Subtitle 1", order: 1, classId: 1},
+                        {title: "Section 2",subtitle: "Subtitle 2", order: 3, classId: 1},
+                        {title: "Section 2",subtitle: "Subtitle 2", order: 2, classId: 1}
+                    ],
+                    sections: []
                 }, created: () => {
-                    
+
+                },
+                mounted: () => {
+
+                axios.post(API(`/section/getall`), {
+                    session: getUserSession(),
+                    classId: 1
+                }).then(response => {
+              
+                    // console.log("LOOK HERE", response.data);
+                    app.sections = response.data.sections;
+                    // console.log("Vue Section data", this.sections);
+                  
+                })
+                // closing brace of mounted    
+                },
+                computed: {
+                    sortedArray: function (sections) {
+                        console.log("Sorted array function:" , sections);
+                        function compare(a, b) {
+                            if (a.order < b.order)
+                                return -1;
+                            if (a.order > b.order)
+                                return 1;
+                            return 0;
+                            }
+                            return this.sections.sort(compare);
+                    }
+                },
+                methods:{
+                    deleteSection: function(inputSectionId){
+                        axios.post(API(`/section//delete`), {
+                    session: getUserSession(),
+                    sectionId: inputSectionId
+                }).then(response => {
+                    app.sections = response.data.sections;
+                })
+                    }
                 }
             });
         </script>
