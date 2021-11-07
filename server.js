@@ -27,7 +27,7 @@ require("./app/routes/backend/message.routes")(app);
 require("./app/routes/backend/prerequisiteSet.routes")(app);
 require("./app/routes/backend/enrollment.routes")(app);
 require("./app/routes/backend/coursePrerequisite.routes")(app);
-
+require("./app/routes/backend/withdrawal.routes")(app);
 // port 8081
 
 //Front-end

@@ -1,5 +1,5 @@
 const db = require("../models");
-
+const AccountController = require("./account.controller");
 const Class = db.Class;
 const Op = db.Sequelize.Op;
 
