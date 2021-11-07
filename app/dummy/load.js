@@ -105,6 +105,11 @@ module.exports.load = () => {
         (10, "Hi Varun, WHat's up, I am Asher", 7, 4),
         (11, 'I love you Asher', 4, 7),
         (12, 'Hehe me too', 7, 4);
+        
+        INSERT INTO CoursePrerequisites(setNumber, courseId) VALUES
+        (1, 1),
+        (2, 1),
+        (2, 2);
 
         INSERT INTO PrerequisiteSets(setNumber, course_fk) VALUES
         (1, 2),
@@ -112,10 +117,7 @@ module.exports.load = () => {
         (2, 1),
         (2, 3);
 
-        INSERT INTO CoursePrerequisites(setNumber, courseId) VALUES
-        (1, 1),
-        (2, 1),
-        (2, 2);
+       
     `)
 };
 
