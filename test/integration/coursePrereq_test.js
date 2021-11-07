@@ -8,11 +8,8 @@ const assert = require('assert')
 const dummy_reload = require("../../app/dummy/reload")
 
 describe('The course prerequisites route and controller',()=>{
-  // before(function(done){
-  //     dummy_reload.reload().then(() => { done() })
-  // })
   before(function(done){
-      dummy_reload.reload().then(() => { done() })
+    dummy_reload.reload().then(() => { done() })
   })
 
   it('deletes one prerequisite set through post request', (done)=>{
