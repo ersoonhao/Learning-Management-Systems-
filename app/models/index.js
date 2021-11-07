@@ -139,11 +139,11 @@ db.Section.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
 db.Section.hasMany(db.CourseMaterial, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.CourseMaterial.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
 
-db.Section.hasMany(db.Quiz, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.Quiz.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
+/* db.Section.hasMany(db.Quiz, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Quiz.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' }); */
 
 db.Section.hasOne(db.Quiz, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-// db.Quiz.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
+db.Quiz.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
 
 // ================== SYNC ==================
 db.sequelize.sync();
