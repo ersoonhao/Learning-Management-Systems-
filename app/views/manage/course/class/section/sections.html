@@ -87,16 +87,18 @@
                 }).then(response => {
               
                     // console.log("LOOK HERE", response.data);
-                    if(response.status == 200){
+                  
                         
-                        for(var i=0; i<response.data.sections.length; i++){
-                            console.log("cb kia ",response.data.sections[i]); 
-                            this.sections.push(response.data.sections[i]);
-                        }
+                        this.sections = response.data.section;
+                        // for(var i=0; i<response.data.sections.length; i++){
+                        //     console.log("cb kia ",response.data.sections[i]); 
+                        //     this.sections.push(response.data.sections[i]);
+                        // }
                         // this.sections = response.data.sections;
                         console.log("Vue Section data", this.sections);
                         // console.log("response Section data", response.data);
-                    }
+                    
+
 
                 })
                 // closing brace of mounted    

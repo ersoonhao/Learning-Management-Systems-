@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize) => {
         subtitle: {
             type:Sequelize.STRING
         },
-        order: {
+        ordering: {
             type: Sequelize.INTEGER
         },
         classId: {

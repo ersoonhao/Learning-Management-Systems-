@@ -117,10 +117,10 @@ module.exports.load = () => {
         (2, 1),
         (2, 2);
 
-        INSERT INTO Sections(sectionId, title, subtitle, order ,classId) VALUES
+        INSERT INTO Sections(sectionId, title, subtitle, ordering, classId) VALUES
         (1,"Intro to Newton Laws" , "Newton's Laws 1", 1, 1),
         (2,"Intro to Newton Laws" , "Newton's Laws 2", 2, 1),
-        (3,"Intro to Newton Laws" , "Newton's Laws 3", 3, 1),
+        (3,"Intro to Newton Laws" , "Newton's Laws 3", 3, 1);
     `)
 };
 

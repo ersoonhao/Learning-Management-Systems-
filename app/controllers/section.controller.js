@@ -98,7 +98,7 @@ exports.addCourseMaterial = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.title || !req.body.order || !req.body.source ) {
+            if (!req.body.title || !req.body.orderinging || !req.body.source ) {
                 res.status(400).send({
                   message: "Content can not be empty!"
                 });
@@ -110,7 +110,7 @@ exports.addCourseMaterial = (req, res) => {
                 instructions: req.body.instructions,
                 source: req.body.source,
                 type: req.body.type, //file type.
-                order: req.body.order
+                ordering: req.body.ordering
               };
               console.log(coursematerial);
               
@@ -134,7 +134,7 @@ exports.addCourseMaterial = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.title || !req.body.order || !req.body.source ) {
+            if (!req.body.title || !req.body.ordering || !req.body.source ) {
                 res.status(400).send({
                   message: "Content can not be empty!"
                 });
@@ -206,7 +206,7 @@ exports.createSection = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if ( !req.body.subtitle || !req.body.description || !req.body.order) {
+            if ( !req.body.subtitle || !req.body.description || !req.body.ordering) {
                 res.status(400).send({
                   message: "Content can not be empty!"
                 });
@@ -215,7 +215,7 @@ exports.createSection = (req, res) => {
               const section = {
                 title: req.body.title,
                 subtitle: req.body.subtitle,
-                order: req.body.order
+                ordering: req.body.ordering
               };
               console.log(section)
               
@@ -348,7 +348,7 @@ exports.updateSection = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.id || !req.body.subtitle || !req.body.description || !req.body.order) {
+            if (!req.body.id || !req.body.subtitle || !req.body.description || !req.body.ordering) {
                 res.status(400).send({
                   message: "Content can not be empty!"
                 });
