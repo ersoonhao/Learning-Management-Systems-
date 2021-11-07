@@ -66,6 +66,16 @@ describe('The prerequisites route and controller',()=>{
     )
   })
 
+  it('creates new prereq set through post request',(done)=>{
+    request(app).post('/api/prereqset/new').send({session: dummy_reload.SESSION_ADMIN,"courseId":1, "prerequisite":[2,3]}).end(
+      (err,response)=>{
+        console.log(response.body)
+        assert(response.body.message == 'Course Prerequisites were created successfully')
+        done()
+      }
+    )
+  })
+
 
   // it('creates one message through post request without message id',(done)=>{
   //   request(app).post('/api/message/create').send({text: 'test message', senderAccountId:1, receiverAccountId:2}).end(

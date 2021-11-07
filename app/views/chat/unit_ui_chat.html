@@ -1,0 +1,218 @@
+<!-- contributor: John Cheong -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/qunit/2.4.0/qunit.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<div id="app">
+</div>
+
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qunit/2.4.0/qunit.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+function getUserSession() {
+    return {"session":"test"}
+}
+
+function initMenu(sections, focus_section_index, focus_link_index) {
+    return {
+        sections: sections,
+        focus_section_index: focus_section_index,
+        focus_link_index: focus_link_index
+    }
+}
+const MENU_SECTIONS_MANAGE_GENERAL = [{
+    id: "T1",
+    title: "Tools",
+    subtitle: "Management Tools",
+    links: [
+        { title: "Course", link: "/manage/courses", completed: false }
+    ]
+}]
+
+function API(path) {
+    return "/api" + path;
+}
+
+var all_messages = {
+    "accountId": 2,
+    "username": "soonhao",
+    "messages": {
+        "robin": {
+            "messages": [
+                {
+                    "messageId": 1,
+                    "text": "Hi SoonHao, Robin Here",
+                    "senderAccountId": 1,
+                    "receiverAccountId": 2,
+                    "sender": "robin",
+                    "receiver": "soonhao"
+                },
+                {
+                    "messageId": 2,
+                    "text": "Hi Robin, WHat's up, I am Soon Hao",
+                    "senderAccountId": 2,
+                    "receiverAccountId": 1,
+                    "sender": "soonhao",
+                    "receiver": "robin"
+                },
+                {
+                    "messageId": 3,
+                    "text": "I love you Soon Hao",
+                    "senderAccountId": 1,
+                    "receiverAccountId": 2,
+                    "sender": "robin",
+                    "receiver": "soonhao"
+                },
+                {
+                    "messageId": 4,
+                    "text": "Hehe me too",
+                    "senderAccountId": 2,
+                    "receiverAccountId": 1,
+                    "sender": "soonhao",
+                    "receiver": "robin"
+                }
+            ],
+            "accountId": 1
+        },
+        "john": {
+            "messages": [
+                {
+                    "messageId": 810,
+                    "text": "yo",
+                    "senderAccountId": 3,
+                    "receiverAccountId": 2,
+                    "sender": "john",
+                    "receiver": "soonhao"
+                },
+                {
+                    "messageId": 811,
+                    "text": "yo john",
+                    "senderAccountId": 2,
+                    "receiverAccountId": 3,
+                    "sender": "soonhao",
+                    "receiver": "john"
+                }
+            ],
+            "accountId": 3
+        },
+        "varun": {
+            "messages": [],
+            "accountId": 4
+        },
+        "joshua": {
+            "messages": [],
+            "accountId": 5
+        },
+        "alvin": {
+            "messages": [],
+            "accountId": 6
+        },
+        "asher": {
+            "messages": [],
+            "accountId": 7
+        },
+        "bob": {
+            "messages": [],
+            "accountId": 8
+        },
+        "sean": {
+            "messages": [],
+            "accountId": 9
+        },
+        "george": {
+            "messages": [],
+            "accountId": 10
+        }
+    }
+}
+
+</script>
+<script src='/js/lms/chat/chat.js'></script>
+    <script type="text/javascript">
+        QUnit.test('can set search term', function (assert) {
+        app.search_term = 'john'
+        console.log(app)
+        assert.equal(app.search_term, 'john');
+        app.search_term = ''
+});
+
+        QUnit.test('can set all users', function (assert) {
+        app.all_users = ['robin', 'john', 'varun', 'joshua', 'alvin', 'asher', 'bob', 'sean', 'george']
+        console.log(app.all_users)
+        assert.deepEqual(app.all_users, ['robin', 'john', 'varun', 'joshua', 'alvin', 'asher', 'bob', 'sean', 'george']);
+        app.all_users = []
+});
+
+QUnit.test('can search for user John successfully', function (assert) {
+        app.all_users = ['robin', 'john', 'varun', 'joshua', 'alvin', 'asher', 'bob', 'sean', 'george']
+        app.search_term = 'john'
+        app.partialSearch()
+        assert.deepEqual(app.searched_users, ['john']);
+        app.searched_users = []
+        app.search_term = ''
+        app.all_users = []
+});
+
+QUnit.test('can search for user Robin successfully', function (assert) {
+        app.all_users = ['robin', 'john', 'varun', 'joshua', 'alvin', 'asher', 'bob', 'sean', 'george']
+        app.search_term = 'Robin'
+        app.partialSearch()
+        assert.deepEqual(app.searched_users, ['robin']);
+        app.searched_users = []
+        app.search_term = ''
+        app.all_users = []
+});
+
+QUnit.test('can search for user Robin in small letters and capital letters successfully', function (assert) {
+        app.all_users = ['robin', 'john', 'varun', 'joshua', 'alvin', 'asher', 'bob', 'sean', 'george']
+        app.search_term = 'rObiN'
+        app.partialSearch()
+        assert.deepEqual(app.searched_users, ['robin']);
+        app.searched_users = []
+        app.search_term = ''
+        app.all_users = []
+});
+
+QUnit.test('can search for user SoonHao with middle of name letters successfully', function (assert) {
+        app.all_users = ['soonhao','robin', 'john', 'varun', 'joshua', 'alvin', 'asher', 'bob', 'sean', 'george']
+        app.search_term = 'oOnH'
+        app.partialSearch()
+        assert.deepEqual(app.searched_users, ['soonhao']);
+        app.searched_users = []
+        app.search_term = ''
+        app.all_users = []
+});
+
+QUnit.test('can update selected user by Account ID', function(assert){
+    app.all_messages = all_messages
+    app.updateSelect('3')
+    assert.equal(app.selected, '3')
+    assert.deepEqual(app.current_messages, app.all_messages['messages']['john'].messages)
+    app.all_messages = {}
+
+})
+
+QUnit.test('can select user by username',function(assert){
+    app.all_messages = all_messages
+    app.nameSelect('john')
+    assert.deepEqual(app.searched_users, [])
+    assert.equal(app.search_term,'')
+    assert.equal(app.selected, '3')
+    assert.deepEqual(app.current_messages, app.all_messages['messages']['john'].messages)
+    app.all_messages = {}
+})
+
+    </script>
+</body>
+</html>
