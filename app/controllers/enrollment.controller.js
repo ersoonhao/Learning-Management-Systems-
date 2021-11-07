@@ -101,7 +101,10 @@ exports.getMyEnrollmentByCourse = (req, res) => {
                         model: Class,
                         include: {
                             model: Enrollment,
-                            where: { accountId: session.accountId }
+                            where: {
+                                accountId: session.accountId,
+                                isWithdrawn: false
+                            }
                         }
                     }
                 })
