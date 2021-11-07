@@ -124,6 +124,7 @@ db.Enrollment.belongsTo(db.Account, { foreignKey: 'accountId', targetKey: 'accou
 db.Class.hasMany(db.Enrollment, { foreignKey: 'classId', sourceKey: 'classId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.Enrollment.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
 
+
 // ================== SYNC ==================
 db.sequelize.sync();
 
