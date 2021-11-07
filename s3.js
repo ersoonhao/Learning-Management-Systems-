@@ -1,9 +1,9 @@
 // DotEnv is a lightweight npm package that automatically loads environment variables from a . env file into the process.
-require('dotenv').config()
+//require('dotenv').config()
 
 // imports statement 
-const fs =require('fs')
-const S3=require('aws-sdk/clients/s3')
+const fs = require('fs')
+const S3 = require('aws-sdk/clients/s3')
 
 // KEYS 
 
@@ -16,13 +16,13 @@ const S3=require('aws-sdk/clients/s3')
 
 
 
-const bucketName="spm-files-upload"
-const region="ap-southeast-1"
-const accessKeyId= "AKIARW74HBZIRY7PNJ5G"
-const secretAccessKey="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" 
+const bucketName = "spm-files-upload"
+const region = "ap-southeast-1"
+const accessKeyId = "AKIARW74HBZIRY7PNJ5G"
+const secretAccessKey = "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"
 
 // s3 init
-const s3= new S3({
+const s3 = new S3({
     region,
     accessKeyId,
     secretAccessKey
@@ -30,33 +30,33 @@ const s3= new S3({
 
 
 // upload function
-function uploadFile(file,extension) {
+function uploadFile(file, extension) {
     // parse in file object from multer which contain the filepath and the unique key from S3 
     const fileStream = fs.createReadStream(file.path)
-    
+
     console.log("key HERE", file.filename)
-    var pdfkey= file.filename+".pdf"; 
-    var filekey=file.filename+ extension;
+    var pdfkey = file.filename + ".pdf";
+    var filekey = file.filename + extension;
     const uploadParams = {
-      Bucket: bucketName,
-      Body: fileStream,
-    //   Key: file.filename,
-      Key: filekey,
-      ACL: 'public-read'
-    } 
+        Bucket: bucketName,
+        Body: fileStream,
+        //   Key: file.filename,
+        Key: filekey,
+        ACL: 'public-read'
+    }
     return s3.upload(uploadParams).promise()
-  }
+}
 
 exports.uploadFile = uploadFile
-// download form s3 
+    // download form s3 
 
 // takes in a file key & return a read stream 
 function getFileStream(fileKey) {
     const downloadParams = {
-      Key: fileKey,
-      Bucket: bucketName
+        Key: fileKey,
+        Bucket: bucketName
     }
-  
+
     return s3.getObject(downloadParams).createReadStream()
-  }
-  exports.getFileStream = getFileStream
+}
+exports.getFileStream = getFileStream
