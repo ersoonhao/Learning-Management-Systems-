@@ -65,10 +65,10 @@ db.Class = require("./class.model")(sequelize, Sequelize);
 db.CourseProgress = require("./courseprogress.model")(sequelize, Sequelize);
 
 //Section
-db.Section=require("./section.model")(sequelize,Sequelize);
+db.Section = require("./section.model")(sequelize, Sequelize);
 
 // Course Material 
-db.CourseMaterial=require("./coursematerial.model")(sequelize,Sequelize);
+db.CourseMaterial = require("./coursematerial.model")(sequelize, Sequelize);
 
 
 //Quiz
@@ -140,7 +140,10 @@ db.Section.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
 
 // course material 
 db.Section.hasMany(db.CourseMaterial, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.CourseMaterial.belongsTo(db.Section, { foreignKey: 'classId', targetKey: 'classId'});
+db.CourseMaterial.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
+
+db.Section.hasOne(db.Quiz, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Quiz.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
 
 // ================== SYNC ==================
 db.sequelize.sync();
