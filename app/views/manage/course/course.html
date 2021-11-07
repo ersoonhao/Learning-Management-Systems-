@@ -19,11 +19,38 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
-                        <h1>{{title}}</h1> 
-                        <button class='button btn btn-danger btn-sm' v-on:click="deleteCourse">Delete Course</button>
-                        <button class='button btn btn-warning btn-sm'>Edit Course Information (Title, Description, Active status)</button>
-                        <p>Description: {{description}}</p>
-                        <p>Active: {{active}}</p>
+                        <h1 v-if='!editing'>{{title}}</h1> 
+                        <img v-if='!editing' :src="img_url" alt="pic" style="width:800px;height:300px;">
+                        <div v-if='editing' class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroup-sizing">Title</span>
+                            </div>
+                            <input v-model='newTitle' type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                        </div>
+                        <div v-if='editing' class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroup-sizing">Description</span>
+                            </div>
+                            <input v-model='newDescription' type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                        </div>
+                        <div v-if='editing' class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroup-sizing">Image URL</span>
+                            </div>
+                            <input v-model='new_img_url' type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                        </div>
+                        <div v-if='editing'>
+                        <label class="form-check-label" for="flexRadioDefault1">Active</label>
+                        <input class="form-check-input"  type="radio" v-model="newActive" v-bind:value="true" name="flexRadioDefault" id="flexRadioDefault1">
+                        <label class="form-check-label" for="flexRadioDefault2">Inactive</label>
+                        <input class="form-check-input" type="radio" v-model="newActive" v-bind:value="false" name="flexRadioDefault" id="flexRadioDefault2">
+                        </div>
+
+                        <p v-if='!editing'>Description: {{description}}</p>
+                        <p v-if='!editing'>Active: {{active}}</p>
+                        <button v-if='!editing' class='button btn btn-danger btn-sm' v-on:click="deleteCourse">Delete Course</button>
+                        <button v-if='!editing' class='button btn btn-warning btn-sm' v-on:click='editStart'>Edit Course Information (Title, Description, Active status)</button>
+                        <button v-if='editing' class='button btn btn-warning btn-sm' v-on:click='completeEdit'>Complete Edit</button>
                         <div v-if="prerequisiteSets.length>1">
                             <h3>Prerequisites for this course</h3>
                             <p>You have to complete either of the below sets of courses</p>
@@ -40,9 +67,16 @@
                             <h3>Prerequisites for this course</h3>
                             <p>You have to complete the below courses to be able to do this course</p>
                             <p v-for="prereq in prerequisiteSets[0].PrerequisiteSets">Course {{prereq.course_fk}}, Title: {{prereq.title}}</p>
+                            <button class='button btn btn-danger btn-sm' v-on:click="deleteSet(prerequisiteSets[0].setNumber)">Delete Set</button>
                         </div>
                         <div v-else>
                             <h3>No prerequisites</h3>
+                        </div>
+                        <button v-if='!adding' class='button btn btn-success btn-sm' v-on:click="startAdd">Add Prerequisite</button>
+                        <div v-if='adding'>
+                            <h3>Adding a prerequisite to this course.</h3>
+                            <coursesets v-bind:course-ids="courseIds" my-message="How many courses are in this set?"></coursesets>
+                            <button class='button btn btn-success btn-sm' v-on:click="addPrerequisite">Complete Prerequisite adding</button>
                         </div>
                     </m-div>
                     
@@ -57,6 +91,31 @@
         <script src="/js/lms/main/master.js"></script>
         <script src="/js/lms/main/manage.js"></script>
         <script>
+
+            Vue.component('coursesets',
+            {data: function () {
+            return {
+              coursesPerSet: 0,
+              courses: []
+            }},created:()=>{
+              
+            }, 
+            props: {myMessage:String, courseIds: Array, setNumber:Number},
+            template: `<div class='blockOfSets'>
+            <span>{{ myMessage }}</span><br><input v-model="coursesPerSet" class="length" type="number" placeholder="Number of sets">
+            <div v-if="coursesPerSet">
+            <div v-for="index in parseInt(coursesPerSet)" :key="index">
+            <span>indicate which course by id</span><br>
+            <select class='select_class' required>
+            <option :value="null">Please select one</option>
+            <option v-for="IdTitle in courseIds" v-bind:value="IdTitle.courseId">{{IdTitle.courseId}}, {{IdTitle.title}}</option>
+            </select>
+            </div>
+            </div>
+            </div>
+            `
+            })
+
             const app = new Vue({
                 el: '#app',
                 data: {
@@ -67,7 +126,15 @@
                     description: null,
                     active: null,
                     prerequisiteSets: [],
-                    id_title_matching: {}
+                    id_title_matching: {},
+                    editing: false,
+                    newTitle: '',
+                    newDescription: '',
+                    newActive: null,
+                    adding: null,
+                    courseIds: [],
+                    img_url: '',
+                    new_img_url: '',
                 },
                 created: () => {
                     
@@ -75,17 +142,29 @@
     axios
       .post(API(`/course/find`), {session: getUserSession(), id: getParams("courseId")})
       .then(response =>{
-        console.log(response.data.course.CoursePrerequisites)
+          console.log(response)
+          
+          if(response.status == 200){
+          console.log(response.data.course.CoursePrerequisites)
           this.title = response.data.course.title
           this.description = response.data.course.description
           this.active = response.data.course.active
           this.prerequisiteSets = response.data.course.CoursePrerequisites
           this.id_title_matching = response.data.id_title_matching
+          this.img_url = response.data.course.courseImage
 
           for(var i=0; i<this.prerequisiteSets.length; i++){
               for(var j=0; j<this.prerequisiteSets[i].PrerequisiteSets.length; j++){
                   this.prerequisiteSets[i].PrerequisiteSets[j]['title'] = this.id_title_matching[this.prerequisiteSets[i].PrerequisiteSets[j].course_fk]
               }
+          }
+          }
+          
+          if(response.status == 401){
+            console.log('failed')
+            sessionExpired();
+            // window.location.href = "/login";
+            return;
           }
       })
   },methods:{
@@ -108,8 +187,50 @@
                 window.location.href = "/manage/course?courseId="+getParams("courseId")
             }
           })
-      }
-  }
+      },editStart:function(){
+          app.editing = true
+          app.newTitle = app.title
+          app.newDescription = app.description
+          app.newActive = app.active
+          app.new_img_url = app.img_url
+          console.log('edit started')
+      },completeEdit:function(){
+          app.editing=false;
+          axios.post(API(`/course/update`), {session: getUserSession(), courseId: getParams("courseId"), title: app.newTitle, description: app.newDescription, active: app.newActive, courseImage: app.new_img_url})
+          .then(response =>{
+            console.log(response.data)
+            if(response.data.message == "Course was updated successfully."){
+                window.location.href = "/manage/course?courseId="+getParams("courseId")
+            }
+          })
+      },startAdd:function(){
+          app.adding = true
+          console.log('add started')
+          axios.get(API('/course/allidtitle')).then(response => (
+                        console.log(response.data),
+                        app.courseIds = response.data
+                        ))
+      },addPrerequisite:function(){
+          app.adding = false
+          var select_html = document.getElementsByClassName('select_class')
+          var preReqIds = []
+          for(var i=0; i<select_html.length; i++){
+                          // console.log(lengths_html[i].value)
+                          var preReqId = select_html[i].options[select_html[i].selectedIndex].value
+                          preReqIds.push(parseInt(preReqId))
+          }
+          console.log(preReqIds)
+            axios.post(API(`/prereqset/new`), {session: getUserSession(), courseId: getParams("courseId"), prerequisite: preReqIds}).then(
+                response =>{
+                    console.log('add completed')
+                    console.log(response.data)
+                    if(response.data.message == "Course Prerequisites were created successfully"){
+                        window.location.href = "/manage/course?courseId="+getParams("courseId")
+                    }
+                })
+        
+    }
+    }
             });
         </script>
     </body>

@@ -52,6 +52,9 @@
                     dataList: []
                 },
                 created: function(){
+                    if(!this.session){
+                        return;
+                    }
                     //DUMMY DATA
                     dummy_class = {
                         classId: 1,

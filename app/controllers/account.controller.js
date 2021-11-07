@@ -32,7 +32,15 @@ exports.validAuthNAccess = (req, res, requiredPerms) => {
         q.sessionId = req.body.session.sessionId
         Account.findOne({ where: q }).then(data => {
             if(data == null){
-                res.status(401).send({ message: failed })
+                Account.findOne({ where: { username: q.username, sessionId: q.sessionId } }).then(data => {
+                    if(data == null){
+                        res.status(401).send({ message: failed })
+                    }else{
+                        res.status(403).send({ message: failed })
+                    }
+                }).catch(err => {
+                    res.status(401).send({ message: failed })
+                })
                 return
             }
             resolve(data);
@@ -71,7 +79,10 @@ exports.login = (req, res) => {
                 res.send({
                     status: 200,
                     message: "Successful login",
-                    session: { username: username, sessionId: sid }
+                    session: { 
+                        username: username, sessionId: sid, 
+                        isAdmin: data.isAdmin, isTrainer: data.isTrainer 
+                    }
                 });
             } else {
                 res.send({
@@ -101,6 +112,58 @@ exports.login = (req, res) => {
     */
 }
 
+//==== POST: /getTrainers
+exports.getTrainers = (req, res) => {
+    const permissions = [this.PERM_ADMIN]
+    this.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
+            Account.findAll({
+                where: { isTrainer: 1 },
+            }).then(data => {
+                res.send({ "trainers": data });
+            }).catch(err=>{
+                res.status(500).send({
+                    message: err.message || "Some error occured obtaining data"
+                })
+            });
+        }
+    })
+    /* SAMPLE JSON BODY REQUEST
+    > POST | localhost:8081/api/account/getTrainers
+        {
+            "session": {
+                "username": "robin",
+                "sessionId": "0q8l8"
+            }
+        }
+    */
+}
+//==== POST: /getLearners
+exports.getLearners = (req, res) => {
+    const permissions = [this.PERM_ADMIN, this.PERM_TRAINER]
+    this.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
+            Account.findAll({
+                order: ['username']
+            }).then(data => {
+                res.send({ "learners": data });
+            }).catch(err=>{
+                res.status(500).send({
+                    message: err.message || "Some error occured obtaining data"
+                })
+            });
+        }
+    })
+    /* SAMPLE JSON BODY REQUEST
+    > POST | localhost:8081/api/account/getLearners
+        {
+            "session": {
+                "username": "robin",
+                "sessionId": "0q8l8"
+            }
+        }
+    */
+}
 
 // Create and Save a new account
 exports.create = (req, res) => {

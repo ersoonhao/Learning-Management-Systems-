@@ -160,7 +160,11 @@ describe('Quiz API - POST /api/quiz/createQuiz', () => { //POST: createQuiz
             chai.request(app).post("/api/quiz/createQuiz").send(data)
             .end((err, response) => {
                 console.log("Status:" + response.status);
-                assert(response.status == 401);
+                if(ses == dummy.SESSION_LEARNER){
+                    assert(response.status == 403);
+                }else{
+                    assert(response.status == 401);
+                }
                 done();
             })
         })
@@ -229,7 +233,11 @@ describe('Quiz API - POST /api/quiz/updateQuiz', () => { //POST: updateQuiz
             chai.request(app).post("/api/quiz/updateQuiz").send(data)
             .end((err, response) => {
                 console.log("Status:" + response.status);
-                assert(response.status == 401);
+                if(ses == dummy.SESSION_LEARNER){
+                    assert(response.status == 403);
+                }else{
+                    assert(response.status == 401);
+                }
                 done();
             })
         })
@@ -293,7 +301,11 @@ describe('Quiz API - POST /api/quiz/addQuestion', () => { //POST: addQuestion
             chai.request(app).post("/api/quiz/addQuestion").send(data)
             .end((err, response) => {
                 console.log("Status:" + response.status);
-                assert(response.status == 401);
+                if(ses == dummy.SESSION_LEARNER){
+                    assert(response.status == 403);
+                }else{
+                    assert(response.status == 401);
+                }
                 done();
             })
         })
@@ -356,7 +368,11 @@ describe(`Quiz API - POST /api/quiz/updateQuestion`, () => { //POST: updateQuest
             chai.request(app).post("/api/quiz/updateQuestion").send(data)
             .end((err, response) => {
                 console.log("Status:" + response.status);
-                assert(response.status == 401);
+                if(ses == dummy.SESSION_LEARNER){
+                    assert(response.status == 403);
+                }else{
+                    assert(response.status == 401);
+                }
                 done();
             })
         })
@@ -409,7 +425,11 @@ describe(`Quiz API - POST /api/quiz/deleteQuestion`, () => { //POST: deleteQuest
             chai.request(app).post("/api/quiz/deleteQuestion").send(data)
             .end((err, response) => {
                 console.log("Status:" + response.status);
-                assert(response.status == 401);
+                if(ses == dummy.SESSION_LEARNER){
+                    assert(response.status == 403);
+                }else{
+                    assert(response.status == 401);
+                }
                 done();
             })
         })
@@ -474,7 +494,11 @@ describe('Quiz API - POST /api/quiz/addQuestionOption', () => { //POST: addQuest
             chai.request(app).post("/api/quiz/addQuestionOption").send(data)
             .end((err, response) => {
                 console.log("Status:" + response.status);
-                assert(response.status == 401);
+                if(ses == dummy.SESSION_LEARNER){
+                    assert(response.status == 403);
+                }else{
+                    assert(response.status == 401);
+                }
                 done();
             })
         })
@@ -535,7 +559,11 @@ describe(`Quiz API - POST /api/quiz/updateQuestionOption`, () => { //POST: updat
             chai.request(app).post("/api/quiz/updateQuestionOption").send(data)
             .end((err, response) => {
                 console.log("Status:" + response.status);
-                assert(response.status == 401);
+                if(ses == dummy.SESSION_LEARNER){
+                    assert(response.status == 403);
+                }else{
+                    assert(response.status == 401);
+                }
                 done();
             })
         })
@@ -587,7 +615,11 @@ describe('Quiz API - POST /api/quiz/deleteQuestionOption', () => { //POST: delet
             chai.request(app).post("/api/quiz/deleteQuestionOption").send(data)
             .end((err, response) => {
                 console.log("Status:" + response.status);
-                assert(response.status == 401);
+                if(ses == dummy.SESSION_LEARNER){
+                    assert(response.status == 403);
+                }else{
+                    assert(response.status == 401);
+                }
                 done();
             })
         })

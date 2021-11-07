@@ -8,11 +8,12 @@ app.use(express.json())
 // ================ Routes ================
 app._FRONT_END_PATH = __dirname + '/app/views/';
 //app.use(express.static(app._FRONT_END_PATH));
+app._TEST_PATH = __dirname + '/test/';
 
 app.use(express.static(__dirname + "/app/static/"));
 
 app.get("/test", (req, res) => {
-  res.json({ message: "Test working @ port 8081" });
+    res.json({ message: "Test working @ port 8081" });
 });
 
 //Backend
@@ -33,6 +34,7 @@ require("./app/routes/backend/withdrawal.routes")(app);
 //Front-end
 require("./app/routes/frontend/main.froutes")(app);
 require("./app/routes/frontend/manage.froutes")(app);
+require("./app/routes/frontend/forum.froutes")(app);
 
 
 
@@ -40,7 +42,7 @@ require("./app/routes/frontend/manage.froutes")(app);
 // Cross-origin resource sharing (CORS) defines a way for client web applications that are loaded in one domain to interact with resources in a different domain. 
 app.use(cors({
     //origin: "*",
-    methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+    methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH']
 }));
 
 app.use((req, res, next) => {
@@ -61,12 +63,12 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse requests of content
 const db = require('./app/models')
 let reset_db = false;
 
-if(reset_db){
+if (reset_db) {
     db.sequelize_force_reset.then(() => { //Reset database
         // Init Dummy Data
-        require("./app/dummy/load") 
+        require("./app/dummy/load")
     });
-}else{
+} else {
     db.sequelize.sync({ alter: true });
 }
 
@@ -83,7 +85,7 @@ require("./chat")(io)
 const PORT = process.env.PORT || 8081; //Set port, listen for requests
 
 server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+    console.log(`Server is running on port ${PORT}.`);
 });
 
 module.exports = server;

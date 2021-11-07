@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <title>LMS</title>
+    <link rel="stylesheet" href="/style/master.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <lms-head :session="session"></lms-head>
+      <div class="content">
+        <div class=container>
+          <m-div :menu="menu" title="View Course" :subtitle="'For Course ID: '+courseId">
+            <h1>{{title}}</h1>
+            <!-- <button class='button btn btn-danger btn-sm' v-on:click="deleteCourse">Delete Course</button><button class='button btn btn-warning btn-sm'>Edit Course Information (Title, Description, Active status)</button> -->
+            <p>Description: {{description}}</p>
+            <p>Active: {{active}}</p>
+            <div v-if="passed">
+              <h3>You have passed this course</h3>
+            </div>
+            <div v-else-if="!isEligible">
+              <h3>Prerequisites for this course</h3>
+              <p>You have to complete either of the below sets of courses</p>
+              <div v-for="set in prerequisiteSets">
+                <h4>Set {{set.setNumber}}</h4>
+                <div class="container" v-for="PrerequisiteSet in set.PrerequisiteSets">
+                  <div class="row">
+                    <div class="col-sm-8">
+                      <p>Course {{ PrerequisiteSet.course_fk }}, Title: {{PrerequisiteSet.title}} </p>
+                    </div>
+                    <div class="col-sm" v-if="prereqDict[set.setNumber][PrerequisiteSet.course_fk]">
+                      <i class="fa fa-check" style="color:green; font-size:20px"></i>
+                    </div>
+                    <div class="col-sm" v-else>
+                      <i class="fa fa-times" style="color:red; font-size:20px"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else>
+              <h3 class="mb-3 lms-font-semibold" style="float: left;">All classes </h1>
+                <!-- <a class="btn btn-secondary" style="float: right;" :href="'/manage/class?courseId='+courseId">Create Class</a><a href="/manage/class?classId=1">Specific class</a> -->
+                <div style="clear: both"></div>
+                <table class="table">
+                  <thead class="lms-table-head lms-font-semibold">
+                    <tr>
+                      <th>Class Id</th>
+                      <th>Trainer</th>
+                      <th>Current Capacity</th>
+                      <th>Max Capacity</th>
+                      <th>Enrollment Start Date</th>
+                      <th>Enrollment End Date</th>
+                      <th>Class Start Date</th>
+                      <th>Class End Date</th>
+                      <td></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="c in classes" :key="c.classId">
+                      <td>{{ c.classId }}</td>
+                      <td>{{ c.Account.username }}</td>
+                      <td>-</td>
+                      <td>{{ c.maxCapacity }}</td>
+                      <td>{{ dateFormat(c.selfEnrollStartDateTime) }}</td>
+                      <td>{{ dateFormat(c.selfEnrollEndDateTime) }}</td>
+                      <td>{{ dateFormat(c.classStartDateTime) }}</td>
+                      <td>{{ dateFormat(c.classEndDateTime) }}</td>
+                      <td v-if="Date.now() < new Date(c.selfEnrollStartDateTime) || Date.now() > new Date(c.selfEnrollEndDateTime)">
+                        <a class="btn btn-secondary">Closed</a>
+                      </td>
+                      <td v-else-if="applied == c.classId">
+                        <a class="btn btn-primary" @click="withdraw()">Withdraw</a>
+                      </td>
+                      <td v-else-if="applied == null">
+                        <a class="btn btn-primary" @click="enroll(c.classId)">Apply</a>
+                      </td>
+                      
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+          </m-div>
+        </div>
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="/js/lib/vue.js"></script>
+    <script src="/js/lms/main/master.js"></script>
+    <script src="/js/lms/main/manage.js"></script>
+    <script>
+      const app = new Vue({
+        el: '#app',
+        data: {
+          session: getUserSession(),
+          courseId: getParams("courseId"),
+          menu: initMenu(generateMenuSections_CourseGeneral(getParams("courseId")), 0, 0),
+          title: null,
+          description: null,
+          active: null,
+          prerequisiteSets: [],
+          prereqDict: [],
+          classes: [],
+          applied: null,
+          enrollmentId: null,
+          passed: false,
+          isEligible: false,
+          id_title_matching: {}
+        },
+        created: () => {
+          this.session = getUserSession();
+          this.courseId;
+        },
+        mounted() {
+          this.loadData();
+        },
+        methods: {
+          dateFormat: (dStr) => {
+            let d = new Date(Date.parse(dStr));
+            if (!d) {
+              return "?";
+            }
+            return [d.getDate(), (d.getMonth() + 1), d.getFullYear()].join('/')
+          },
+          loadData() {
+            var enrollObj = {
+              courseId: getParams("courseId"),
+              session: this.session
+            }
+            axios.post(API('/enrollment/getMyEnrollmentByCourse'), enrollObj).then((response) => {
+              if (response.status == 200) {
+                if (response.data.data.Classes[0]) {
+                  console.log(response.data.data.Classes[0].enrollments[0].classId)
+                  this.applied = response.data.data.Classes[0].enrollments[0].classId
+                  this.passed = response.data.data.Classes[0].enrollments[0].coursePassed
+                  this.enrollmentId = response.data.data.Classes[0].enrollments[0].enrollmentId
+                  console.log(this.enrollmentId)
+                } else {
+                  this.applied = null
+                  this.passed = false
+                  this.enrollmentId = null
+                }
+              }
+            }, (error) => {
+              console.log(error);
+            });
+            axios.post(API(`/course/find`), {
+              session: getUserSession(),
+              id: getParams("courseId")
+            }).then(response => {
+              this.title = response.data.course.title
+              this.description = response.data.course.description
+              this.active = response.data.course.active
+              this.prerequisiteSets = response.data.course.CoursePrerequisites
+              console.log(this.prerequisiteSets)
+              this.id_title_matching = response.data.id_title_matching
+              for (var i = 0; i < this.prerequisiteSets.length; i++) {
+                for (var j = 0; j < this.prerequisiteSets[i].PrerequisiteSets.length; j++) {
+                  this.prerequisiteSets[i].PrerequisiteSets[j]['title'] = this.id_title_matching[this.prerequisiteSets[i].PrerequisiteSets[j].course_fk]
+                }
+              }
+            })
+            var checkObj = {
+              courseId: getParams("courseId"),
+              session: this.session
+            }
+            axios.post(API('/enrollment/isEligibleForCourse'), checkObj).then((response) => {
+              if (response.status == 200) {
+                this.isEligible = response.data.eligible
+                this.prereqDict = response.data.prereqDict
+                console.log(this.prereqDict)
+              }
+            }, (error) => {
+              console.log(error);
+            });
+            let data = {
+              courseId: getParams("courseId"),
+              session: getUserSession(),
+            };
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", API("/class/getCourseClasses"), true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState == XMLHttpRequest.DONE) {
+                if (xhr.status == 200) {
+                  //Successful
+                  let dataJSON = JSON.parse(xhr.responseText);
+                  let classes = dataJSON.classes;
+                  if (classes != null) {
+                    app.classes = classes
+                  } else {
+                    alert("Unable to obtain classes")
+                  }
+                } else if (xhr.status == 401) {
+                  sessionExpired();
+                  return;
+                } else {
+                  alert("An error has occured - " + xhr.status);
+                  console.log(xhr.responseText);
+                  return;
+                }
+              }
+            };
+            xhr.send(JSON.stringify(data));
+          },
+          enroll(classId) {
+            console.log(classId);
+            var enrollObj = {
+              classId: parseInt(classId),
+              session: getUserSession()
+            }
+            console.log(enrollObj);
+            axios.post(API('/enrollment/applyCourseClass'), enrollObj).then((response) => {
+              console.log(response);
+              if (response.status == 200) {
+                alert("Submitted enrollment application successfully")
+              }
+              this.loadData()
+            }, (error) => {
+              console.log(error);
+            });
+          },
+          withdraw() {
+            console.log(app.enrollmentId);
+            var enrollObj = {
+              enrollmentId: app.enrollmentId,
+              session: getUserSession()
+            }
+            console.log(enrollObj);
+            axios.post(API('/enrollment/deleteEnrollment'), enrollObj).then((response) => {
+              console.log(response);
+              if (response.status == 200) {
+                alert("Submitted withrawal successfully")
+              }
+              this.loadData()
+            }, (error) => {
+              console.log(error);
+            });
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

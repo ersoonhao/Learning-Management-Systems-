@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+        <title>LMS</title>
+        <link rel="stylesheet" href="/style/master.css">
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <lms-head :session="session"></lms-head>
+            <div class="content">
+                <div class=container>
+                    <!-- <m-div :menu="menu" title="Course Settings" :subtitle="'For Course ID: '+courseId">
+                        <h1>{{title}}</h1>
+                        <p>{{description}}</p>
+                    </m-div> -->
+                    <m-div :menu="menu">
+                        <div class="columns" id="app" v-if="!submitSuccess">
+                            <div class="column is-two-thirds">
+                              <section class="section">
+                                <h1 class="title">Create Thread Page</h1>
+                                <p class="subtitle">
+                                  Fill in form below to create a new thread
+                                </p>
+                                <hr>      
+                                
+                                <!-- form starts here -->
+                    
+                              
+                                    <label class="label">Title</label>
+                                    <br>
+                                      <input v-model="title" class="input" type="text" placeholder="Title">
+                                    <br>
+                                    <br>
+                                    <label class="label">Question</label>
+                                    <br>
+                                      <textarea style="width:80%" v-model="question" class="lms-input" type="text" placeholder="Add your question">
+                                      </textarea>
+                                    <br>
+                                                                        
+                              </section>
+                            </div>
+                            <br>
+                            <button v-on:click="onSubmit" class="btn btn-primary">Submit Thread Creation</button>
+                           
+                                    
+                            
+                        </div>
+                        <div class='content' v-if='submitSuccess'>
+                            <h1>
+                                Thread Creation Successful
+                            </h1>
+                            <a href='/forum' class="link-primary">Link to all threads</a>
+                            <br>
+                            <a :href="'/forum/thread?threadId=' + this.newId">Link to created thread with title: {{title}}</a>
+                        </div>
+                    </m-div>
+                </div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+        </script>
+        <script src="/js/lib/vue.js"></script>
+        <script src="/js/lms/main/master.js"></script>
+        <script src="/js/lms/forum/manage.js"></script>
+        <script>
+            const app = new Vue({
+                el: '#app',
+                data: {
+                    session: getUserSession(),
+                    courseId: getParams("courseId"),
+                    menu: initMenu(MENU_SECTIONS_FORUM_GENERAL, 0, 2),
+                    title: '',
+                    question: '',
+                    submitSuccess: null,
+                    newId: '',
+                    sets: 0,
+                    courseIds: []
+                },methods: {
+                    onSubmit() {
+                        console.log(this.title, this.question)
+
+                        var threadObj = {thread : { title: this.title}, 
+                                        post: {postType : 1,
+                                              body: this.question},
+                                        session: this.session}
+                        
+                        axios.post(API('/forum/createThread'), threadObj)
+                        .then((response) => {
+                        console.log(response);
+                        if(response.status == 200){
+                            this.submitSuccess = true
+                            this.newId = response.data.post.threadId
+                        }
+                        }, (error) => {
+                        console.log(error);
+                        });
+                    }},
+                    created: () => {
+                      
+                }, mounted () {
+    
+                }
+            });            
+
+        </script>
+    </body>
+</html>

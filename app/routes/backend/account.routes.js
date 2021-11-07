@@ -8,6 +8,10 @@ module.exports = app => {
     //Login
     router.post("/login", accounts.login);
 
+    //Admin Management
+    router.post("/getTrainers", accounts.getTrainers);
+    router.post("/getLearners", accounts.getLearners);
+
     //Create new account
     router.post("/create", accounts.create);
 

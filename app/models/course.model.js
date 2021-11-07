@@ -13,6 +13,9 @@ module.exports = (sequelize, Sequelize) => {
         },
         active:{
             type: Sequelize.BOOLEAN
+        },
+        courseImage:{
+            type: Sequelize.STRING(2083)
         }
     });
 

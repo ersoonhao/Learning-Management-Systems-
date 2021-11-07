@@ -250,6 +250,7 @@ exports.findAllById = (req, res) => {
     console.log(req.body)
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(async(session) => {
+    if(session){
     var accountId = session.accountId
     console.log(accountId)
     // const [senders, metadata_senders] = await sequelize.query(`SELECT * FROM Messages INNER JOIN Accounts b ON Messages.senderAccountId=b.accountId WHERE Messages.senderAccountID = ${accountId} OR Messages.receiverAccountID = ${accountId}`);
@@ -285,6 +286,7 @@ exports.findAllById = (req, res) => {
     }
 
     res.send(messages)
+    }
      })
-    
+  
   }

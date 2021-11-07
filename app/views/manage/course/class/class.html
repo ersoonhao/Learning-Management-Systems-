@@ -18,7 +18,36 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Class Settings" :subtitle="'For Class ID: '+classId">
-                        <h1>ADD CLASS SETTINGS HERE</h1>
+                        <h3 v-show="!classId" class="mb-3 lms-font-semibold">Create Class</h1>
+                        <h3 v-show="classId" class="mb-3 lms-font-semibold">Update Class</h1>
+                        <!-- <h1 class="">ADD CLASS SETTINGS HERE</h1> -->
+                        <div class="lms-input">
+                            <label class="lms-input-label">Trainer</label>
+                            <select v-model="c.trnAccountId">
+                                <option v-for="t in trainers" :value="t.accountId">{{ t.username }} (AccountId: {{ t.accountId }})</option>
+                            </select>
+                        </div>
+                        <div class="lms-input">
+                            <label class="lms-input-label">Max Capacity</label>
+                            <input type="number" v-model="c.maxCapacity" min="0"/>
+                        </div>
+                        <div class="lms-input">
+                            <label class="lms-input-label">Enrollment Start Date</label>
+                            <input type="date" v-model="c.selfEnrollStartDateTime"/>
+                        </div>
+                        <div class="lms-input">
+                            <label class="lms-input-label">Enrollment End Date</label>
+                            <input type="date" v-model="c.selfEnrollEndDateTime"/>
+                        </div>
+                        <div class="lms-input">
+                            <label class="lms-input-label">Class Start Date</label>
+                            <input type="date" v-model="c.classStartDateTime"/>
+                        </div>
+                        <div class="lms-input">
+                            <label class="lms-input-label">Class End Date</label>
+                            <input type="date" v-model="c.classEndDateTime"/>
+                        </div>
+                        <button class="btn bg-highlight text-white my-3 px-3" @click="submit" v-text="classId?'Save class':'Create class'"></button>
                     </m-div>
                 </div>
             </div>
@@ -35,10 +64,212 @@
                 el: '#app',
                 data: {
                     session: getUserSession(),
-                    classId: getParams("classId"),
-                    menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 0)
+                    classId: getParams("classId"), //Update
+                    courseId: getParams("courseId"), //Create
+                    menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 0),
+                    c: {
+                        "classId": null,
+                        "classStartDateTime": "",
+                        "classEndDateTime": "",
+                        "selfEnrollStartDateTime": "",
+                        "selfEnrollEndDateTime": "",
+                        "maxCapacity": 50,
+                        "courseId": 0,
+                        "trnAccountId": 0,
+                        "adminAccountId": 0
+                    },
+                    trainers: []
                 }, created: () => {
-                    
+                    let classId = getParams("classId");
+                    let courseId = getParams("courseId");
+                    if(classId || courseId){
+                        //Create & Update - Get list of trainers
+                        let data = { 
+                            courseId: courseId,
+                            session: getUserSession(),
+                        };
+                        let xhr = new XMLHttpRequest();
+                        xhr.open("POST", API("/account/getTrainers"), true);
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                if (xhr.status == 200) {
+                                    //Successful
+                                    let dataJSON = JSON.parse(xhr.responseText);
+                                    let trainers = dataJSON.trainers;
+                                    if(trainers != null){
+                                        app.trainers = trainers
+                                        if(classId){
+                                            let data = { 
+                                                classId: classId,
+                                                session: getUserSession(),
+                                            };
+                                            let xhr = new XMLHttpRequest();
+                                            xhr.open("POST", API("/class/getCourseClass"), true);
+                                            xhr.setRequestHeader("Content-Type", "application/json");
+                                            
+                                            xhr.onreadystatechange = function() {
+                                                if (xhr.readyState == XMLHttpRequest.DONE) {
+                                                    if (xhr.status == 200) {
+                                                        //Successful
+                                                        let dataJSON = JSON.parse(xhr.responseText);
+                                                        let _class = dataJSON.class;
+                                                        console.log(_class);
+                                                        if(_class != null){
+                                                            _class.classStartDateTime = app.dateFormat(_class.classStartDateTime)
+                                                            _class.classEndDateTime = app.dateFormat(_class.classEndDateTime)
+                                                            _class.selfEnrollStartDateTime = app.dateFormat(_class.selfEnrollStartDateTime)
+                                                            _class.selfEnrollEndDateTime = app.dateFormat(_class.selfEnrollEndDateTime)
+                                                            app.c = _class
+                                                            app.courseId = _class.courseId
+                                                        }else{
+                                                            alert("Unable to obtain course class")
+                                                        }
+                                                    }else if(xhr.status == 401){
+                                                        sessionExpired();
+                                                        return;
+                                                    } else {
+                                                        alert("An error has occured - " + xhr.status);
+                                                        console.log(xhr.responseText);
+                                                        return;
+                                                    }
+                                                }
+                                            };
+                                            xhr.send(JSON.stringify(data));
+                                            console.log(data);
+                                        }
+                                    }else{
+                                        alert("Unable to obtain trainers")
+                                    }
+                                }else if(xhr.status == 401){
+                                    sessionExpired();
+                                    return;
+                                } else {
+                                    alert("An error has occured - " + xhr.status);
+                                    console.log(xhr.responseText);
+                                    return;
+                                }
+                            }
+                        };
+                        xhr.send(JSON.stringify(data));
+                        console.log(data);
+                    }else{
+                        window.location = "/manage"
+                    }
+                }, methods: {
+                    submit: function(){
+                        if(this.validate()){
+                            if(!this.classId && this.courseId){
+                                let data = { 
+                                    courseId: this.courseId,
+                                    class: this.c,
+                                    session: getUserSession(),
+                                };
+                                console.log(data)
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("POST", API("/class/createClass"), true);
+                                xhr.setRequestHeader("Content-Type", "application/json");
+                                
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                                        if (xhr.status == 200) {
+                                            //Successful
+                                            let dataJSON = JSON.parse(xhr.responseText);
+                                            console.log(dataJSON);
+                                            let _class = dataJSON.class;
+                                            if(_class != null){
+                                                alert("Successfully created class!")
+                                                window.location = "/manage/classes?courseId="+_class.courseId;
+                                            }else{
+                                                alert("An error has occured");
+                                            }
+                                        }else if(xhr.status == 401){
+                                            sessionExpired();
+                                            return;
+                                        } else {
+                                            alert("An error has occured - " + xhr.status);
+                                            console.log(xhr.responseText);
+                                            return;
+                                        }
+                                    }
+                                };
+                                xhr.send(JSON.stringify(data));
+                                console.log(data);
+                            }else if(this.classId){
+                                let data = { 
+                                    class: this.c,
+                                    session: getUserSession(),
+                                };
+                                console.log(data)
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("POST", API("/class/updateClass"), true);
+                                xhr.setRequestHeader("Content-Type", "application/json");
+                                
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                                        if (xhr.status == 200) {
+                                            //Successful
+                                            alert("Successfully updated class!")
+                                            if(app.courseId){
+                                                window.location = "/manage/classes?courseId="+app.courseId;
+                                            }
+                                        }else if(xhr.status == 401){
+                                            sessionExpired();
+                                            return;
+                                        } else {
+                                            alert("An error has occured - " + xhr.status);
+                                            console.log(xhr.responseText);
+                                            return;
+                                        }
+                                    }
+                                };
+                                xhr.send(JSON.stringify(data));
+                                console.log(data);
+                            }
+                        }
+                    },
+                    validate: function(){
+                        let c = this.c;
+                        if(c.trnAccountId == ""){
+                            alert("Please select a trainer")
+                            return false;
+                        }else if(c.maxCapacity == "" || c.maxCapacity < 0){
+                            alert("Please enter a valid capacity");
+                            return false;
+                        }else if(c.selfEnrollStartDateTime == "" || c.selfEnrollEndDateTime == ""){
+                            alert("Please state the self enrollment period")
+                            return false;
+                        }else if(c.classStartDateTime == "" || c.classEndDateTime == ""){
+                            alert("Please state the class period")
+                            return false;
+                        }else if(c.selfEnrollStartDateTime >= c.selfEnrollEndDateTime){
+                            alert("Please enter a valid enrollment period");
+                            return false;
+                        }else if(c.classStartDateTime >= c.classEndDateTime){
+                            alert("Please enter a valid enrollment period");
+                            return false;
+                        }else if(c.selfEnrollEndDateTime > c.classStartDateTime){
+                            alert("The enrollment period can't happen during or after class period");                            
+                            return false;
+                        }
+                        return true;
+                    },
+                    dateFormat: (dStr) => {
+                        let d = new Date(Date.parse(dStr));
+                        if(!d){
+                            return "?";
+                        }
+                        let day = d.getDate();
+                        if(day < 10){
+                            day = "0"+day;
+                        }
+                        let month = d.getMonth()+1;
+                        if(month < 10){
+                            month = "0"+month;
+                        }
+                        return [d.getFullYear(), month, day].join('-')
+                    }
                 }
             });
         </script>
