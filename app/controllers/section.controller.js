@@ -27,7 +27,7 @@ const db = require("../models");
 // need to create an account table
 // const Section = db.Section; 
 const Op = db.Sequelize.Op;
-const { Section, CourseMaterial } = require("../models");
+const { Section, CourseMaterial, Quiz } = require("../models");
 // helper function to hash. Not used yet.Use if required.
 async function hash(password) {
     return await bcrypt.hash(password, 10);
@@ -180,7 +180,11 @@ exports.getSectionPackage = (req, res) => {
             //TODO: Check if learner is enrolled & has completed previous sections
 
             Section.findAll({
-                where: { classId: classId }
+                where: { classId: classId },
+                include: [{ model: CourseMaterial }],
+                include: [{
+                    model: Quiz
+                }]
             }).then(data => {
                 res.send({ "sections": data });
             }).catch(err => {
