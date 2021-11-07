@@ -23,57 +23,60 @@ exports.isEligibleForCourse = (req, res) => {
             }
             const courseId = body.courseId
             Course.findOne({
-                where: { courseId: courseId },
-                include: {
-                    model: CoursePrerequisite,
+                    where: { courseId: courseId },
                     include: {
-                        model: PrerequisiteSet,
+                        model: CoursePrerequisite,
                         include: {
-                            model: Class,
+                            model: PrerequisiteSet,
                             include: {
-                                model: Enrollment,
-                                where: { accountId: session.accountId, coursePassed: true }
+                                model: Class,
+                                include: {
+                                    model: Enrollment,
+                                    where: { accountId: session.accountId, coursePassed: true }
+                                }
                             }
                         }
                     }
-                }
-            }).then(data => {
-                var prereqDict = {}
-                var eligible = false
-                if (data.CoursePrerequisites.length == 0) {
-                    eligible = true
-                } else {
-                    data.CoursePrerequisites.forEach(set => {
-                        if (!prereqDict[set.setNumber]) {
-                            prereqDict[set.setNumber] = {}
-                        }
-                        set.PrerequisiteSets.forEach(prereq => {
-                            prereqDict[set.setNumber][prereq.course_fk] = !(prereq.Class == null)
-                        });
-                    });
-                    var temp = true
-                    for (var setNum in prereqDict) {
-                        for (var course in prereqDict[setNum]) {
-                            if (!prereqDict[setNum][course]) {
-                                temp = false
-                            }
-                        }
-                        if (temp) {
-                            eligible = true
-                        }
-                        // do something with "key" and "value" variables
-                    }
-
-                }
-                res.send({
-                    "eligible": eligible,
-                    "prereqDict": prereqDict
-                });
-            }).catch(err => {
-                res.status(500).send({
-                    message: err.message || "Some error occured obtaining data"
                 })
-            });
+                .then(data => {
+                    var prereqDict = {}
+                    var eligible = false
+                    if (data.CoursePrerequisites.length == 0) {
+                        eligible = true
+                    } else {
+                        data.CoursePrerequisites.forEach(set => {
+                            if (!prereqDict[set.setNumber]) {
+                                prereqDict[set.setNumber] = {}
+                            }
+                            set.PrerequisiteSets.forEach(prereq => {
+                                prereqDict[set.setNumber][prereq.course_fk] = !(
+                                    prereq.Class == null
+                                )
+                            })
+                        })
+                        var temp = true
+                        for (var setNum in prereqDict) {
+                            for (var course in prereqDict[setNum]) {
+                                if (!prereqDict[setNum][course]) {
+                                    temp = false
+                                }
+                            }
+                            if (temp) {
+                                eligible = true
+                            }
+                            // do something with "key" and "value" variables
+                        }
+                    }
+                    res.send({
+                        eligible: eligible,
+                        prereqDict: prereqDict
+                    })
+                })
+                .catch(err => {
+                    res.status(500).send({
+                        message: err.message || 'Some error occured obtaining data'
+                    })
+                })
         }
     })
 }
@@ -93,33 +96,34 @@ exports.getMyEnrollmentByCourse = (req, res) => {
             }
             const courseId = body.courseId
             Course.findOne({
-                where: { courseId: courseId },
-                include: {
-                    model: Class,
+                    where: { courseId: courseId },
                     include: {
-                        model: Enrollment,
-                        where: { accountId: session.accountId }
+                        model: Class,
+                        include: {
+                            model: Enrollment,
+                            where: { accountId: session.accountId }
+                        }
                     }
-                }
-            }).then(data => {
-                res.send({
-                    "data": data
-                });
-            }).catch(err => {
-                res.status(500).send({
-                    message: err.message || "Some error occured obtaining data"
                 })
-            });
+                .then(data => {
+                    res.send({
+                        data: data
+                    })
+                })
+                .catch(err => {
+                    res.status(500).send({
+                        message: err.message || 'Some error occured obtaining data'
+                    })
+                })
         }
     })
 }
 
-
-
 //==== POST: /findEnrollmentbyId
 exports.findEnrollmentbyId = (req, res) => {
     const permissions = []
-    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
+        //Access control
         if (session) {
             const body = req.body
             if (!body) {
@@ -144,14 +148,13 @@ exports.findEnrollmentbyId = (req, res) => {
                 })
         }
     })
-
 }
-
 
 //==== POST: /getMyEnrolledClasses
 exports.getMyEnrolledClasses = (req, res) => {
     const permissions = []
-    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
+        //Access control
         if (session) {
             const body = req.body
             if (!body) {
@@ -167,11 +170,23 @@ exports.getMyEnrolledClasses = (req, res) => {
                 if (body.type == 'ongoing') {
                     stmt = { classId: body.classId, accountId: accountId, coursePassed: false, isWithdrawn: false, isEnrolled: true }
                 } else if (body.type == 'passed') {
-                    stmt = { classId: body.classId, accountId: accountId, coursePassed: true }
+                    stmt = {
+                        classId: body.classId,
+                        accountId: accountId,
+                        coursePassed: true
+                    }
                 } else if (body.type == 'failed') {
-                    stmt = { classId: body.classId, accountId: accountId, coursePassed: false }
+                    stmt = {
+                        classId: body.classId,
+                        accountId: accountId,
+                        coursePassed: false
+                    }
                 } else if (body.type == 'withdrawn') {
-                    stmt = { classId: body.classId, accountId: accountId, isWithdrawn: true }
+                    stmt = {
+                        classId: body.classId,
+                        accountId: accountId,
+                        isWithdrawn: true
+                    }
                 } else {
                     stmt = { classId: body.classId, accountId: accountId }
                 }
@@ -218,8 +233,12 @@ exports.getMyEnrolledClasses = (req, res) => {
 
 //==== POST: /getAllClassEnrollments
 exports.getAllClassEnrollments = (req, res) => {
-    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
-    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+    const permissions = [
+        AccountController.PERM_ADMIN,
+        AccountController.PERM_TRAINER
+    ]
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
+            //Access control
             if (session) {
                 const body = req.body
                 if (!body || !body.classId) {
@@ -247,15 +266,15 @@ exports.getAllClassEnrollments = (req, res) => {
             }
         })
         /* SAMPLE JSON BODY REQUEST
-        > localhost:8081/api/enrollment/getAllClassEnrollments
-            {
-                "classId": 1,
-                "session": {
-                    "username": "robin",
-                    "sessionId": "0q8l8"
-                }
-            }
-        */
+                    > localhost:8081/api/enrollment/getAllClassEnrollments
+                        {
+                            "classId": 1,
+                            "session": {
+                                "username": "robin",
+                                "sessionId": "0q8l8"
+                            }
+                        }
+                    */
 }
 
 //==== Get: /getAllPendingEnrollments
@@ -277,10 +296,11 @@ exports.getPendingEnrollments = (req, res) => {
 //==== POST: /applyCourseClass
 exports.applyCourseClass = (req, res) => {
     const permissions = []
-    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
+        //Access control
         if (session) {
             let body = req.body
-            console.log("test")
+            console.log('test')
             if (!body || !body.classId) {
                 res.status(400).send({
                     message: 'Request body is empty!'
@@ -292,7 +312,7 @@ exports.applyCourseClass = (req, res) => {
             //TODO: Get permissions
             enroll = {
                 isSelfEnrollment: false
-            };
+            }
             const enrollment = Enrollment.createEnrollment(
                 enroll,
                 session.accountId,
@@ -306,29 +326,48 @@ exports.applyCourseClass = (req, res) => {
                 return
             }
 
-            //Write to DB
-            Enrollment.create(enrollment)
+            Class.findOne({
+                    where: { classId: body.classId }
+                })
                 .then(data => {
-                    res.send({ enrollment: data })
+                    startTime = Date.parse(data.selfEnrollStartDateTime)
+                    endTime = Date.parse(data.selfEnrollEndDateTime)
+                    console.log(startTime, endTime)
+                    if (Date.now() < startTime || Date.now() > endTime) {
+                        res.status(400).send({
+                            message: 'Enrollment is not open yet'
+                        })
+                    } else {
+                        //Write to DB
+                        Enrollment.create(enrollment)
+                            .then(data => {
+                                res.send({ enrollment: data })
+                            })
+                            .catch(err => {
+                                res.status(500).send({
+                                    message: err.message || 'Some error occured during creation'
+                                })
+                            })
+                    }
                 })
                 .catch(err => {
                     res.status(500).send({
-                        message: err.message || 'Some error occured during creation'
+                        message: err.message ||
+                            'Some error occurred while retrieving available classes by courseId'
                     })
                 })
         }
     })
 
-
     /* SAMPLE JSON BODY REQUEST
-        {      
-            "classId": 1,
-            "session": {
-                "username": "robin",
-                "sessionId": "0q8l8"
+            {      
+                "classId": 1,
+                "session": {
+                    "username": "robin",
+                    "sessionId": "0q8l8"
+                }
             }
-        }
-    */
+        */
 }
 
 //==== POST: /enrollLearner
@@ -348,7 +387,7 @@ exports.enrollLearner = (req, res) => {
                     body.enrollment = {
                         isSelfEnrollment: false,
                         coursePassed: false
-                    };
+                    }
                     const enrollment = Enrollment.createEnrollment(
                         body.enrollment,
                         body.accountId,
@@ -382,15 +421,15 @@ exports.enrollLearner = (req, res) => {
             }
         })
         /* SAMPLE JSON BODY REQUEST
-        {
-            "classId": 1,
-            "accountId": 1,
-            "session": {
-                "username": "robin",
-                "sessionId": "0q8l8"
-            }
-        }
-    */
+                    {
+                        "classId": 1,
+                        "accountId": 1,
+                        "session": {
+                            "username": "robin",
+                            "sessionId": "0q8l8"
+                        }
+                    }
+                */
 }
 
 //==== POST: enrollment/respondApplication
@@ -407,15 +446,15 @@ exports.respondApplication = (req, res) => {
             }
         })
         /* SAMPLE JSON BODY REQUEST
-            {
-                "enrollmentId": 1,
-                "isApproved": true,
-                "session": true
-                    "username": "robin",
-                    "sessionId": "0q8l8"
-                }
-            }
-        */
+                        {
+                            "enrollmentId": 1,
+                            "isApproved": true,
+                            "session": true
+                                "username": "robin",
+                                "sessionId": "0q8l8"
+                            }
+                        }
+                    */
 }
 
 function _updateEnrollment(body, res) {
@@ -461,7 +500,8 @@ function _updateEnrollment(body, res) {
 //==== POST: /deleteEnrollment
 exports.deleteEnrollment = (req, res) => {
     const permissions = []
-    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
+        //Access control
         if (session) {
             const enrollmentId = req.body.enrollmentId
 
@@ -487,12 +527,11 @@ exports.deleteEnrollment = (req, res) => {
         }
     })
 
-
     /* SAMPLE JSON BODY REQUEST
-              {      
-                  "enrollmentId": 1,
-              }
-          */
+                  {      
+                      "enrollmentId": 1,
+                  }
+              */
 }
 
 /* exports.template = (req, res) => {
