@@ -43,6 +43,7 @@ require("./app/routes/backend/enrollment.routes")(app);
 require("./app/routes/backend/coursePrerequisite.routes")(app);
 require("./app/routes/backend/section.routes")(app);
 
+require("./app/routes/backend/withdrawal.routes")(app);
 // port 8081
 
 //Front-end
