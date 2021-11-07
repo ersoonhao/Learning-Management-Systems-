@@ -16,6 +16,8 @@ module.exports.SESSION_INVALID_SESSION = { username: "robin", sessionId: "00000"
 
 module.exports.load = () => {
     return db.sequelize.query(`
+     
+ 
         INSERT INTO Accounts(accountId, username, email, isAdmin, isTrainer, password, sessionId) VALUES
         (1, 'robin', 'wafturerobin@gmail.com', 1, 1, 'a', '0q8l8'),
         (2, 'soonhao', 'john.d.cheong@gmail.com', 1, 0, 'a', 'gee43'),
@@ -105,22 +107,26 @@ module.exports.load = () => {
         (10, "Hi Varun, WHat's up, I am Asher", 7, 4),
         (11, 'I love you Asher', 4, 7),
         (12, 'Hehe me too', 7, 4);
-
-        INSERT INTO PrerequisiteSets(setNumber, course_fk) VALUES
-        (1, 2),
-        (1, 4),
-        (2, 1),
-        (2, 3);
-
-        INSERT INTO CoursePrerequisites(setNumber, courseId) VALUES
-        (1, 1),
-        (2, 1),
-        (2, 2);
+        
 
         INSERT INTO Sections(sectionId, title, subtitle, ordering, classId) VALUES
         (1,"Intro to Newton Laws" , "Newton's Laws 1", 1, 1),
         (2,"Intro to Newton Laws" , "Newton's Laws 2", 2, 1),
         (3,"Intro to Newton Laws" , "Newton's Laws 3", 3, 1);
+
+
+     
+        INSERT INTO PrerequisiteSets(setNumber, course_fk) VALUES
+        (1, 2),
+        (1, 4),
+        (2, 1),
+        (2, 3);
+        
+        INSERT INTO CoursePrerequisites(setNumber, courseId) VALUES
+        (1, 1),
+        (2, 1),
+        (2, 2);
+
     `)
 };
 
