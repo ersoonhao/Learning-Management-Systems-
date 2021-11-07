@@ -25,7 +25,7 @@
                         
 
                         <ul class="list-group text-center">
-                           <li v-for="section in " :key="section.title"  class="list-group-item justify-content-center"></v-for> 
+                           <li v-for="section in sections" :key="section.title"  class="list-group-item justify-content-center"></v-for> 
                                 <h1 class="">{{section.title}} </h1>
                                 <h2>{{section.subtitle}}</h2>
                                 <h2>{{section.order}}</h2>
@@ -67,15 +67,30 @@
                 el: '#app',
                 data: {
                     session: getUserSession(),
-                    classId: getParams("classId"),
+                    clasesId: getParams("classId"),
                     menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 2),
                     sections: [
                         {title: "Section 1",subtitle: "Subtitle 1", order: 1, classId: 1},
                         {title: "Section 2",subtitle: "Subtitle 2", order: 3, classId: 1},
                         {title: "Section 2",subtitle: "Subtitle 2", order: 2, classId: 1}
-                    ]
+                    ],
+                    ordered_sections: []
                 }, created: () => {
-                    
+                    this.sections = [
+                        {title: "Section 1",subtitle: "Subtitle 1", order: 1, classId: 1},
+                        {title: "Section 2",subtitle: "Subtitle 2", order: 3, classId: 1},
+                        {title: "Section 2",subtitle: "Subtitle 2", order: 2, classId: 1}
+                    ]
+                    //sort algorithm below
+                    for(var i=0; i<this.sections.length; i++) {
+                        for(let j = 0; j < this.sections.length - i - 1; j++){
+                    //Value comparison using ascending order
+                    if(this.sections[j + 1].order < this.sections[j].order){
+                    //Swapping
+                    [this.sections[j + 1].order,this.sections[j].order] = [this.sections[j].order,this.sections[j + 1].order]
+                    }
+                    }
+                    }
                 },
                 mounted: () => {
 
@@ -83,11 +98,12 @@
                     session: getUserSession(),
                     id: getParams("courseId")
                 }).then(response => {
-                    this.title = response.data.course.title
-                    this.description = response.data.course.description
-                    this.active = response.data.course.active
-                    this.prerequisiteSets = response.data.course.CoursePrerequisites
-                    this.id_title_matching = response.data.id_title_matching
+                    this.sectionid = response.data.sectionId
+                    this.title = response.data.title
+                    this.subtitle = response.data.subtitll
+                    this.order = response.data.order
+                    this.classId = response.data.classId
+                   
                     for (var i = 0; i < this.prerequisiteSets.length; i++) {
                     for (var j = 0; j < this.prerequisiteSets[i].PrerequisiteSets.length; j++) {
                         this.prerequisiteSets[i].PrerequisiteSets[j]['title'] = this.id_title_matching[this.prerequisiteSets[i].PrerequisiteSets[j].course_fk]
@@ -106,7 +122,7 @@
                 computed: {
                     orderdSections: function (sections) {
                         return this.sections.sort((a, b) => {
-                            return a.order - b.order
+                            return a.order > b.order
                         })
                     }
                 }
