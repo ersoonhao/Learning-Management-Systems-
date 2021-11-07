@@ -119,8 +119,8 @@ db.PrerequisiteSet.belongsTo(db.CoursePrerequisite, { foreignKey: 'setNumber', t
 /* db.Course.hasMany(db.PrerequisiteSet, { foreignKey: 'course_fk', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.PrerequisiteSet.belongsTo(db.Course, { foreignKey: 'course_fk', targetKey: 'courseId' }); */
 
-db.Class.hasMany(db.PrerequisiteSet, { foreignKey: 'course_fk', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.PrerequisiteSet.belongsTo(db.Class, { foreignKey: 'course_fk', targetKey: 'courseId' });
+db.Course.hasMany(db.PrerequisiteSet, { foreignKey: 'course_fk', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.PrerequisiteSet.belongsTo(db.Course, { foreignKey: 'course_fk', targetKey: 'courseId' });
 
 db.Account.hasMany(db.Class, { foreignKey: 'trnAccountId', sourceKey: 'accountId', onDelete: 'cascade', onUpdate: 'NO ACTION' })
 db.Class.belongsTo(db.Account, { foreignKey: 'trnAccountId', targetKey: 'accountId' }); //Trainer
