@@ -130,23 +130,21 @@ db.Class.hasMany(db.Enrollment, { foreignKey: 'classId', sourceKey: 'classId', o
 db.Enrollment.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
 
 
-<<
-<< << < HEAD
-    ===
-    === =
-    // Section
-    db.Class.hasMany(db.Section, { foreignKey: 'classId', sourceKey: 'classId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+
+// Section
+db.Class.hasMany(db.Section, { foreignKey: 'classId', sourceKey: 'classId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.Section.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
 
 // course material 
 db.Section.hasMany(db.CourseMaterial, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.CourseMaterial.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
 
+db.Section.hasMany(db.Quiz, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Quiz.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
+
 db.Section.hasOne(db.Quiz, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 // db.Quiz.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
 
->>>
->>> > soonhao2
 // ================== SYNC ==================
 db.sequelize.sync();
 
