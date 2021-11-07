@@ -19,18 +19,18 @@
             <lms-head :session="session"></lms-head>
             <div class="content">
                 <div class=container>
-                    <h4 class="lms-font-semibold mb-4">Recommended Courses</h4>
-                    <zingo-hs title='Customer' href='#'>
-                        <hs-course-item v-for="cdata in dataList" :key="cdata.courseId" :cdata='cdata'></hs-course-item>
+                    <div class="dashboard" style="background-color: rgba(0, 0, 0, 0.95); padding: 40px 30px; margin: 50px 0; border-radius: 5px; color: white;">
+                        <h1>Hello</h1>
+                        <h3>Welcome Back :)</h3>
+                    </div>
+                    <zingo-hs v-show="ongoing.length > 0" title='Continue Classes' href='#'>
+                        <hs-course-item v-for="cdata in ongoing" :key="cdata.courseId" :cdata='cdata'></hs-course-item>
                     </zingo-hs>
-                    <zingo-hs title='Hardware' href='#'>
-                        <hs-course-item v-for="cdata in dataList" :key="cdata.courseId" :cdata='cdata'></hs-course-item>
+                    <zingo-hs v-show="enroll.length > 0" title='Explore Courses' href='#'>
+                        <hs-course-item v-for="cdata in enroll" :key="cdata.courseId" :cdata='cdata'></hs-course-item>
                     </zingo-hs>
-                    <zingo-hs title='Software' href='#'>
-                        <hs-course-item v-for="cdata in dataList" :key="cdata.courseId" :cdata='cdata'></hs-course-item>
-                    </zingo-hs>
-                    <zingo-hs title='Configuration' href='#'>
-                        <hs-course-item v-for="cdata in dataList" :key="cdata.courseId" :cdata='cdata'></hs-course-item>
+                    <zingo-hs v-show="completed.length > 0" title='Completed Courses' href='#'>
+                        <hs-course-item v-for="cdata in completed" :key="cdata.courseId" :cdata='cdata'></hs-course-item>
                     </zingo-hs>
                 </div>
             </div>
@@ -49,28 +49,150 @@
                 el: '#app',
                 data: {
                     session: getUserSession(),
-                    dataList: []
+                    ongoing: [],
+                    enroll: [],
+                    completed: []
                 },
                 created: function(){
                     if(!this.session){
                         return;
                     }
-                    //DUMMY DATA
-                    dummy_class = {
-                        classId: 1,
-                        classStartDateTime: new Date(),
-                        classEndDateTime: new Date(),
-                        selfEnrolStartDateTime: new Date(),
-                        selfEnrolStartDateTime: new Date(),
-                        maxCapacity: 100,
-                        noOfLessons: 10,
-                        displayPicture: "https://i.scdn.co/image/ab6761610000e5ebb10fd90c8d4446fa75af0de7",
-                        title: "Customer Relations",
-                        completed: true
-                    }
-                    this.dataList = [dummy_class, dummy_class, dummy_class, dummy_class, dummy_class, dummy_class, dummy_class];
+                    getMyClasses("ongoing", "Course", (e) => {
+                        app.ongoing = e;
+                    })
+                    getAvailableClasses((e) => {
+                        app.enroll = e;
+                    })
+                    getMyClasses("passed", "Course", (e) => {
+                        console.log(e)
+                        app.completed = e;
+                    })
+                    
+                    // DUMMY DATA
+                    // dummy_class = {
+                    //     classId: 1,
+                    //     classStartDateTime: new Date(),
+                    //     classEndDateTime: new Date(),
+                    //     selfEnrolStartDateTime: new Date(),
+                    //     selfEnrolStartDateTime: new Date(),
+                    //     maxCapacity: 100,
+                    //     noOfLessons: 10,
+                    //     displayPicture: "https://i.scdn.co/image/ab6761610000e5ebb10fd90c8d4446fa75af0de7",
+                    //     title: "Customer Relations",
+                    //     completed: true
+                    // }
+                    // this.dataList = [dummy_class, dummy_class, dummy_class, dummy_class, dummy_class, dummy_class, dummy_class];
                 }
             });
+            function getAvailableClasses(cb){
+                var xhr = new XMLHttpRequest();
+                let data = { 
+                    session: getUserSession()
+                };
+                xhr.open("POST", API("/class/getAvailableCourseClasses"), true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                        if (xhr.status == 200) {
+                            let classes = JSON.parse(xhr.responseText).classes;
+                            
+                            //Course Capacity
+                            let courseCapacity = {}
+                            let minStartDate = {};
+                            let maxStartDate = {}; 
+                            for (let c of classes){
+                                let i = 0;
+                                for(let e of c.enrollments){
+                                    if(e.isEnrolled){
+                                        i += 1
+                                    }
+                                }
+                                courseCapacity[c.Course.courseId] = c.maxCapacity - i;
+                                let _minStartDate = new Date(Date.parse(c.selfEnrollStartDateTime));
+                                if(minStartDate[c.Course.courseId] == null || _minStartDate < minStartDate){
+                                    minStartDate[c.Course.courseId] = _minStartDate;
+                                }
+                                let _maxStartDate = new Date(Date.parse(c.selfEnrollStartDateTime));
+                                if(maxStartDate[c.Course.courseId] == null || _maxStartDate > maxStartDate){
+                                    maxStartDate[c.Course.courseId] = _maxStartDate;
+                                }
+                            }
+
+                            //Fill Course
+                            let courseIdList = []
+                            let courseList = []
+                            for (let c of classes){
+                                let course = c.Course
+                                if(!courseIdList.includes(course.courseId)){
+                                    let _course = {
+                                        courseId: course.courseId,
+                                        type: "Enroll",
+                                        startDateTime: minStartDate[course.courseId],
+                                        endDateTime: maxStartDate[course.courseId],
+                                        capacity: courseCapacity[course.courseId],
+                                        displayPicture: course.courseImage,
+                                        title: course.title,
+                                        completed: false
+                                    }
+                                    courseList.push(_course)
+                                    courseIdList.push(course.courseId)
+                                }
+                            }
+                            console.log(courseCapacity);
+                            console.log(courseList)
+                            cb(courseList)
+                        }else if(xhr.status == 401){
+                            sessionExpired();
+                            return;
+                        } else {
+                            alert("An error has occured - " + xhr.status);
+                            console.log(xhr.responseText);
+                            return;
+                        }
+                    }
+                };
+                xhr.send(JSON.stringify(data));
+            }
+            function getMyClasses(type, typeTitle, cb){
+                var xhr = new XMLHttpRequest();
+                let data = { 
+                    type: type,
+                    session: getUserSession()
+                };
+                xhr.open("POST", API("/enrollment/getMyEnrolledClasses"), true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                        if (xhr.status == 200) {
+                            let enrollments = JSON.parse(xhr.responseText).enrollment;
+                            let classList = [];
+                            for (let e of enrollments){
+                                let _class = {
+                                    classId: e.classId,
+                                    type: typeTitle,
+                                    startDateTime: new Date(Date.parse(e.Class.classStartDateTime)),
+                                    endDateTime: new Date(Date.parse(e.Class.classEndDateTime)),
+                                    maxCapacity: e.Class.maxCapacity,
+                                    displayPicture: e.Class.Course.courseImage,
+                                    title: e.Class.Course.title,
+                                    completed: e.coursePassed
+                                }
+                                classList.push(_class);
+                            }
+                            cb(classList)
+                            
+                        }else if(xhr.status == 401){
+                            sessionExpired();
+                            return;
+                        } else {
+                            alert("An error has occured - " + xhr.status);
+                            console.log(xhr.responseText);
+                            return;
+                        }
+                    }
+                };
+                xhr.send(JSON.stringify(data));
+            }
         </script>
     </body>
 </html>

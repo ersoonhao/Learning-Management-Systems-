@@ -9,16 +9,6 @@ module.exports = app => {
         res.sendFile(app._FRONT_END_PATH + '/manage/course/course.html')
     })
 
-    app.get('/course', async(req, res) => {
-        res.sendFile(app._FRONT_END_PATH + "/course/course_general.html")
-    })
-    app.get('/course/classes', async(req, res) => {
-        res.sendFile(app._FRONT_END_PATH + "/course/classes.html")
-    })
-    app.get('/course/class', async(req, res) => {
-        res.sendFile(app._FRONT_END_PATH + "/course/class.html")
-    })
-
     app.get('/manage/course/create', async(req, res) => {
         res.sendFile(app._FRONT_END_PATH + "/manage/course/createCourse.html")
     })
