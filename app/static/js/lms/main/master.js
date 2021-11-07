@@ -232,7 +232,7 @@ Vue.component("hs-course-item", {
         "cdata": { type: Object }
     },
     template: `
-        <a class="zingoHSItem zingoWidgetLink" :href="cdata.courseId ? ('course?courseId=' + cdata.courseId) : ('class?classId=' + cdata.classId)">
+        <a class="zingoHSItem zingoWidgetLink" :href="'course/' + cdata.courseId">
             <div class="listing-item-wrapper">
                 <div class="listing-item-head">
                     <img class="image" :src="cdata.displayPicture">
@@ -241,10 +241,9 @@ Vue.component("hs-course-item", {
                     </div>
                 </div>
                 <div class="listing-item-body">
-                    <div class="li-location"><span class="lms-font-semibold">{{ cdata.type }}</span>: {{ dateFormat(cdata.startDateTime) }} - {{ dateFormat(cdata.endDateTime) }}</div>
+                    <div class="li-location">{{ dateFormat(cdata.classStartDateTime) }} - {{ dateFormat(cdata.classEndDateTime) }}</div>
                     <div class="li-title lms-font-semibold" >{{ cdata.title }}</div>
-                    <div class="li-proptype lms-font-semibold" v-show="!cdata.capacity">{{ cdata.noOfLessons }} Lesson course</div>
-                    <div class="li-proptype lms-font-semibold" v-show="cdata.capacity">{{ cdata.capacity }} slots left</div>
+                    <div class="li-proptype lms-font-semibold">{{ cdata.noOfLessons }} lesson course</div>
                 </div>
             </div>
         </a>

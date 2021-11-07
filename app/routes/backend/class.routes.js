@@ -9,11 +9,7 @@ module.exports = app => {
     //======== START: CONTROLLER LOGIC ========
     const Class = require("../../controllers/class.controller.js");
 
-
-    router.post("/getAvailableCourseClasses", Class.getAvailableCourseClasses);
-
     router.post("/getCourseClasses", Class.getCourseClasses);
-
     router.post("/getCourseClass", Class.getCourseClass);
     
     router.post("/createClass", Class.createClass);

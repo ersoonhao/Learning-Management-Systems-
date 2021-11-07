@@ -171,7 +171,13 @@ exports.getMyEnrolledClasses = (req, res) => {
             let stmt
             if (body.classId) {
                 if (body.type == 'ongoing') {
-                    stmt = { classId: body.classId, accountId: accountId, coursePassed: false, isWithdrawn: false, isEnrolled: true }
+                    stmt = {
+                        classId: body.classId,
+                        accountId: accountId,
+                        coursePassed: null,
+                        isWithdrawn: false,
+                        isEnrolled: true
+                    }
                 } else if (body.type == 'passed') {
                     stmt = {
                         classId: body.classId,
@@ -195,7 +201,12 @@ exports.getMyEnrolledClasses = (req, res) => {
                 }
             } else {
                 if (body.type == 'ongoing') {
-                    stmt = { accountId: accountId, coursePassed: false, isWithdrawn: false, isEnrolled: true }
+                    stmt = {
+                        accountId: accountId,
+                        coursePassed: null,
+                        isWithdrawn: false,
+                        isEnrolled: true
+                    }
                 } else if (body.type == 'passed') {
                     stmt = { accountId: accountId, coursePassed: true }
                 } else if (body.type == 'failed') {
@@ -208,30 +219,25 @@ exports.getMyEnrolledClasses = (req, res) => {
             }
 
             Enrollment.findAll({
-                where: stmt,
-                include: [ { model: Class, include: [Course] } ]
-            })
-            .then(data => {
-                res.send({ enrollment: data })
-            })
-            .catch(err => {
-                res.status(500).send({
-                    message: err.message || 'Some error occured obtaining data'
+                    where: stmt,
+                    include: [{ model: Class }]
                 })
-            })
+                .then(data => {
+                    res.send({ enrollment: data })
+                })
+                .catch(err => {
+                    res.status(500).send({
+                        message: err.message || 'Some error occured obtaining data'
+                    })
+                })
         }
     })
 
     /* SAMPLE JSON BODY REQUEST
-        > localhost:8081/api/enrollment/getMyEnrolledClasses
-        {
-            "type": "ongoing",
-            "session": {
-                "username": "robin",
-                "sessionId": "0q8l8"
-            }
-        }
-    */
+                  {      
+                      "accountId": 1
+                  }
+              */
 }
 
 //==== POST: /getAllClassEnrollments

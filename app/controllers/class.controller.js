@@ -1,5 +1,4 @@
-const { Op } = require("sequelize");
-const { Class, Account, Course, Enrollment } = require("../models");
+const { Class, Account } = require("../models");
 const AccountController = require("./account.controller");
 
 // const db = require("../models");
@@ -162,52 +161,6 @@ exports.updateClass = (req, res) => {
 
 //Asher --> Enrollment Controller need getNoOfEnrollments (classID) -->if current capacity < maxCapacity --> getAvailableCourseClass mthd (no access restriction)
 
-
-
-// getAvailableCourseClasses
-exports.getAvailableCourseClasses = (req, res) => {
-    const permissions = []
-    AccountController.validAuthNAccess(req, res, permissions).then(session => {
-            if (session) {
-                Class.findAll({
-                        where: { 
-                            [Op.and]: {
-                                selfEnrollStartDateTime: { 
-                                    [Op.lt]: new Date()
-                                },
-                                selfEnrollEndDateTime: { 
-                                    [Op.gt]: new Date()
-                                }
-                            }
-                        },
-                        include: [ 
-                            { model: Account }, 
-                            { model: Enrollment },
-                            { model: Course }
-                        ] 
-                    })
-                    .then(data => {
-                        res.send({ "classes": data })
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            message: err.message || "Some error occurred while retrieving available classes by courseId"
-                        })
-                    })
-            }
-        })
-        /* SAMPLE JSON BODY REQUEST
-        > POST | localhost:8081/api/class/getAvailableCourseClasses
-            {
-                "session": {
-                    "username": "robin",
-                    "sessionId": "0q8l8"
-                }
-            }
-        */
-}
-
-// getCourseClasses
 exports.getCourseClasses = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => {

@@ -36,9 +36,9 @@ module.exports.load = () => {
 
         INSERT INTO Classes(classId, selfEnrollStartDateTime, selfEnrollEndDateTime, classStartDateTime, classEndDateTime, maxCapacity, courseId, trnAccountId, adminAccountId) VALUES
         (1, '2021-07-01', '2021-08-30', '2021-09-01', '2022-01-01', 50, 1, 3, 1),
-        (2, '2021-08-01', '2021-09-30', '2021-10-01', '2022-02-01', 50, 2, 3, 1),
-        (3, '2021-09-01', '2021-10-30', '2021-11-01', '2022-03-01', 50, 3, 3, 1),
-        (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 4, 3, 1);
+        (2, '2021-08-01', '2021-09-30', '2021-10-01', '2022-02-01', 50, 1, 3, 1),
+        (3, '2021-09-01', '2021-10-30', '2021-11-01', '2022-03-01', 50, 2, 3, 1),
+        (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 2, 3, 1);
 
         INSERT INTO enrollments(enrollmentId, isSelfEnrollment, isEnrolled, dateCreated, enrolledDate, coursePassed, isWithdrawn, accountId, classId) VALUES
         (1, 1, 0, '2021-07-01', NULL, 0, 0, 7, 1),
@@ -116,11 +116,6 @@ module.exports.load = () => {
         (1, 1),
         (2, 1),
         (2, 2);
-
-        INSERT INTO Sections(sectionId, title, subtitle, order ,classId) VALUES
-        (1,"Intro to Newton Laws" , "Newton's Laws 1", 1, 1),
-        (2,"Intro to Newton Laws" , "Newton's Laws 2", 2, 1),
-        (3,"Intro to Newton Laws" , "Newton's Laws 3", 3, 1),
     `)
 };
 
