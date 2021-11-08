@@ -80,6 +80,10 @@ db.Comment = require("./comment.model")(sequelize, Sequelize);
 //Enrollment
 db.Enrollment = require("./enrollment.model")(sequelize, Sequelize);
 
+//QuizAttempt
+db.QuizAttempt = require("./quizAttempt.model")(sequelize, Sequelize);
+db.QuestionAttempt = require("./questionAttempt.model")(sequelize, Sequelize);
+
 //Chat
 db.Message = require("./message.model")(sequelize, Sequelize);
 

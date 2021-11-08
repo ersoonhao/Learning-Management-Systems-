@@ -283,14 +283,18 @@ Vue.component("side-menu", {
             <div class="side-menu-group accordion-item" v-for="(section, i) in menu.sections">
                 <div class="accordion-header">
                     <button class="side-menu-button accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#section_' + section.id">
-                        <div class="lms-font-semibold" v-text="section.title"></div>
+                        <div style="float: right;"><i v-show="section.completed" class="fas fa-check"></i><i v-show="section.lock" class="fas fa-lock"></i></div>
+                        <div class="lms-font-semibold" v-text="section.title" style="float: left"></div>
+                        <div style="clear: both;"></div>
                         <small v-text="section.subtitle"></small>
                     </button>
                 </div>
                 <div :id="'section_' + section.id" :class="(i == menu.focus_section_index)?'accordion-collapse collapse show':'accordion-collapse collapse'" data-bs-parent="#side-menu">
                     <div class="list-group pt-2 pb-2">
-                        <a v-for="(link, l_i) in section.links" :href="link.link" :class="(l_i == menu.focus_link_index)?'list-group-item list-group-item-action side-menu-item active':'list-group-item list-group-item-action side-menu-item'">
-                            <span v-text="link.title"></span>
+                        <a v-for="(link, l_i) in section.links" :href="section.lock?'#':link.link" :class="(i == menu.focus_section_index && l_i == menu.focus_link_index)?'list-group-item list-group-item-action side-menu-item active':'list-group-item list-group-item-action side-menu-item'">
+                            <div style="float: right;"><i v-show="link.completed" class="fas fa-check"></i><i v-show="section.lock" class="fas fa-lock"></i></div>
+                            <div v-text="link.title" style="float: left;"></span></div>
+                            <div style="clear: both"></div>
                         </a>
                     </div>
                 </div>

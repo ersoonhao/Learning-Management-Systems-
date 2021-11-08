@@ -16,8 +16,6 @@ module.exports.SESSION_INVALID_SESSION = { username: "robin", sessionId: "00000"
 
 module.exports.load = () => {
     return db.sequelize.query(`
-     
- 
         INSERT INTO Accounts(accountId, username, email, isAdmin, isTrainer, password, sessionId) VALUES
         (1, 'robin', 'wafturerobin@gmail.com', 1, 1, 'a', '0q8l8'),
         (2, 'soonhao', 'john.d.cheong@gmail.com', 1, 0, 'a', 'gee43'),
@@ -38,15 +36,15 @@ module.exports.load = () => {
 
         INSERT INTO Classes(classId, selfEnrollStartDateTime, selfEnrollEndDateTime, classStartDateTime, classEndDateTime, maxCapacity, courseId, trnAccountId, adminAccountId) VALUES
         (1, '2021-07-01', '2021-08-30', '2021-09-01', '2022-01-01', 50, 1, 3, 1),
-        (2, '2021-08-01', '2021-09-30', '2021-10-01', '2022-02-01', 50, 1, 3, 1),
-        (3, '2021-09-01', '2021-10-30', '2021-11-01', '2022-03-01', 50, 2, 3, 1),
-        (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 2, 3, 1);
+        (2, '2021-08-01', '2021-09-30', '2021-10-01', '2022-02-01', 50, 2, 3, 1),
+        (3, '2021-09-01', '2021-10-30', '2021-11-01', '2022-03-01', 50, 3, 3, 1),
+        (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 4, 3, 1);
 
         INSERT INTO enrollments(enrollmentId, isSelfEnrollment, isEnrolled, dateCreated, enrolledDate, coursePassed, isWithdrawn, accountId, classId) VALUES
         (1, 1, 0, '2021-07-01', NULL, 0, 0, 7, 1),
         (2, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 1),
         (3, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 1),
-        (4, 0, 1, '2021-07-01', NULL, 0, 0, 10, 1),
+        (4, 0, 1, '2021-07-01', NULL, 0, 0, 10, 1), 
         (5, 1, 0, '2021-07-01', NULL, 0, 0, 7, 2),
         (6, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 2),
         (7, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 2),
@@ -98,6 +96,13 @@ module.exports.load = () => {
         (16, "reading a file", true, 5),
         (17, "True", true, 6),
         (18, "False", false, 6);
+
+        INSERT INTO QuizAttempts(quizAttemptId, startDateAttempt, endDateAttempt, score, quizId, enrollmentId) VALUES
+        (1, '2021-11-01', '2021-11-01', 10, 1, 4); /* enrollmentId=4, account=10 (george), quiz=1, section=1, class=1, course=1 */
+        
+        INSERT INTO QuestionAttempts(questionAttemptId, isCorrect, quizAttemptId, questionOptionId) VALUES
+        (1, true, 1, 4), /* enrollmentId=4, account=10 (george), quiz=1, section=1, class=1, course=1 */
+        (2, false, 1, 6);
 
         INSERT INTO Messages(messageId, text, senderAccountId, receiverAccountId) VALUES
         (1, 'Hi SoonHao, Robin Here', 1, 2),

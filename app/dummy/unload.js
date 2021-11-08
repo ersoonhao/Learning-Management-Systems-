@@ -4,9 +4,12 @@ module.exports.unload = () => {
     return db.sequelize.query(`
         DELETE FROM enrollments;
         DELETE FROM Classes;
+        DELETE FROM QuestionAttempts;
+        DELETE FROM QuizAttempts;
         DELETE FROM QuestionOptions;
         DELETE FROM Questions;
         DELETE FROM Quizzes;
+        DELETE FROM Sections;
         DELETE FROM Courses;
         DELETE FROM Accounts;
         DELETE FROM Messages;
