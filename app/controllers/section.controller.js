@@ -179,8 +179,7 @@ exports.getSectionPackage = (req, res) => {
             //TODO: Check if learner is enrolled & has completed previous sections
             Section.findAll({
                 where: { classId: classId },
-                include: [{ model: db.CourseMaterial }],
-                include: [{ model: db.Quiz }]
+                include: [{ model: db.CourseMaterial }, { model: db.Quiz }]
 
             }).then(data => {
                 res.send({ "sections": data });
