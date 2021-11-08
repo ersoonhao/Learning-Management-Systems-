@@ -5,17 +5,17 @@ module.exports = app => {
     //======== START: CONTROLLER LOGIC ========
     const section = require("../../controllers/section.controller");
 
-    
+
     router.get("/allsections", section.findAllSection);
     router.post("/getall", section.getSectionPackage);
     router.get("/:id", section.findOne);
 
-    router.post("/",section.createSection);
-    router.post("/delete",section.deleteSection);
+    router.post("/", section.createSection);
+    router.post("/delete", section.deleteSection);
     router.post('/update', section.updateSection);
-    router.post("/deleteall",section.deleteAllSection);
+    router.post("/deleteall", section.deleteAllSection);
 
     //======== END: CONTROLLER LOGIC ========
-    
+
     app.use(ROUTE_PATH, router);
 }

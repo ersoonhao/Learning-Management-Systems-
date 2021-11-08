@@ -66,6 +66,7 @@ describe('The courses route and controller',()=>{
   it('retrieves course 1 with prerequisites through get request',(done)=>{
     request(app).post('/api/course/find').send({session: dummy_reload.SESSION_ADMIN, 'id':1}).end(
       (err,response)=>{
+        console.log(response.body.course)
         assert(response.body.course.title == 'Physics')
         assert(response.body.course.description == 'This course is about Physics')
         assert(response.body.course.active == true)

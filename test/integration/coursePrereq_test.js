@@ -7,7 +7,7 @@ const assert = require('assert')
 
 const dummy_reload = require("../../app/dummy/reload")
 
-describe('The course prerequisites route and controller',()=>{
+describe('The courses prerequisites route and controller',()=>{
   before(function(done){
       dummy_reload.reload().then(() => { done() })
   })
@@ -23,6 +23,24 @@ describe('The course prerequisites route and controller',()=>{
     )
   })
 
-
 })
 
+
+// // // CONTRIBUTOR: John Cheong
+// 'use strict';
+
+// const request = require('supertest'); 
+// const app = require('../../server.js');
+// const assert = require('assert')
+
+// const dummy_reload = require("../../app/dummy/reload")
+
+// describe('The course prerequisites route and controller',()=>{
+//   before(function(done){
+//     dummy_reload.reload().then(() => { done() })
+//   })
+
+  
+
+
+// })

@@ -60,10 +60,6 @@ db.CoursePrerequisite = require("./coursePrerequisite.model")(sequelize, Sequeli
 //Class
 db.Class = require("./class.model")(sequelize, Sequelize);
 
-
-//Course Progress 
-db.CourseProgress = require("./courseprogress.model")(sequelize, Sequelize);
-
 //Section
 db.Section = require("./section.model")(sequelize, Sequelize);
 
@@ -120,8 +116,11 @@ db.CoursePrerequisite.hasMany(db.PrerequisiteSet, { foreignKey: 'setNumber', sou
 db.PrerequisiteSet.belongsTo(db.CoursePrerequisite, { foreignKey: 'setNumber', targetKey: 'setNumber' });
 
 /* Class */
-db.Class.hasMany(db.PrerequisiteSet, { foreignKey: 'course_fk', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-db.PrerequisiteSet.belongsTo(db.Class, { foreignKey: 'course_fk', targetKey: 'courseId' });
+/* db.Course.hasMany(db.PrerequisiteSet, { foreignKey: 'course_fk', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.PrerequisiteSet.belongsTo(db.Course, { foreignKey: 'course_fk', targetKey: 'courseId' }); */
+
+db.Course.hasMany(db.PrerequisiteSet, { foreignKey: 'course_fk', sourceKey: 'courseId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.PrerequisiteSet.belongsTo(db.Course, { foreignKey: 'course_fk', targetKey: 'courseId' });
 
 db.Account.hasMany(db.Class, { foreignKey: 'trnAccountId', sourceKey: 'accountId', onDelete: 'cascade', onUpdate: 'NO ACTION' })
 db.Class.belongsTo(db.Account, { foreignKey: 'trnAccountId', targetKey: 'accountId' }); //Trainer
@@ -134,6 +133,7 @@ db.Class.hasMany(db.Enrollment, { foreignKey: 'classId', sourceKey: 'classId', o
 db.Enrollment.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
 
 
+
 // Section
 db.Class.hasMany(db.Section, { foreignKey: 'classId', sourceKey: 'classId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.Section.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
@@ -142,8 +142,11 @@ db.Section.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
 db.Section.hasMany(db.CourseMaterial, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.CourseMaterial.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
 
+/* db.Section.hasMany(db.Quiz, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.Quiz.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' }); */
+
 db.Section.hasOne(db.Quiz, { foreignKey: 'sectionId', sourceKey: 'sectionId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
-// db.Quiz.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
+db.Quiz.belongsTo(db.Section, { foreignKey: 'sectionId', targetKey: 'sectionId' });
 
 // ================== SYNC ==================
 db.sequelize.sync();

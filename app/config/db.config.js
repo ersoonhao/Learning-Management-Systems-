@@ -20,17 +20,16 @@
 
 
 
-  module.exports = {
+module.exports = {
     HOST: "spm.czmzwyti4icp.ap-southeast-1.rds.amazonaws.com",
     USER: "admin",
     PASSWORD: "regopq==",
-    DB: "soonz",
+    DB: "lms_test",
     dialect: "mysql",
     pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000, 
-      idle: 10000
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
     }
-  };
-
+};

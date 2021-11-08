@@ -1,4 +1,3 @@
-
 // need a section FK here. 
 
 module.exports = (sequelize, Sequelize) => {
@@ -8,19 +7,19 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true,
             primaryKey: true
         },
-        title:{
-            type:Sequelize.STRING
+        title: {
+            type: Sequelize.STRING
         },
-        instructions:{
-            type:Sequelize.STRING
+        instructions: {
+            type: Sequelize.STRING
         },
         // source is a s3 link 
-        source:{
-            type:Sequelize.STRING
+        source: {
+            type: Sequelize.STRING
         },
         // vid, pdf , doc , ? 
         type: {
-            type:Sequelize.STRING
+            type: Sequelize.STRING
         },
         // Order is the positions 
         order: {
@@ -30,6 +29,5 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER
         }
     });
-    return CourseMaterial; 
+    return CourseMaterial;
 };
-
