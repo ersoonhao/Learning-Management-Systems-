@@ -29,13 +29,10 @@ exports.isEligibleForCourse = (req, res) => {
                         include: {
                             model: PrerequisiteSet,
                             include: {
-                                model: Course,
+                                model: Class,
                                 include: {
-                                    model: Class,
-                                    include: {
-                                        model: Enrollment,
-                                        where: { accountId: session.accountId, coursePassed: true }
-                                    }
+                                    model: Enrollment,
+                                    where: { accountId: session.accountId, coursePassed: true }
                                 }
                             }
                         }
@@ -44,9 +41,6 @@ exports.isEligibleForCourse = (req, res) => {
                 .then(data => {
                     var prereqDict = {}
                     var eligible = false
-                        /* res.send({
-                            eligible: data
-                        }) */
                     if (data.CoursePrerequisites.length == 0) {
                         eligible = true
                     } else {
@@ -56,7 +50,7 @@ exports.isEligibleForCourse = (req, res) => {
                             }
                             set.PrerequisiteSets.forEach(prereq => {
                                 prereqDict[set.setNumber][prereq.course_fk] = !(
-                                    prereq.Course.Class == null
+                                    prereq.Class == null
                                 )
                             })
                         })
@@ -174,13 +168,7 @@ exports.getMyEnrolledClasses = (req, res) => {
             let stmt
             if (body.classId) {
                 if (body.type == 'ongoing') {
-                    stmt = {
-                        classId: body.classId,
-                        accountId: accountId,
-                        coursePassed: null,
-                        isWithdrawn: false,
-                        isEnrolled: true
-                    }
+                    stmt = { classId: body.classId, accountId: accountId, coursePassed: false, isWithdrawn: false, isEnrolled: true }
                 } else if (body.type == 'passed') {
                     stmt = {
                         classId: body.classId,
@@ -204,12 +192,7 @@ exports.getMyEnrolledClasses = (req, res) => {
                 }
             } else {
                 if (body.type == 'ongoing') {
-                    stmt = {
-                        accountId: accountId,
-                        coursePassed: null,
-                        isWithdrawn: false,
-                        isEnrolled: true
-                    }
+                    stmt = { accountId: accountId, coursePassed: false, isWithdrawn: false, isEnrolled: true }
                 } else if (body.type == 'passed') {
                     stmt = { accountId: accountId, coursePassed: true }
                 } else if (body.type == 'failed') {
@@ -222,25 +205,30 @@ exports.getMyEnrolledClasses = (req, res) => {
             }
 
             Enrollment.findAll({
-                    where: stmt,
-                    include: [{ model: Class }]
+                where: stmt,
+                include: [ { model: Class, include: [Course] } ]
+            })
+            .then(data => {
+                res.send({ enrollment: data })
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: err.message || 'Some error occured obtaining data'
                 })
-                .then(data => {
-                    res.send({ enrollment: data })
-                })
-                .catch(err => {
-                    res.status(500).send({
-                        message: err.message || 'Some error occured obtaining data'
-                    })
-                })
+            })
         }
     })
 
     /* SAMPLE JSON BODY REQUEST
-                    {      
-                        "accountId": 1
-                    }
-                */
+        > localhost:8081/api/enrollment/getMyEnrolledClasses
+        {
+            "type": "ongoing",
+            "session": {
+                "username": "robin",
+                "sessionId": "0q8l8"
+            }
+        }
+    */
 }
 
 //==== POST: /getAllClassEnrollments
@@ -278,15 +266,15 @@ exports.getAllClassEnrollments = (req, res) => {
             }
         })
         /* SAMPLE JSON BODY REQUEST
-                          > localhost:8081/api/enrollment/getAllClassEnrollments
-                              {
-                                  "classId": 1,
-                                  "session": {
-                                      "username": "robin",
-                                      "sessionId": "0q8l8"
-                                  }
-                              }
-                          */
+                    > localhost:8081/api/enrollment/getAllClassEnrollments
+                        {
+                            "classId": 1,
+                            "session": {
+                                "username": "robin",
+                                "sessionId": "0q8l8"
+                            }
+                        }
+                    */
 }
 
 //==== Get: /getAllPendingEnrollments
@@ -372,14 +360,14 @@ exports.applyCourseClass = (req, res) => {
     })
 
     /* SAMPLE JSON BODY REQUEST
-              {      
-                  "classId": 1,
-                  "session": {
-                      "username": "robin",
-                      "sessionId": "0q8l8"
-                  }
-              }
-          */
+            {      
+                "classId": 1,
+                "session": {
+                    "username": "robin",
+                    "sessionId": "0q8l8"
+                }
+            }
+        */
 }
 
 //==== POST: /enrollLearner
@@ -433,15 +421,15 @@ exports.enrollLearner = (req, res) => {
             }
         })
         /* SAMPLE JSON BODY REQUEST
-                          {
-                              "classId": 1,
-                              "accountId": 1,
-                              "session": {
-                                  "username": "robin",
-                                  "sessionId": "0q8l8"
-                              }
-                          }
-                      */
+                    {
+                        "classId": 1,
+                        "accountId": 1,
+                        "session": {
+                            "username": "robin",
+                            "sessionId": "0q8l8"
+                        }
+                    }
+                */
 }
 
 //==== POST: enrollment/respondApplication
@@ -458,15 +446,15 @@ exports.respondApplication = (req, res) => {
             }
         })
         /* SAMPLE JSON BODY REQUEST
-                              {
-                                  "enrollmentId": 1,
-                                  "isApproved": true,
-                                  "session": true
-                                      "username": "robin",
-                                      "sessionId": "0q8l8"
-                                  }
-                              }
-                          */
+                        {
+                            "enrollmentId": 1,
+                            "isApproved": true,
+                            "session": true
+                                "username": "robin",
+                                "sessionId": "0q8l8"
+                            }
+                        }
+                    */
 }
 
 function _updateEnrollment(body, res) {
@@ -540,10 +528,10 @@ exports.deleteEnrollment = (req, res) => {
     })
 
     /* SAMPLE JSON BODY REQUEST
-                    {      
-                        "enrollmentId": 1,
-                    }
-                */
+                  {      
+                      "enrollmentId": 1,
+                  }
+              */
 }
 
 /* exports.template = (req, res) => {
