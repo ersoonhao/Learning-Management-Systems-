@@ -11,6 +11,7 @@
             <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
         <title>LMS</title>
         <link rel="stylesheet" href="/style/master.css">
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
     <body>
         <div id="app">
@@ -24,13 +25,16 @@
                         <!-- START OF LIST OF SECTIONS -->
                         
 
+                        <!-- <a bind-href="'/job/'r.id"> {{ r.job_title }} </a> -->
+
+
                         <ul class="list-group text-center">
                             <!-- :key="section.title" -->
                            <li v-for="section in sortedArray"   class="list-group-item justify-content-center"> 
-                                <h1 class="text-uppercase">{{section.title}} </h1>
+                                <a :href="'/manage/section?sectionId='+section.sectionId" style="color:black"><h1 class="text-uppercase">{{section.title}} </h1> </a>
                                 <h2>{{section.subtitle}}</h2>
                                 <h2>{{section.order}}</h2>
-                                <button class="button btn btn-danger btn-sm" @click="deleteSection({{section.sectionId}})" >Delete Section</button>
+                                <button class="button btn btn-danger btn-sm" @click="deleteSection(section.sectionId)" >Delete Section</button>
                             </li>
 
                             <!-- <li class="list-group-item disabled" aria-disabled="true">A disabled item</li>
@@ -39,15 +43,13 @@
                             <li class="list-group-item">A fourth item</li> -->
                             <!-- <li class="list-group-item">And a fifth one</li> -->
                           </ul>
-                          <button type="button" class="btn btn-primary">Add Section</button>
+                          <button type="button" class="btn btn-primary" @click="addSection()">Add Section</button>
                          
 
                         <!-- END OF LIST OF SECTION -->
+                        <!-- <a href="/manage/section?sectionId=1">Specific section</a> -->
 
-
-
-
-                        <a href="/manage/section?sectionId=1">Specific section</a>
+                        
                     </m-div>
                 </div>
             </div>
@@ -104,7 +106,15 @@
                 },
                 methods:{
                     deleteSection: function(inputSectionId){
-                        axios.post(API(`/section//delete`), {
+                        axios.post(API(`/section/delete`), {
+                    session: getUserSession(),
+                    sectionId: inputSectionId
+                }).then(response => {
+                    app.sections = response.data.sections;
+                })
+                    },
+                    addSection: function(inputSectionId){
+                        axios.post(API(`/section/add`), {
                     session: getUserSession(),
                     sectionId: inputSectionId
                 }).then(response => {

@@ -1,9 +1,17 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
+const { uploadFile, getFileStream } = require('./s3')
 const app = express();
 app.use(express.json())
+
+
+// ================ Multer  ================
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' })
+    // ================ AWS Related Controllers  ================
+const AccountCTRL = require("./app/controllers/account.controller");
+const SectionCTRL = require("./app/controllers/section.controller");
 
 // ================ Routes ================
 app._FRONT_END_PATH = __dirname + '/app/views/';
@@ -80,6 +88,117 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 require("./chat")(io)
+
+
+
+
+
+app.post('/images', upload.single('image'), async(req, res) => {
+    // req.file is the `avatar` file
+    // req.body will hold the text fields, if there were any
+
+    const file = req.file;
+    const extension = ".jpeg"
+    const result = await uploadFile(file, extension);
+    console.log(result);
+    const description = req.body.description
+
+    res.status(200).send({ imagePath: `/images/${result.Key}` });
+
+})
+
+
+app.post('/pdfs', upload.single('pdf'), async(req, res) => {
+    // console.log("BODY", req.body);
+    const file = req.file;
+
+    var title = file.orignalname; // fieldname 
+
+    var instructions = req.body.instructions;
+    var ordering = req.body.ordering;
+    var type = "pdf";
+    var source; // link  
+    var sectionId = req.body.sectionId;;
+    var key;
+    // { data: { bodyFormData: {} } }
+    const extension = ".pdf"
+    if (file == null) {
+        console.log("FILE IS NULL");
+        res.status(400).send({ message: "No file uploaded" });
+    } else if (!instructions || !ordering || !sectionId) {
+        res.status(400).send({ message: "Missing fields" });
+    } else {
+        const result = await uploadFile(file, extension);
+        console.log(result);
+        if (result) {
+            source = result.Location
+            key = result.Key;
+            title = result.originalName;
+            title = "some title first";
+        }
+
+        // const description = req.body.description
+        // var savetodb = await SectionCTRL.getAllCourseMaterials();
+        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, key);
+        console.log("DB results", savetodb);
+        if (savetodb) {
+            // how come this happens? 
+            res.status(200).send({ message: "File uploaded" });
+        } else {
+            res.status(400).send({ message: "File not uploaded" });
+        }
+    }
+
+
+
+    // res.status(200).send({message:"file uploaded successfully"}); 
+    // res.status(200).send({ pdfPath: `/pdfs/${result.Key}` });
+
+
+})
+
+app.post('/docs', upload.single('docx'), async(req, res) => {
+    // req.file is the `avatar` file
+    // req.body will hold the text fields, if there were any
+
+    const file = req.file;
+    const extension = ".docx"
+        // console.log(file); 
+    const result = await uploadFile(file, extension);
+    console.log(result);
+    const description = req.body.description
+
+    res.status(200).send({ pdfPath: `/docs/${result.Key}` });
+
+})
+
+
+
+// can embedded the image in 
+app.get('/images/:key', (req, res) => {
+    console.log(req.params)
+    const key = req.params.key
+    const readStream = getFileStream(key)
+
+    readStream.pipe(res)
+})
+
+app.get('/pdfs/:key', (req, res) => {
+    console.log(req.params)
+    const key = req.params.key
+    const readStream = getFileStream(key)
+
+    readStream.pipe(res)
+})
+
+
+
+
+
+
+
+
+
 
 
 // ================ SETUP ================

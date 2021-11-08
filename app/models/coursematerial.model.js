@@ -22,11 +22,14 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING
         },
         // Order is the positions 
-        order: {
+        ordering: {
             type: Sequelize.INTEGER
         },
         sectionId: {
             type: Sequelize.INTEGER
+        },
+        key: {
+            type: Sequelize.STRING
         }
     });
     return CourseMaterial;

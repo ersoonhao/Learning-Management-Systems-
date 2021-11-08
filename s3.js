@@ -32,7 +32,9 @@ const s3 = new S3({
 // upload function
 function uploadFile(file, extension) {
     // parse in file object from multer which contain the filepath and the unique key from S3 
-    const fileStream = fs.createReadStream(file.path)
+    console.log("file object", file);
+    const fileStream = fs.createReadStream(file.path);
+
 
     console.log("key HERE", file.filename)
     var pdfkey = file.filename + ".pdf";

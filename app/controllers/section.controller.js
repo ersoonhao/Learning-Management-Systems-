@@ -87,18 +87,49 @@ function isSectionTrainer(Account, SectionId) {
 }
 
 
+function getAllCourseMaterials() {
+    console.log("called from server.js")
 
+    return true;
+}
+exports.getAllCourseMaterials = getAllCourseMaterials
 
 
 //======== START: COURSE MATERIAL  ========
+function addCourseMaterial(title, instructions, source, type, ordering, sectionId, key) {
+    if (!title || !ordering || !source || !sectionId) {
+        return false;
+    }
+    const coursematerial = {
+        title,
+        instructions,
+        source,
+        type,
+        ordering,
+        sectionId,
+        key
+    }
 
-// Create and Save a Section 
-exports.addCourseMaterial = (req, res) => {
+    CourseMaterial.create(coursematerial)
+        .then(result => {
+            if (result) {
+                return true;
+            }
+            return false;
+        }).catch(err => {
+            console.log(err);
+            return false;
+        });
+    return true;
+}
+exports.addCourseMaterial = addCourseMaterial
+    // Create and Save a Section 
+exports.addCourseMaterial2 = (req, res) => {
     // Validate request
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.title || !req.body.orderinging || !req.body.source) {
+            if (!req.body.title || !req.body.ordering || !req.body.source) {
                 res.status(400).send({
                     message: "Content can not be empty!"
                 });
@@ -179,8 +210,8 @@ exports.getSectionPackage = (req, res) => {
             //TODO: Check if learner is enrolled & has completed previous sections
             Section.findAll({
                 where: { classId: classId },
-                include: [{ model: db.CourseMaterial }],
-                include: [{ model: db.Quiz }]
+                include: [{ model: db.CourseMaterial }, { model: db.Quiz }]
+
 
             }).then(data => {
                 res.send({ "sections": data });
