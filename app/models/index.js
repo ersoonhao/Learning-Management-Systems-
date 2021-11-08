@@ -136,6 +136,12 @@ db.Enrollment.belongsTo(db.Account, { foreignKey: 'accountId', targetKey: 'accou
 db.Class.hasMany(db.Enrollment, { foreignKey: 'classId', sourceKey: 'classId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.Enrollment.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
 
+db.Enrollment.hasMany(db.QuizAttempt, { foreignKey: 'enrollmentId', sourceKey: 'enrollmentId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.QuizAttempt.belongsTo(db.Enrollment, { foreignKey: 'enrollmentId', targetKey: 'enrollmentId' });
+
+/* QuizAttempt */
+db.QuizAttempt.hasMany(db.QuestionAttempt, { foreignKey: 'quizAttemptId', sourceKey: 'quizAttemptId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.QuestionAttempt.belongsTo(db.QuizAttempt, { foreignKey: 'quizAttemptId', targetKey: 'quizAttemptId' });
 
 
 // Section

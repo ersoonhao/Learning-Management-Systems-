@@ -9,6 +9,14 @@ module.exports = app => {
 
     router.post("/getMyQuizAttempts", quizAttempt.getMyQuizAttempts);
 
+    router.post("/getMyQuestionAttempts", quizAttempt.getMyQuestionAttempts);
+    
+    router.post("/startQuizAttempt", quizAttempt.startQuizAttempt);
+
+    router.post("/registerQuestionAttempt", quizAttempt.registerQuestionAttempt);
+    
+    router.post("/submitQuizAttempt", quizAttempt.submitQuizAttempt);
+    
     //======== END: CONTROLLER LOGIC ========
     
     app.use(ROUTE_PATH, router);

@@ -251,6 +251,7 @@ exports.addQuestion = (req,res) => {
         }
     */
 }
+
 //==== POST: /updateQuestion
 exports.updateQuestion = (req, res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]

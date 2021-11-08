@@ -20,21 +20,31 @@ module.exports = (sequelize, Sequelize) => {
     });
 
     //Public
-    QuestionAttempt.createQuestionAttempt = function(isCorrect, quizAttemptId, questionOptionId){
+    QuestionAttempt.createQuestionAttempt = function(quizAttemptId, questionOptionId){
         let questionAttempt = {
-            isCorrect: isCorrect,
             quizAttemptId: quizAttemptId,
             questionOptionId: questionOptionId
         }
-        if(isValidQuestionAttempt(questionAttempt)){
+        if(isValidQuestionAttempt(questionAttempt, true)){
+            return questionAttempt;
+        }
+        return null;
+    }
+    QuestionAttempt.markQuestion = function(questionAttemptId, isCorrect){
+        let questionAttempt = {
+            questionAttemptId: questionAttemptId,
+            isCorrect: isCorrect
+        }
+        if(isValidQuestionAttempt(questionAttempt, false)){
             return questionAttempt;
         }
         return null;
     }
 
     //Private
-    function isValidQuestionAttempt(questionAttempt){
-        if(questionAttempt.isCorrect == null || questionAttempt.quizAttemptId == null || questionAttempt.questionOptionId == null){
+    function isValidQuestionAttempt(questionAttempt, isNew){
+        if((isNew && (questionAttempt.quizAttemptId == null || questionAttempt.questionOptionId == null)) || 
+            (!isNew && questionAttemptId == null)){
             console.log(`QuestionAttempt Error: 1`);
             return false;
         }

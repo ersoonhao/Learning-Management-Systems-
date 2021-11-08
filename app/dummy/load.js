@@ -98,11 +98,14 @@ module.exports.load = () => {
         (18, "False", false, 6);
 
         INSERT INTO QuizAttempts(quizAttemptId, startDateAttempt, endDateAttempt, score, quizId, enrollmentId) VALUES
-        (1, '2021-11-01', '2021-11-01', 10, 1, 4); /* enrollmentId=4, account=10 (george), quiz=1, section=1, class=1, course=1 */
-        
+        (1, '2021-11-01', '2021-11-01', 2, 1, 4), /* enrollmentId=4, account=10 (george), quiz=1, section=1, class=1, course=1 */
+        (2, '2021-11-07', NULL, NULL, 1, 4); /* enrollmentId=4, account=10 (george), quiz=1, section=1, class=1, course=1 */
+
         INSERT INTO QuestionAttempts(questionAttemptId, isCorrect, quizAttemptId, questionOptionId) VALUES
         (1, true, 1, 4), /* enrollmentId=4, account=10 (george), quiz=1, section=1, class=1, course=1 */
-        (2, false, 1, 6);
+        (2, false, 1, 6),
+        (3, NULL, 2, 3), /* enrollmentId=4, account=10 (george), quiz=1, section=1, class=1, course=1 */
+        (4, NULL, 2, 5);
 
         INSERT INTO Messages(messageId, text, senderAccountId, receiverAccountId) VALUES
         (1, 'Hi SoonHao, Robin Here', 1, 2),
