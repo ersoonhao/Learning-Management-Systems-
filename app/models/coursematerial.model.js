@@ -1,5 +1,5 @@
 // need a section FK here. 
-
+// recommit
 module.exports = (sequelize, Sequelize) => {
     const CourseMaterial = sequelize.define("CourseMaterial", {
         CourseMaterialId: {
@@ -31,6 +31,7 @@ module.exports = (sequelize, Sequelize) => {
         key: {
             type: Sequelize.STRING
         }
+      
     });
     return CourseMaterial;
 };
