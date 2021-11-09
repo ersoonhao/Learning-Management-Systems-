@@ -4,6 +4,7 @@ const cors = require("cors");
 const { uploadFile, getFileStream } = require('./s3')
 const app = express();
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 
 // ================ Multer  ================
@@ -65,7 +66,7 @@ app.use((req, res, next) => {
 
 // ================ PARSERS ================
 // app.use(bodyParser.json()); // parse requests of content-type - application/json
-app.use(bodyParser.urlencoded({ extended: true })); // parse requests of content-type - application/x-www-form-urlencoded
+// app.use(bodyParser.urlencoded({ extended: true })); 
 
 
 // ================ MODELS ================
@@ -110,15 +111,35 @@ app.post('/images', upload.single('image'), async(req, res) => {
 
 app.post('/pdfs', upload.single('pdf'), async(req, res) => {
     // console.log("BODY", req.body);
+    console.log("REQ", req);
     const file = req.file;
+    var title; 
+    if(file.originalname){
+        title=file.originalname;
+    }else{ title="placeholder"}
+ 
+    var instructions;
 
-    var title = file.orignalname; // fieldname 
+    if (req.body.instructions) {
+        instructions = req.body.instructions;
+    } else {
+        instructions = "None";
+    }
+    if (req.body.ordering) {
+        ordering = req.body.ordering;
+    } else {
+        ordering = -1;
+    }
+    if (req.body.sectionId) {
+        sectionId = req.body.sectionId;
+    } else {
+        sectionId = 1;
+    }
 
-    var instructions = req.body.instructions;
-    var ordering = req.body.ordering;
-    var type = "pdf";
+    // var ordering = req.body.ordering;
+    var type = file.fieldname;
     var source; // link  
-    var sectionId = req.body.sectionId;;
+    var sectionId = req.body.sectionId;
     var key;
     // { data: { bodyFormData: {} } }
     const extension = ".pdf"
@@ -133,8 +154,8 @@ app.post('/pdfs', upload.single('pdf'), async(req, res) => {
         if (result) {
             source = result.Location
             key = result.Key;
-            title = result.originalName;
-            title = "some title first";
+            // title = file.originalname;
+        
         }
 
         // const description = req.body.description
@@ -193,98 +214,10 @@ app.get('/pdfs/:key', (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
 // ================ SETUP ================
 const PORT = process.env.PORT || 8081; //Set port, listen for requests
-
-server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
-});
-
-module.exports = server;
-
-
-
-
-
-
-
-
-// ================ SETUP ================
-const PORT = process.env.PORT || 8081; //Set port, listen for requests
-
-
-// my own middlewear for images ?? 
-// cuz front end upload image
-app.post('/images', upload.single('image'), async (req, res) => {
-    // req.file is the `avatar` file
-    // req.body will hold the text fields, if there were any
-
-    const file = req.file;
-    const extension=".jpeg"
-    const result= await uploadFile(file,extension);
-    console.log(result);
-    const description = req.body.description 
-
-    res.status(200).send({imagePath: `/images/${result.Key}`}); 
-
-  })
-
-
-  app.post('/pdfs', upload.single('pdf'), async (req, res) => {    
-    const file = req.file;
-    const extension=".pdf"
-    // console.log(file); 
-    const result= await uploadFile(file,extension);
-    console.log(result);
-    const description = req.body.description 
-
-    res.status(200).send({pdfPath: `/pdfs/${result.Key}`}); 
-
-  })
-
-  app.post('/docs', upload.single('docx'), async (req, res) => {
-    // req.file is the `avatar` file
-    // req.body will hold the text fields, if there were any
-    
-    const file = req.file;
-    const extension=".docx"
-    // console.log(file); 
-    const result= await uploadFile(file,extension);
-    console.log(result);
-    const description = req.body.description 
-
-    res.status(200).send({pdfPath: `/docs/${result.Key}`}); 
-
-  })
-
-  // can embedded the image in 
-app.get('/images/:key', (req, res) => {
-    console.log(req.params)
-    const key = req.params.key
-    const readStream = getFileStream(key)
-
-    readStream.pipe(res)
-})
-
-app.get('/pdfs/:key', (req, res) => {
-    console.log(req.params)
-    const key = req.params.key
-    const readStream = getFileStream(key)
-
-    readStream.pipe(res)
-})
-
-
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+    console.log(`Server is running on port ${PORT}.`);
 });
 
 module.exports = server;

@@ -1,121 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <!-- Required meta tags -->
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <!-- Bootstrap CSS -->
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-      <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
-      <title>LMS</title>
-      <link rel="stylesheet" href="/style/master.css">
-      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-   </head>
-   <body>
-      <div id="app">
-         <lms-head :session="session"></lms-head>
-         <div class="content">
-            <div class=container>
-               <m-div :menu="menu" title="Learning Materials" :subtitle="'For Section ID: '+sectionId">
-                  <h1>Add LEARNING MATERIALS</h1>
-                  <div class="row">
-                     <input type="radio" id="PDF" value="pdf" v-model="type">
-                     <label for="PDF">PDF</label>
+
+<head>
+   <!-- Required meta tags -->
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <!-- Bootstrap CSS -->
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+   <title>LMS</title>
+   <link rel="stylesheet" href="/style/master.css">
+   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+   <div id="app">
+      <lms-head :session="session"></lms-head>
+      <div class="content">
+         <div class=container>
+            <m-div :menu="menu" title="Learning Materials" :subtitle="'For Section ID: '+sectionId">
+               <h1>Add LEARNING MATERIALS</h1>
+
+               <div class="row">
+                  <select v-model="type" class="form-select" aria-label="Default select example">
+                     <option selected>Select File Type</option>
+                     <option value="pdf">PDF</option>
+                     <option value="docx">WORD</option>
+                     <option value="image">IMAGE</option>
+                     <option value="VIDEO">VIDEO</option>
+                  </select>
+               </div>
+
+
+               <!-- START OF FORM  -->
+               <!--  SINGLE FILE ONLY -->
+               <h1>Upload Your Document </h1>
+
+
+               <form v-on: submit=:submit.prevent action="/pdfs" enctype="multipart/form-data" method="POST"> 
+                        <span v-if="type == 'VIDEO'">
+                            <div class="form-group">
+                        <input type="text" id="userInputFile" placeholder="Add your video URL"/>
+                            </div>
+                        <br> 
+                        </span>
+                        <span v-else>
+                            <div class="form-group">
+                            <input class="btn-primary" type="file"  id="userInputFile" name="pdf" />
+                            <!-- <label class="form-label" for="userInputFile">Upload course Materials</label>
+                            <input type="file" class="form-control" id="userInputFile" :name="pdf" /> -->
+                            </div> 
+                        </span>
+                        <br>
+
+                        <div class="form-group">
+                            <label for="instructions">Instructions</label>
+                            <input type="text" class="form-control" id="instructions" name="instructions" placeholder="Enter Instructions">
+                        </div>
+                        <br>
+
+                        <div class="form-group">
+                            <label for="ordering">Order</label>
+                            <input type="text" class="form-control" id="ordering" name="ordering" placeholder="Enter Order">
+                        </div>
+
+                        <br>
+                        <div class="form-group">
+                            <label for="sectionIdForm">Uploading for Current Section</label>
+                        <input class="form-control" id="sectionIdForm" type="text" :value="sectionId" name="sectionId" readonly>
+                        </div>
+
+                        <input class="btn btn-primary" type="submit"value="Upload" />
+                  </form> -->
+               <!-- END OF FORM
+
+               <h1>OLD WORKING FORM</h1>
+
+               <!-- <form action="/pdfs" enctype="multipart/form-data" method="POST">
+                  <span v-if="type == 'VIDEO'">
+                     <input type="text" id="userInputFile" placeholder="Add your video URL" />
                      <br>
-                     <input type="radio" id="WORD" value="docx" v-model="type">
-                     <label for="WORD">WORD</label>
-                     <br>
-                     <input type="radio" id="IMAGE" value="image" v-model="type">
-                     <label for="IMAGE">IMAGE</label>
-                     <br>
-                     <input type="radio" id="VIDEO" value="VIDEO" v-model="type">
-                     <label for="VIDEO">VIDEO</label>
-                     <br>
-                     <span>Picked: {{ type }}</span>
-                  </div>
-                
-                  <!--  SINGLE FILE ONLY -->
-                  <h1>Upload Your Document </h1>
-                  <form v-on: submit=:submit.prevent action="/pdfs" enctype="multipart/form-data" method="POST"> 
-                     <span v-if="type == 'VIDEO'">
-                     <input type="text" id="userInputFile" placeholder="Add your video URL"/>
-                     <br> 
-                     </span>
-                     <span v-else>
-                     <input type="file" id="userInputFile" name="pdf" />
-                     </span>
-                     <br>
-                     <input type="text" placeholder="Add your description"/> 
-                     <br>
-                     <input type="submit"value="Upload"/>
-                  </form>
-               </m-div>
-            </div>
+                  </span>
+                  <span v-else>
+                     <input type="file" id="pdf" name="pdf" />
+                  </span>
+                  <br>
+                  <input type="text" name="description" placeholder="Add your description" />
+                  <br>
+                  <input type="submit" value="Upload" />
+
+                  <h1>END OF OLD WORKING FORM </h1>
+               </form> -->
+
+            </m-div>
          </div>
       </div>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-         integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-      <script src="/js/lib/vue.js"></script>
-      <script src="/js/lms/main/master.js"></script>
-      <script src="/js/lms/main/manage.js"></script>
-      <script>
-         const app = new Vue({
-             el: '#app',
-             data: {
-                 session: getUserSession(),
-                 sectionId: getParams("sectionId"),
-                 upload: false,
-                 type: "",
-                 videoURL: "",
-                 description: "",
-                 menu: initMenu(generateMenuSections_Section(getParams("sectionId")), 0, 1)
-             }, created: () => {
-                 
-             },
-             methods: {
-                 uploadFile: function() {
-                     alert("Uploading file");
-                     var filetype= this.type;
-                     var file = document.getElementById("userInputFile").files[0];
-                     console.log(file);
-                     console.log(filetype);
-                    
-                     var bodyFormData = new FormData();
-                     bodyFormData.append(filetype,file); 
-                     console.log(bodyFormData);
-                     bodyFormData.append("description", this.description);
-                     var postpath="/pdfs"
-                     var fileObj = {
-                         sectionId: app.enrollmentId,
-                         session: getUserSession()
-                     }   
-         
-                     console.log(bodyFormData);
-                    // { file: { bodyFormData: {} } }
-                     axios.post((`/pdfs/`), {
-                        bodyFormData,
-                        headers: { 'Content-Type': 'multipart/form-data' },
-                     }).then(response => {
-                         if(status == 200) {
-                             alert("File Uploaded Successfully");
-                          
-                         }else{
-                             alert("File Upload Failed");
-                         }
-                         console.log(response);
-                     })
-         
-                     
-                     
-                     
-                 },
-                 preventSubmit:function () {
-                    // @submit.prevent
-                 }
-             }
-         });
-      </script>
-   </body>
+   </div>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+   </script>
+   <script src="/js/lib/vue.js"></script>
+   <script src="/js/lms/main/master.js"></script>
+   <script src="/js/lms/main/manage.js"></script>
+   <script>
+      const app = new Vue({
+         el: '#app',
+         data: {
+            session: getUserSession(),
+            sectionId: getParams("sectionId"),
+            upload: false,
+            type: "",
+            videoURL: "",
+            description: "",
+            menu: initMenu(generateMenuSections_Section(getParams("sectionId")), 0, 1)
+         },
+         created: () => {
+
+         },
+         methods: {
+            uploadFile: function () {
+               alert("Uploading file");
+               var filetype = this.type;
+               var file = document.getElementById("userInputFile").files[0];
+               console.log(file);
+               console.log(filetype);
+
+               var bodyFormData = new FormData();
+               bodyFormData.append(filetype, file);
+               console.log(bodyFormData);
+               bodyFormData.append("description", this.description);
+               var postpath = "/pdfs"
+               var fileObj = {
+                  sectionId: app.enrollmentId,
+                  session: getUserSession()
+               }
+
+               console.log(bodyFormData);
+               // { file: { bodyFormData: {} } }
+               axios.post((`/pdfs/`), {
+                  bodyFormData,
+                  headers: {
+                     'Content-Type': 'multipart/form-data'
+                  },
+               }).then(response => {
+                  if (status == 200) {
+                     alert("File Uploaded Successfully");
+
+                  } else {
+                     alert("File Upload Failed");
+                  }
+                  console.log(response);
+               })
+            },
+            onSubmit: function () {
+               submit.prevent
+            }
+         }
+      });
+   </script>
+</body>
+
 </html>

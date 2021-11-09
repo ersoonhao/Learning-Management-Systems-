@@ -1,4 +1,3 @@
-
 module.exports = (sequelize, Sequelize) => {
     const Section = sequelize.define("Section", {
         sectionId: {
@@ -6,11 +5,11 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true,
             primaryKey: true
         },
-        title:{
-            type:Sequelize.STRING
+        title: {
+            type: Sequelize.STRING
         },
         subtitle: {
-            type:Sequelize.STRING
+            type: Sequelize.STRING
         },
         ordering: {
             type: Sequelize.INTEGER
@@ -19,6 +18,5 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER
         }
     });
-    return Section; 
+    return Section;
 };
-

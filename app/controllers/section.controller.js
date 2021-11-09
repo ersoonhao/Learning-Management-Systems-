@@ -236,18 +236,19 @@ exports.createSection = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.subtitle || !req.body.description || !req.body.ordering) {
+
+            if (!req.body.subtitle || !req.body.subtitle || !req.body.ordering) {
                 res.status(400).send({
                     message: "Content can not be empty!"
                 });
                 return;
             }
             const section = {
+                classId: req.body.classId,
                 title: req.body.title,
                 subtitle: req.body.subtitle,
                 ordering: req.body.ordering
             };
-            console.log(section)
 
             Section.create(section)
                 .then(data => {
