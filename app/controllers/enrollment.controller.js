@@ -29,10 +29,13 @@ exports.isEligibleForCourse = (req, res) => {
                         include: {
                             model: PrerequisiteSet,
                             include: {
-                                model: Class,
+                                model: Course,
                                 include: {
-                                    model: Enrollment,
-                                    where: { accountId: session.accountId, coursePassed: true }
+                                    model: Class,
+                                    include: {
+                                        model: Enrollment,
+                                        where: { accountId: session.accountId, coursePassed: true }
+                                    }
                                 }
                             }
                         }
@@ -101,7 +104,7 @@ exports.getMyEnrollmentByCourse = (req, res) => {
                         model: Class,
                         include: {
                             model: Enrollment,
-                            where: { accountId: session.accountId }
+                            where: { accountId: session.accountId, isWithdrawn: false }
                         }
                     }
                 })
@@ -205,17 +208,17 @@ exports.getMyEnrolledClasses = (req, res) => {
             }
 
             Enrollment.findAll({
-                where: stmt,
-                include: [ { model: Class, include: [Course] } ]
-            })
-            .then(data => {
-                res.send({ enrollment: data })
-            })
-            .catch(err => {
-                res.status(500).send({
-                    message: err.message || 'Some error occured obtaining data'
+                    where: stmt,
+                    include: [{ model: Class, include: [Course] }]
                 })
-            })
+                .then(data => {
+                    res.send({ enrollment: data })
+                })
+                .catch(err => {
+                    res.status(500).send({
+                        message: err.message || 'Some error occured obtaining data'
+                    })
+                })
         }
     })
 
