@@ -257,10 +257,9 @@ exports.getCourseClass = (req, res) => {
                 }
                 Class.findOne({
                         where: { classId: classId },
-                        include: Account
+                        include: [{ model: Account }, { model: Course }]
                     })
                     .then(data => {
-                        console.log(data)
                         res.send({ "class": data })
                     })
                     .catch(err => {
@@ -271,7 +270,7 @@ exports.getCourseClass = (req, res) => {
             }
         })
         /* SAMPLE JSON BODY REQUEST
-        > POST | localhost:8081/api/class/getCourseClasses
+        > POST | localhost:8081/api/class/getCourseClass
             {
                 "classId": 9,
                 "session": {

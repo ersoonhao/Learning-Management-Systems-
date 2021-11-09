@@ -11,14 +11,60 @@
             <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
         <title>LMS</title>
         <link rel="stylesheet" href="/style/master.css">
+        <style>
+            tr {
+                height: 50px;
+                vertical-align: middle;
+            }
+        </style>
     </head>
     <body>
         <div id="app">
             <lms-head :session="session"></lms-head>
             <div class="content">
                 <div class=container>
-                    <m-div :menu="menu" title="Class Settings" :subtitle="'For Class ID: '+classId">
-                        
+                    <m-div :menu="menu" :title="c.Course.title" :subtitle="classTitle">
+                        <!-- COURSE MATERIAL -->
+                        <div v-if="courseMaterial">
+                            COURSE MATERIAL
+
+                            <!-- SOONHAO: FILL HERE  -->
+
+
+                        </div>
+
+                        <!-- QUIZ -->
+                        <div v-else-if="quiz">
+                            <h4 class="lms-font-semibold mb-3">Quiz - {{ quiz.title }}</h4>
+                            <p class="mb-1"><b>Duration: </b> {{ quiz.durationInMins }} mins</p>
+                            <p><b>Instructions: </b> {{ quiz.instructions }}</p>
+                            <hr/>
+
+                            <div v-if="quizAttempts">
+                                <table class="table">
+                                    <thead class="lms-table-head lms-font-semibold">
+                                        <tr>
+                                            <th>Attempts</th>
+                                            <th style="text-align: center;">Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(qa, i) in quizAttempts">
+                                            <td>Attempt {{i+1}} <span v-show="!qa.endDateAttempt" style="color: rgb(110, 110, 110)">(Started: {{ qa.startDateAttempt }})</span></td>
+                                            <td style="text-align: center;">{{ qa.score }}<button v-show="!qa.endDateAttempt" class="btn btn-primary" @click="attemptQuiz(qa)">Continue</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="lms-font-semibold" style="text-align: right;">Highest attempt score: </td>
+                                            <td class="lms-font-semibold" style="text-align: center;" v-text="highestQuizScore"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <button v-show="!hasOngoingQuiz" class="btn btn-primary" @click="attemptQuiz(null)">Begin Quiz</button>
+                            </div>
+                            <div v-else-if="quizAttempt">
+                                <q-input v-for="q in questionList" :qn="q" @select="selectQuestion"></q-input>
+                            </div>
+                        </div>
                     </m-div>
                 </div>
             </div>
@@ -35,52 +81,425 @@
                 el: '#app',
                 data: {
                     session: getUserSession(),
-                    classId: getParams("classId"), //Update
-                    courseId: getParams("courseId"), //Create
+                    classId: getParams("classId"),
                     menu: initMenu([], 0, 0),
-                    c: {
-                        "classId": null,
-                        "classStartDateTime": "",
-                        "classEndDateTime": "",
-                        "selfEnrollStartDateTime": "",
-                        "selfEnrollEndDateTime": "",
-                        "maxCapacity": 50,
-                        "courseId": 0,
-                        "trnAccountId": 0,
-                        "adminAccountId": 0
-                    },
-                    trainers: []
-                }, created: () => {
-                    
+                    c: { classId: "", Course: { title: "" }, Account: { username: "" } }, 
+                    courseMaterial: null,
+                    quiz: null,
+                    quizAttempts: null,
+                    quizAttempt: null,
+                    questionList: []
                 }, mounted: function(){
-                    let classId = getParams("classId");
+                    loadClass((component) => { 
+                        this.c = component.class;
+                        if(component.quiz != null){
+                            this.loadQuiz(component.quiz)
+                        }else if(component.courseMaterial != null){
+                            this.loadCourseMaterial(component.courseMaterial)
+                        }
+                    })
+                }, methods: {
+                    //COURSE MATERIALS
+                    loadCourseMaterial: function(courseMaterial){
+                        this.courseMaterial = courseMaterial;
+                        
+                        //SOONHAO: FILL HERE 
 
-                    this.menu = initMenu([{
-                        id: "C1",
-                        title: "Section 1",
-                        subtitle: "Manage Course",
-                        completed: false,
-                        lock: false,
-                        links: [
-                            { title: "Course Settings", link: `/class?classId=${classId}`, completed: true },
-                            { title: "Classes", link: `/class?classId=${classId}`, completed: true },
-                            { title: "Graded Quiz", link: `/class?classId=${classId}`, completed: false }
-                        ]
-                    },{
-                        id: "C2",
-                        title: "Course",
-                        subtitle: "Manage Course",
-                        completed: false,
-                        lock: true,
-                        links: [
-                            { title: "Course Settings", link: `/class?classId=${classId}`, completed: false },
-                            { title: "Classes", link: `/class?classId=${classId}`, completed: false },
-                            { title: "Graded Quiz", link: `/class?classId=${classId}`, completed: false }
-                        ]
+
+                    },
+
+                    //QUIZ
+                    loadQuiz: function(quiz) {
+                        this.quiz = quiz;
+
+                        //Load quiz attempts
+                        let data = { 
+                            quizId: quiz.quizId,
+                            session: getUserSession()
+                        };
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", API("/quizAttempt/getMyQuizAttempts"), true);
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                if (xhr.status == 200) {
+                                    let dataJSON = JSON.parse(xhr.responseText);
+                                    app.quizAttempts = dataJSON.quizAttempts;
+                                }else if(xhr.status == 401){
+                                    sessionExpired();
+                                    return;
+                                } else {
+                                    alert("An error has occurred - " + xhr.status);
+                                    console.log(xhr.responseText);
+                                    return;
+                                }
+                            }
+                        };
+                        xhr.send(JSON.stringify(data));
+                        console.log(data);
+
+                    },
+                    attemptQuiz: function(quizAttempt){
+                        if(quizAttempt != null){
+                            this._renderQuiz(quizAttempt);
+                        }else{
+                            //Start new QuizAttempt
+                            let data = { 
+                                quizId: this.quiz.quizId,
+                                session: getUserSession()
+                            };
+                            var xhr = new XMLHttpRequest();
+                            xhr.open("POST", API("/quizAttempt/startQuizAttempt"), true);
+                            xhr.setRequestHeader("Content-Type", "application/json");
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState == XMLHttpRequest.DONE) {
+                                    if (xhr.status == 200) {
+                                        let dataJSON = JSON.parse(xhr.responseText);
+                                        let quizAttempt = dataJSON.quizAttempt;
+                                        console.log("Quiz attempt", quizAttempt);
+                                        if(quizAttempt != null){
+                                            app._renderQuiz(quizAttempt);
+                                        }
+                                    }else if(xhr.status == 401){
+                                        sessionExpired();
+                                        return;
+                                    } else {
+                                        alert("An error has occurred - " + xhr.status);
+                                        console.log(xhr.responseText);
+                                        return;
+                                    }
+                                }
+                            };
+                            xhr.send(JSON.stringify(data));
+                            console.log(data);
+                        }
+                    }, 
+                    _renderQuiz: function(quizAttempt){
+                        //Load quiz
+                        let data = { 
+                            quizId: this.quiz.quizId,
+                            session: getUserSession() 
+                        };
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", API("/quiz/getQuizPackage"), true);
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                if (xhr.status == 200) {
+                                    let dataJSON = JSON.parse(xhr.responseText);
+                                    let quiz = dataJSON.quiz;
+                                    if(quiz != null){
+                                        app.quizAttempts = null;
+                                        app.quizAttempt = quizAttempt;
+
+                                        if(quiz.Questions != null){
+                                            for(let q of quiz.Questions){
+                                                let qui = formatUIQuestion(q, null);
+                                                if(qui != null){
+                                                    app.questionList.push(qui);
+                                                    console.log(app.questionList);
+                                                    app._loadAutoSave();
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }else if(xhr.status == 401){
+                                    sessionExpired();
+                                    return;
+                                } else {
+                                    alert("An error has occurred - " + xhr.status);
+                                    console.log(xhr.responseText);
+                                    return;
+                                }
+                            }
+                        };
+                        xhr.send(JSON.stringify(data));
+                        console.log(data);
+                    }, 
+                    _loadAutoSave: function(){
+                        let quizAttemptId = this.quizAttempt.quizAttemptId;
+                        if(quizAttemptId == null){
+                            return
+                        }
+                        let data = { 
+                            quizAttemptId: quizAttemptId,
+                            session: getUserSession() 
+                        };
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", API("/quizAttempt/getMyQuestionAttempts"), true);
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                if (xhr.status == 200) {
+                                    let dataJSON = JSON.parse(xhr.responseText);
+                                    let questionAttempts = dataJSON.questionAttempts;
+                                    if(questionAttempts != null){
+                                        for(let qa of questionAttempts){
+                                            for(let q of app.questionList){
+                                                for(let qo of q.questionOptions){
+                                                    if(qa.questionOptionId == qo.questionOptionId){
+                                                        q.value = qa.questionOptionId;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }else if(xhr.status == 401){
+                                    sessionExpired();
+                                    return;
+                                } else {
+                                    alert("An error has occurred - " + xhr.status);
+                                    console.log(xhr.responseText);
+                                    return;
+                                }
+                            }
+                        };
+                        xhr.send(JSON.stringify(data));
+                        console.log(data);
+                    },
+                    selectQuestion: function(qn){
+                        console.log("SELECTED", qn);
+                        let quizAttemptId = this.quizAttempt.quizAttemptId;
+                        let questionOptionId = qn.value;
+                        qn.saved = false;
+                        if(!quizAttemptId || !questionOptionId){
+                            console.log("Unable to save question")
+                            return;
+                        }
+                        let data = {
+                            quizAttemptId: quizAttemptId,
+                            questionOptionId: questionOptionId,
+                            session: getUserSession(),
+                        }
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", API("/quizAttempt/registerQuestionAttempt"), true);
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                if (xhr.status == 200) {
+                                    let dataJSON = JSON.parse(xhr.responseText);
+                                    let questionAttempt = dataJSON.questionAttempt;
+                                    if(questionAttempt != null){
+                                        qn.saved = true;
+                                    }
+                                }else if(xhr.status == 401){
+                                    sessionExpired();
+                                    return;
+                                } else {
+                                    alert("An error has occured - " + xhr.status);
+                                    console.log(xhr.responseText);
+                                    return;
+                                }
+                            }
+                        };
+                        xhr.send(JSON.stringify(data));
+                        console.log(data);
+                    },
+                    submitQuiz: function(){
+                        
                     }
-                    ], 0, 0)
+                }, computed: {
+                    classTitle: function(){
+                        if(this.c.classId == ""){
+                            return "";
+                        }else{
+                            return 'Course: ' + this.c.Course.courseId + '| Class: '+this.c.classId+' | '+this.c.Account.username;
+                        }
+                    },
+                    hasOngoingQuiz: function(){
+                        if(this.quizAttempts){
+                            for(let qa of this.quizAttempts){
+                                if(qa.endDateAttempt == null){
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    },
+                    highestQuizScore: function(){
+                        let score = 0;
+                        if(this.quizAttempts){
+                            for(let qa of this.quizAttempts){
+                                if(qa.score > score){
+                                    score = qa.score;
+                                }
+                            }
+                        }
+                        return score;
+                    }
                 }
             });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            function loadClass(cb){
+                let classId = getParams("classId");
+                let courseMaterialId = getParams("courseMaterialId");
+                let quizId = getParams("quizId");
+                let data = { 
+                    classId: classId,
+                    session: getUserSession(),
+                };
+
+                //Load class
+                let xhr = new XMLHttpRequest();
+                xhr.open("POST", API("/class/getCourseClass"), true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                        if (xhr.status == 200) {
+                            let dataJSON = JSON.parse(xhr.responseText);
+                            let _class = dataJSON.class;
+                            if(!_class){
+                                window.location = "/";
+                                return
+                            }
+                            //Load content
+                            xhr = new XMLHttpRequest();
+                            xhr.open("POST", API("/section/getall"), true);
+                            xhr.setRequestHeader("Content-Type", "application/json");
+                            
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState == XMLHttpRequest.DONE) {
+                                    if (xhr.status == 200) {
+                                        //Successful
+                                        let dataJSON = JSON.parse(xhr.responseText);
+                                        let sections = dataJSON.sections;
+                                        sections.sort((a, b) => a.ordering > b.ordering && 1 || -1)
+
+                                        //Selection
+                                        let sel_sec = 0;
+                                        let sel_cm = 0;
+                                        let sel_courseMaterial = null;
+                                        let sel_quiz = null;
+
+                                        //Sections
+                                        let secList = []
+                                        let lock = false;
+                                        for(let i_sec = 0; i_sec < sections.length; i_sec++){
+                                            let s = sections[i_sec];
+                                            
+                                            //Course materials
+                                            let links = []
+                                            s.CourseMaterials.sort((a, b) => a.ordering > b.ordering && 1 || -1)
+                                            for(let i_cm = 0; i_cm < s.CourseMaterials.length; i_cm++){
+                                                let cm = s.CourseMaterials[i_cm];
+                                                links.push({ title: cm.title, link: `/class?classId=${classId}&courseMaterialId=${cm.CourseMaterialId}`, completed: false })
+                                                if(courseMaterialId == cm.CourseMaterialId){ //Selection
+                                                    sel_sec = i_sec
+                                                    sel_cm = i_cm
+                                                    sel_courseMaterial = cm;
+                                                }
+                                            }
+                                            //Ungraded Quiz
+                                            let ugQuiz = s.Quiz
+                                            if(ugQuiz){
+                                                links.push({ title: ugQuiz.title, link: `/class?classId=${classId}&quizId=${ugQuiz.quizId}` })
+                                                if(quizId == ugQuiz.quizId.toString()){ //Selection
+                                                    sel_sec = i_sec
+                                                    sel_cm = s.CourseMaterials.length
+                                                    sel_quiz = ugQuiz
+                                                }
+                                            }
+                                            //Section
+                                            let sec = {
+                                                id: s.sectionId,
+                                                title: s.title,
+                                                subtitle: s.subtitle,
+                                                completed: false, //TODO: Replace dummy data
+                                                lock: lock,
+                                                links: links
+                                            }
+                                            secList.push(sec)
+                                        }
+                                        // TODO: Add final quiz
+
+
+                                        app.menu = initMenu(secList, sel_sec, sel_cm);
+                                        cb({
+                                            class: _class,
+                                            courseMaterial: sel_courseMaterial,
+                                            quiz: sel_quiz
+                                        })
+
+                                    }else if(xhr.status == 401){
+                                        sessionExpired();
+                                        return;
+                                    } else {
+                                        alert("An error has occurred - " + xhr.status);
+                                        console.log(xhr.responseText);
+                                        return;
+                                    }
+                                }
+                            };
+                            xhr.send(JSON.stringify(data));
+
+                        }else if(xhr.status == 401){
+                            sessionExpired();
+                            return;
+                        } else {
+                            alert("An error has occurred - " + xhr.status);
+                            console.log(xhr.responseText);
+                            return;
+                        }
+                    }
+                };
+                xhr.send(JSON.stringify(data));
+                console.log(data);
+
+                /*
+                this.menu = initMenu([{
+                    id: "C1",
+                    title: "Section 1",
+                    subtitle: "Manage Course",
+                    completed: false,
+                    lock: false,
+                    links: [
+                        { title: "Course Settings", link: `/class?classId=${classId}`, completed: true },
+                        { title: "Classes", link: `/class?classId=${classId}`, completed: true },
+                        { title: "Graded Quiz", link: `/class?classId=${classId}`, completed: false }
+                    ]
+                },{
+                    id: "C2",
+                    title: "Course",
+                    subtitle: "Manage Course",
+                    completed: false,
+                    lock: true,
+                    links: [
+                        { title: "Course Settings", link: `/class?classId=${classId}`, completed: false },
+                        { title: "Classes", link: `/class?classId=${classId}`, completed: false },
+                        { title: "Graded Quiz", link: `/class?classId=${classId}`, completed: false }
+                    ]
+                }
+                ], 0, 0)*/
+            }
         </script>
     </body>
 </html>

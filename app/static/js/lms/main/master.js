@@ -363,7 +363,7 @@ Vue.component("q-input-field", {
                                 <td v-show="o.editing != null" style="width: 20px;">
                                 </td>
                                 <td>
-                                    <div v-show="o.editing == null || o.editing == false" :class="generateQONoEdit(i)"><input :id="generateQOId(i)" :type="qn._type" :name="inputId" :value="o.questionOptionId" v-model="qn.value" style="margin-top: 10px; margin-bottom: 10px;"/><label :for="generateQOId(i)" v-text="o.optionText"></label></div>
+                                    <div v-show="o.editing == null || o.editing == false" :class="generateQONoEdit(i)"><input :id="generateQOId(i)" :type="qn._type" :name="inputId" :value="o.questionOptionId" v-model="qn.value" style="margin-top: 10px; margin-bottom: 10px;" @change="$emit('select', qn)"/><label :for="generateQOId(i)" v-text="o.optionText"></label></div>
                                     <input v-show="o.editing == true" :id="generateQOEditId(i)" :class="generateQOEdit(i)" type="text" v-model="o.editOptionText" style="width: 200px"/>
                                 </td>
                             </tr>
@@ -541,8 +541,12 @@ Vue.component("q-input", {
     template: `
         <div>
             <div :id="ctnInputId" class="lms-input">
-                <label class="lms-input-label" v-text="qn.title"></label><span class="mandatory" v-show="qn.required">*</span> <i class="icon-alert fa fa-exclamation-circle" v-show="qn.failedValidation"></i>
-                <q-input-field :qn="qn"/>
+                <div style="float: right; color: #5e5e5e;" v-show="qn.saved!=null" v-text="qn.saved?'Saved':'Saving'"></div>
+                <div style="float: left;">
+                    <label class="lms-input-label" v-text="qn.title"></label><span class="mandatory" v-show="qn.required">*</span> <i class="icon-alert fa fa-exclamation-circle" v-show="qn.failedValidation"></i>
+                </div>
+                <div style="clear: both;"></div>
+                <q-input-field :qn="qn" v-on="$listeners"/>
             </div>
         </div>
     `,
@@ -591,7 +595,7 @@ Vue.component("edit-q-input", {
             </div>
             <hr style="clear: both;"/>
             <div class="lms-input" style="padding-top: 0;">
-                <q-input-field :qn="qn"/>
+                <q-input-field :qn="qn" v-on="$listeners"/>
             </div>
         </div>
     `,
@@ -601,3 +605,35 @@ Vue.component("edit-q-input", {
         }
     }
 })
+
+function formatUIQuestion(data, editor=false){ //editor: null = learner
+    if(data.type == QUESTION_TYPES_MCQ){
+        data._type = "radio";
+    }else{
+        return null;
+    }
+
+    //Correct Ans
+    let correctAns = "";
+    if(editor != null){
+        for(let o of data.QuestionOptions){
+            if(o.isCorrect){
+                correctAns = o.questionOptionId
+            }
+        }
+    }
+    //Editor
+    if(editor){
+        if(data.QuestionOptions != null){
+            for(let o of data.QuestionOptions){
+                o.editing = false;
+            }
+        }
+    }
+    return {
+        questionId: data.questionId, title: data.question, placeholder: "", _type: data._type, 
+        required: false, questionOptions: data.QuestionOptions, value: correctAns, 
+        editor: editor, saved: null,
+        question: data.question, autoGraded: data.autoGraded, type: data.type 
+    }
+}

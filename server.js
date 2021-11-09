@@ -44,6 +44,7 @@ require("./app/routes/backend/withdrawal.routes")(app);
 
 //Front-end
 require("./app/routes/frontend/main.froutes")(app);
+require("./app/routes/frontend/course.froutes")(app);
 require("./app/routes/frontend/manage.froutes")(app);
 require("./app/routes/frontend/forum.froutes")(app);
 

@@ -32,7 +32,7 @@ exports.getMyQuizAttempts = (req, res) => {
                     QuizAttempt.findAll({
                         where: { enrollmentId: enrollmentId, quizId: quizId },
                     }).then(data => {
-                        res.send({ "quizAttempt": data });
+                        res.send({ "quizAttempts": data });
                     }).catch(err=>{
                         res.status(500).send({
                             message: err.message || "Some error occurred obtaining data"
@@ -78,7 +78,7 @@ exports.getMyQuestionAttempts = (req, res) => {
                     }]
                 }]
             }).then(data => {
-                res.send({ "questionAttempt": data });
+                res.send({ "questionAttempts": data });
             }).catch(err=>{
                 res.status(500).send({
                     message: err.message || "Some error occurred obtaining data"
@@ -130,8 +130,8 @@ exports.startQuizAttempt = (req, res) => {
                     QuizAttempt.findAll({
                         where: { enrollmentId: enrollmentId, quizId: quizId, endDateAttempt: null },
                     }).then(ogQA => {
-                        if(ogQA){
-                            res.send({"quizAttempt": ogQA}) //Ongoing attempt
+                        if(ogQA && ogQA.length > 0){
+                            res.send({"quizAttempt": ogQA[0]}) //Ongoing attempt
                             return
                         }
                         //Create Quiz Attempt
@@ -199,7 +199,8 @@ exports.registerQuestionAttempt = (req,res) => {
                             model: QuestionOption, where: { questionOptionId: questionOptionId }
                         }]
                     }).then(question => {
-                        if(!question){
+                        let questionId = question.questionId;
+                        if(!questionId){
                             res.status(400).send({ message: "Unable to obtain question" })
                             return
                         }
@@ -207,12 +208,7 @@ exports.registerQuestionAttempt = (req,res) => {
                         if(questionType == Question.QUESTION_TYPES_MCQ){
 
                             //Remove past attempt
-                            QuestionAttempt.destroy({
-                                where: { quizAttemptId: quizAttemptId },
-                                include: [{ 
-                                    model: QuestionOption, where: { quizId: quizId }
-                                }]
-                            }).then(_ => {
+                            sequelize.query(rmAttemptQuery, { bind: { questionId: questionId }}).spread(function(results, metadata) {
                                 //Create Question Attempt
                                 const questionAttempt = QuestionAttempt.createQuestionAttempt(quizAttemptId, questionOptionId)
                                 if(!questionAttempt){
@@ -480,4 +476,7 @@ function isQuizAttemptOwner(res, session, quizAttemptId){
 let markQnsQuery = `
     UPDATE QuestionAttempts as qa INNER JOIN QuestionOptions as qo ON qa.questionOptionId = qo.questionOptionId
     SET qa.isCorrect = true WHERE qo.isCorrect = true AND qa.quizAttemptId = $quizAttemptId
+`
+let rmAttemptQuery = `
+    DELETE qa FROM QuestionAttempts qa INNER JOIN QuestionOptions qo ON qa.questionOptionId = qo.questionOptionId WHERE qo.questionId = $questionId
 `

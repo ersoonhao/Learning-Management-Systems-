@@ -64,8 +64,8 @@ module.exports.load = () => {
         (3,"Intro to Newton Laws" , "Newton's Laws 3", 3, 1);
 
         INSERT INTO Quizzes(quizId, type, title, instructions, durationInMins, passScoreRequirement, active, courseId, sectionId) VALUES
-        (1, 'UG', "Section 1 Quiz", "Please complete the quiz within the time limit", 10, null, false, 1, 1),
-        (2, 'G', "Final Quiz", "Please complete the quiz within the time limit", 10, 0.7, false, 1, 1),
+        (1, 'UG', "Section 1 Quiz", "Please complete the quiz within the time limit", 10, null, true, 1, 1),
+        (2, 'G', "Final Quiz", "Please complete the quiz within the time limit", 10, 0.7, true, 1, 1),
         (3, 'UG', "Section 2 Quiz", "Please complete the quiz within the time limit", 10, null, false, 1, 2),
         (4, 'UG', "Section 2 Quiz", "Please complete the quiz within the time limit", 10, null, false, 1, 2);
 
