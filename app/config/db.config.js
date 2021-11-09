@@ -8,7 +8,7 @@
 //     HOST: "localhost",
 //     USER: "root",
 //     PASSWORD: "",
-//     DB: "fyp",
+//     DB: "spm",
 //     dialect: "mysql",
 //     pool: {
 //       max: 5,

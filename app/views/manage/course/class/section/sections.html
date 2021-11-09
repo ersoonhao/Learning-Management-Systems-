@@ -1,118 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-            integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-            <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
-        <title>LMS</title>
-        <link rel="stylesheet" href="/style/master.css">
-    </head>
-    <body>
-        <div id="app">
-            <lms-head :session="session"></lms-head>
-            <div class="content">
-                <div class=container>
-                    <m-div :menu="menu" title="Classes" :subtitle="'For Class ID: '+classId">
-                        <h1>Course of Sections</h1>
-                        
-                   
-                        <!-- START OF LIST OF SECTIONS -->
-                        
-
-                        <ul class="list-group text-center">
-                            <!-- :key="section.title" -->
-                           <li v-for="section in sortedArray"   class="list-group-item justify-content-center"> 
-                                <h1 class="text-uppercase">{{section.title}} </h1>
-                                <h2>{{section.subtitle}}</h2>
-                                <h2>{{section.order}}</h2>
-                                <button class="button btn btn-danger btn-sm" @click="deleteSection({{section.sectionId}})" >Delete Section</button>
-                            </li>
-
-                            <!-- <li class="list-group-item disabled" aria-disabled="true">A disabled item</li>
-                            <li class="list-group-item">A second item</li>
-                            <li class="list-group-item">A third item</li>
-                            <li class="list-group-item">A fourth item</li> -->
-                            <!-- <li class="list-group-item">And a fifth one</li> -->
-                          </ul>
-                          <button type="button" class="btn btn-primary">Add Section</button>
-                         
-
-                        <!-- END OF LIST OF SECTION -->
-
-
-
-
-                        <a href="/manage/section?sectionId=1">Specific section</a>
-                    </m-div>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <title>LMS</title>
+    <link rel="stylesheet" href="/style/master.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <lms-head :session="session"></lms-head>
+      <div class="content">
+        <div class=container>
+          <m-div :menu="menu" title="Classes" :subtitle="'For Class ID: '+classId">
+            <h1>Course of Sections</h1>
+            <!-- START OF LIST OF SECTIONS -->
+            <ul class="list-group text-center">
+              <!-- :key="section.title" -->
+              <li v-for="section in sortedArray" class="list-group-item justify-content-center">
+                <a :href="'/manage/section?sectionId='+section.sectionId" style="color:black">
+                  <h1 class="text-uppercase">{{section.title}} </h1>
+                </a>
+                <h2>{{section.subtitle}}</h2>
+                <h2>{{section.order}}</h2>
+                <button class="button btn btn-danger btn-sm" @click="deleteSection(section.sectionId)">Delete Section</button>
+              </li>
+            </ul>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSectionModal"> Add Section </button>
+            <!-- Add section Modal-->
+            <div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="addSectionModalLabel">Add Section</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <label>Section Title:</label>
+                    <input style="width:100%" v-model="sectionTitle" type="text">
+                    <label>Section Subtitle:</label>
+                    <input style="width:100%" v-model="sectionSubtitle" type="text">
+                    <label>Week number:</label>
+                    <input style="width:100%" v-model="sectionOrder" type="number">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" @click="addSection()" data-bs-dismiss="modal">Add</button>
+                  </div>
                 </div>
+              </div>
             </div>
+            <!-- END OF LIST OF SECTION -->
+            <!-- <a href="/manage/section?sectionId=1">Specific section</a> -->
+          </m-div>
         </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
-        </script>
-        <script src="/js/lib/vue.js"></script>
-        <script src="/js/lms/main/master.js"></script>
-        <script src="/js/lms/main/manage.js"></script>
-        <script>
-            const app = new Vue({
-                el: '#app',
-                data: {
-                    session: getUserSession(),
-                    classId: getParams("classId"),
-                    menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 2),
-                    sections2: [
-                        {title: "Section 1",subtitle: "Subtitle 1", order: 1, classId: 1},
-                        {title: "Section 2",subtitle: "Subtitle 2", order: 3, classId: 1},
-                        {title: "Section 2",subtitle: "Subtitle 2", order: 2, classId: 1}
-                    ],
-                    sections: []
-                }, created: () => {
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="/js/lib/vue.js"></script>
+    <script src="/js/lms/main/master.js"></script>
+    <script src="/js/lms/main/manage.js"></script>
+    <script>
+      const app = new Vue({
+        el: '#app',
+        data: {
+          session: getUserSession(),
+          classId: getParams("classId"),
+          menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 2),
+          sectionTitle: "",
+          sectionSubtitle: "",
+          sectionOrder: null,
+          sections: []
+        },
+        created: () => {},
+        mounted() {
+          this.loadData()   
+        },
+        computed: {
+          sortedArray: function(sections) {
+            console.log("Sorted array function:", sections);
 
-                },
-                mounted: () => {
-
-                axios.post(API(`/section/getall`), {
-                    session: getUserSession(),
-                    classId: 1
-                }).then(response => {
-              
-                    // console.log("LOOK HERE", response.data);
-                    app.sections = response.data.sections;
-                    // console.log("Vue Section data", this.sections);
-                  
-                })
-                // closing brace of mounted    
-                },
-                computed: {
-                    sortedArray: function (sections) {
-                        console.log("Sorted array function:" , sections);
-                        function compare(a, b) {
-                            if (a.order < b.order)
-                                return -1;
-                            if (a.order > b.order)
-                                return 1;
-                            return 0;
-                            }
-                            return this.sections.sort(compare);
-                    }
-                },
-                methods:{
-                    deleteSection: function(inputSectionId){
-                        axios.post(API(`/section//delete`), {
-                    session: getUserSession(),
-                    sectionId: inputSectionId
-                }).then(response => {
-                    app.sections = response.data.sections;
-                })
-                    }
-                }
-            });
-        </script>
-    </body>
+            function compare(a, b) {
+              if (a.ordering < b.ordering) return -1;
+              if (a.ordering > b.ordering) return 1;
+              return 0;
+            }
+            return this.sections.sort(compare);
+          }
+        },
+        methods: {
+          loadData: function() {
+            axios.post(API(`/section/getall`), {
+              session: getUserSession(),
+              classId: getParams("classId")
+            }).then(response => {
+              app.sections = response.data.sections;
+            })
+          },
+          deleteSection: function(inputSectionId) {
+            axios.post(API(`/section/delete`), {
+              session: getUserSession(),
+              sectionId: inputSectionId
+            }).then(response => {
+              alert("Section added successfully");
+              app.loadData();
+            })
+          },
+          addSection: function() {
+            console.log(app.sectionTitle);
+            if (app.sectionTitle == "" || app.sectionSubtitle == "" || app.sectionOrder == null) {
+              alert("Please fill out all fields");
+            } else {
+              axios.post(API(`/section/`), {
+                session: getUserSession(),
+                classId: app.classId,
+                title: app.sectionTitle,
+                subtitle: app.sectionSubtitle,
+                ordering: app.sectionOrder
+              }).then(response => {
+                alert("Section added successfully");
+                app.sectionTitle = "";
+                app.sectionSubtitle = "";
+                app.sectionOrder = null;
+                app.loadData();
+              })
+            }
+          }
+        }
+      });
+    </script>
+  </body>
 </html>

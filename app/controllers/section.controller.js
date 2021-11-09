@@ -87,18 +87,49 @@ function isSectionTrainer(Account, SectionId) {
 }
 
 
+function getAllCourseMaterials() {
+    console.log("called from server.js")
 
+    return true;
+}
+exports.getAllCourseMaterials = getAllCourseMaterials
 
 
 //======== START: COURSE MATERIAL  ========
+function addCourseMaterial(title, instructions, source, type, ordering, sectionId, key) {
+    if (!title || !ordering || !source || !sectionId) {
+        return false;
+    }
+    const coursematerial = {
+        title,
+        instructions,
+        source,
+        type,
+        ordering,
+        sectionId,
+        key
+    }
 
-// Create and Save a Section 
-exports.addCourseMaterial = (req, res) => {
+    CourseMaterial.create(coursematerial)
+        .then(result => {
+            if (result) {
+                return true;
+            }
+            return false;
+        }).catch(err => {
+            console.log(err);
+            return false;
+        });
+    return true;
+}
+exports.addCourseMaterial = addCourseMaterial
+    // Create and Save a Section 
+exports.addCourseMaterial2 = (req, res) => {
     // Validate request
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.title || !req.body.orderinging || !req.body.source) {
+            if (!req.body.title || !req.body.ordering || !req.body.source) {
                 res.status(400).send({
                     message: "Content can not be empty!"
                 });
@@ -181,6 +212,7 @@ exports.getSectionPackage = (req, res) => {
                 where: { classId: classId },
                 include: [{ model: db.CourseMaterial }, { model: db.Quiz }]
 
+
             }).then(data => {
                 res.send({ "sections": data });
             }).catch(err => {
@@ -204,18 +236,19 @@ exports.createSection = (req, res) => {
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
-            if (!req.body.subtitle || !req.body.description || !req.body.ordering) {
+
+            if (!req.body.subtitle || !req.body.subtitle || !req.body.ordering) {
                 res.status(400).send({
                     message: "Content can not be empty!"
                 });
                 return;
             }
             const section = {
+                classId: req.body.classId,
                 title: req.body.title,
                 subtitle: req.body.subtitle,
                 ordering: req.body.ordering
             };
-            console.log(section)
 
             Section.create(section)
                 .then(data => {
@@ -407,6 +440,9 @@ exports.deleteAllSection = (req, res) => {
 }
 
 
+
+
+//======== END: SECTION  ========
 
 
 //======== END: SECTION  ========

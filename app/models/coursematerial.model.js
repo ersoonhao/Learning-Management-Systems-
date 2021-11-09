@@ -1,5 +1,5 @@
 // need a section FK here. 
-
+// recommit
 module.exports = (sequelize, Sequelize) => {
     const CourseMaterial = sequelize.define("CourseMaterial", {
         CourseMaterialId: {
@@ -22,12 +22,16 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING
         },
         // Order is the positions 
-        order: {
+        ordering: {
             type: Sequelize.INTEGER
         },
         sectionId: {
             type: Sequelize.INTEGER
+        },
+        key: {
+            type: Sequelize.STRING
         }
+      
     });
     return CourseMaterial;
 };
