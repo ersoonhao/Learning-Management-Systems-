@@ -237,13 +237,12 @@
                     });
                 },
                 withdraw() {
-                    console.log(app.enrollmentId);
                     var enrollObj = {
                         enrollmentId: app.enrollmentId,
                         session: getUserSession()
                     }
                     console.log(enrollObj);
-                    axios.post(API('/enrollment/deleteEnrollment'), enrollObj).then((response) => {
+                    axios.put(API('/withdrawal/SelfWithdraw'), enrollObj).then((response) => {
                         console.log(response);
                         if (response.status == 200) {
                             alert("Submitted withrawal successfully")
