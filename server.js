@@ -13,7 +13,8 @@ const upload = multer({ dest: 'uploads/' })
     // ================ AWS Related Controllers  ================
 const AccountCTRL = require("./app/controllers/account.controller");
 const SectionCTRL = require("./app/controllers/section.controller");
-
+const getYoutubeTitle = require('get-youtube-title')
+var getYouTubeID = require('get-youtube-id');
 // ================ Routes ================
 app._FRONT_END_PATH = __dirname + '/app/views/';
 //app.use(express.static(app._FRONT_END_PATH));
@@ -94,29 +95,111 @@ require("./chat")(io)
 
 
 
-app.post('/images', upload.single('image'), async(req, res) => {
-    // req.file is the `avatar` file
-    // req.body will hold the text fields, if there were any
 
-    const file = req.file;
-    const extension = ".jpeg"
-    const result = await uploadFile(file, extension);
-    console.log(result);
-    const description = req.body.description
+//link
 
-    res.status(200).send({ imagePath: `/images/${result.Key}` });
-
-})
-
-
-app.post('/pdfs', upload.single('pdf'), async(req, res) => {
+//image
+app.post('/video', async(req, res) => {
     // console.log("BODY", req.body);
-    console.log("REQ", req);
+    // console.log("REQ", req);
+    // const file = req.file;
+    var title; 
+    var source; // link  
+    
+    if(req.body.source){
+        source=req.body.source;
+        console.log("source", source);
+        // var splitURL=source.split(".");
+        // getYoutubeTitle('ZjM8Wq5pQ2o', function (err, title) {
+        //     console.log(title)
+        //     title="place holder";
+        //   })
+    }else{res.status(400).send({ message: "Missing fields" });}
+    
+    if(req.body.title){
+        title=req.body.title;
+        console.log("title", title);
+    }else{
+        title="Course Video";
+    }
+
+    var instructions;
+
+    if (req.body.instructions) {
+        instructions = req.body.instructions;
+    } else {
+        instructions = "None";
+    }
+    if (req.body.ordering) {
+        ordering = req.body.ordering;
+    } else {
+        ordering = -1;
+    }
+    if (req.body.sectionId) {
+        sectionId = req.body.sectionId;
+    } else {
+        sectionId = 1;
+    }
+
+   
+    var type = "link";
+    // if (type.toLowerCase() != "png" || type.toLowerCase() != "jpg" || type.toLowerCase() != "jpeg") {
+    //     res.status(400).send({ message: "Only images are allowed" });
+    // }
+  
+    var sectionId = req.body.sectionId;
+    var key = null;
+
+    const extension = type;
+    // if (file == null) {
+    //     console.log("FILE IS NULL");
+    //     res.status(400).send({ message: "No file uploaded" });
+    // } else if (!instructions || !ordering || !sectionId) {
+    //     res.status(400).send({ message: "Missing fields" });
+    // } else {
+    //     const result = await uploadFile(file, extension);
+    //     console.log(result);
+    //     if (result) {
+    //         source = result.Location
+    //         key = result.Key;
+          
+        
+    //     }
+
+    if (!instructions || !ordering || !sectionId) {
+        res.status(400).send({ message: "Missing fields" });
+    }
+
+  
+        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, key);
+        console.log("DB results", savetodb);
+        if (savetodb) {
+            res.status(200);
+        } else {
+            res.status(400).send({ message: "File not uploaded" });
+        }
+    })
+
+
+
+
+//image
+app.post('/image', upload.single('image'), async(req, res) => {
+    // console.log("BODY", req.body);
+    // console.log("REQ", req);
     const file = req.file;
     var title; 
-    if(file.originalname){
+
+    if(req.body.title){
+        title=req.body.title;
+    }else if(file.originalname){
         title=file.originalname;
-    }else{ title="placeholder"}
+    }
+    else{ title="Course image"}
+
+    // if(file.originalname){
+    //     title=file.originalname;
+    // }else{ title="Course Document"}
  
     var instructions;
 
@@ -136,12 +219,94 @@ app.post('/pdfs', upload.single('pdf'), async(req, res) => {
         sectionId = 1;
     }
 
-    // var ordering = req.body.ordering;
+   
     var type = file.fieldname;
+    console.log("type here", type);
+    if (type.toLowerCase() != "image") {
+        res.status(400).send({ message: "Only images are allowed" });
+    }
     var source; // link  
     var sectionId = req.body.sectionId;
     var key;
-    // { data: { bodyFormData: {} } }
+
+    const extension = type;
+    if (file == null) {
+        console.log("FILE IS NULL");
+        res.status(400).send({ message: "No file uploaded" });
+    } else if (!instructions || !ordering || !sectionId) {
+        res.status(400).send({ message: "Missing fields" });
+    } else {
+        const result = await uploadFile(file, extension);
+        console.log(result);
+        if (result) {
+            source = result.Location
+            key = result.Key;
+          
+        
+        }
+
+  
+        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, key);
+        console.log("DB results", savetodb);
+        if (savetodb) {
+       
+            res.status(200);
+        } else {
+            res.status(400).send({ message: "File not uploaded" });
+        }
+    }
+})
+
+
+
+// done pdf 
+app.post('/pdf', upload.single('pdf'), async(req, res) => {
+    // console.log("BODY", req.body);
+    console.log("REQ", req);
+    const file = req.file;
+    var title; 
+
+
+    
+    if(req.body.title){
+        title=req.body.title;
+    }else if(file.originalname){
+        title=file.originalname;
+    }
+    else{ title="Course Document"}
+
+
+    // if(file.originalname){
+    //     title=file.originalname;
+    // }else{ title="Course Document"}
+ 
+    var instructions;
+
+    if (req.body.instructions) {
+        instructions = req.body.instructions;
+    } else {
+        instructions = "None";
+    }
+    if (req.body.ordering) {
+        ordering = req.body.ordering;
+    } else {
+        ordering = -1;
+    }
+    if (req.body.sectionId) {
+        sectionId = req.body.sectionId;
+    } else {
+        sectionId = 1;
+    }
+
+   
+    var type = file.fieldname;
+    if (type.toLowerCase() != "pdf"){
+        res.status(400).send({ message: "Only PDFs are allowed" });
+    }
+    var source; // link  
+    var sectionId = req.body.sectionId;
+    var key;
+
     const extension = ".pdf"
     if (file == null) {
         console.log("FILE IS NULL");
@@ -164,7 +329,8 @@ app.post('/pdfs', upload.single('pdf'), async(req, res) => {
         console.log("DB results", savetodb);
         if (savetodb) {
             // how come this happens? 
-            res.status(200).send({ message: "File uploaded" });
+            // res.status(200).send({ message: "File uploaded" });
+            res.status(200).json;
         } else {
             res.status(400).send({ message: "File not uploaded" });
         }
@@ -178,21 +344,83 @@ app.post('/pdfs', upload.single('pdf'), async(req, res) => {
 
 })
 
-app.post('/docs', upload.single('docx'), async(req, res) => {
-    // req.file is the `avatar` file
-    // req.body will hold the text fields, if there were any
 
+
+// done 
+app.post('/docx', upload.single('docx'), async(req, res) => {
+    // console.log("BODY", req.body);
+    // console.log("REQ", req);
     const file = req.file;
-    const extension = ".docx"
-        // console.log(file); 
-    const result = await uploadFile(file, extension);
-    console.log(result);
-    const description = req.body.description
+    var title; 
 
-    res.status(200).send({ pdfPath: `/docs/${result.Key}` });
+    if(req.body.title){
+        title=req.body.title;
+    }else if(file.originalname){
+        title=file.originalname;
+    }
+    else{ title="Course Document"}
 
+
+
+
+    // if(file.originalname){
+    //     title=file.originalname;
+    // }else{ title="Course Document"}
+ 
+    var instructions;
+
+    if (req.body.instructions) {
+        instructions = req.body.instructions;
+    } else {
+        instructions = "None";
+    }
+    if (req.body.ordering) {
+        ordering = req.body.ordering;
+    } else {
+        ordering = -1;
+    }
+    if (req.body.sectionId) {
+        sectionId = req.body.sectionId;
+    } else {
+        sectionId = 1;
+    }
+
+   
+    var type = file.fieldname;
+    if (type.toLowerCase() != "docx"){
+        res.status(400).send({ message: "Only docx are allowed" });
+    }
+    var source; // link  
+    var sectionId = req.body.sectionId;
+    var key;
+
+    const extension = ".pdf"
+    if (file == null) {
+        console.log("FILE IS NULL");
+        res.status(400).send({ message: "No file uploaded" });
+    } else if (!instructions || !ordering || !sectionId) {
+        res.status(400).send({ message: "Missing fields" });
+    } else {
+        const result = await uploadFile(file, extension);
+        console.log(result);
+        if (result) {
+            source = result.Location
+            key = result.Key;
+          
+        
+        }
+
+  
+        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, key);
+        console.log("DB results", savetodb);
+        if (savetodb) {
+       
+            res.status(200);
+        } else {
+            res.status(400).send({ message: "File not uploaded" });
+        }
+    }
 })
-
 
 
 // can embedded the image in 

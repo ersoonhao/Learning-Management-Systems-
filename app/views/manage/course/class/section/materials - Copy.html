@@ -40,11 +40,9 @@
                <h1>Upload Your Document </h1>
                
                application/x-www-form-urlencoded
-               multipart/form-data
                 <h1> URL: {{type}} </h1>
-                <!-- {{if type == 'VIDEO' ? 'application/x-www-form-urlencoded' : 'multipart/form-data' }} -->
                 <!-- <form @submit.stop.prevent="submit" action="computedAction" enctype="multipart/form-data" method="POST">  -->
-               <form :action="computedAction" :enctype="computeEnctype" method="POST"> 
+               <form :action="computedAction" enctype="multipart/form-data" method="POST"> 
                         <span v-if="type == 'VIDEO'">
                             <div class="form-group">
                         <input type="text" id="userInputFile" name="source" placeholder="Add your video URL"/>
@@ -52,7 +50,7 @@
                         <br> 
                         </span>
                         <span v-else>
-               
+                    <form :action="computedAction" enctype="multipart/form-data" method="POST"></form>
                             <div class="form-group">
                             <input class="btn-primary" type="file"  id="userInputFile" :name="type" />
         
@@ -162,16 +160,6 @@
             computedAction: function () {
                 // alert("submitting to /" +this.type);
                return "/" + this.type;
-            },
-            computeEnctype: function () {
-                if (this.type == "VIDEO") {
-                    alert("application/x-www-form-urlencoded");
-                    return "application/x-www-form-urlencoded";
-                } else {
-                    alert("multipart/form-data");
-                    return "multipart/form-data";
-                }
-            //    return (this.type == 'VIDEO') ? 'application/x-www-form-urlencoded' : 'multipart/form-data'
             }
          }
       });
