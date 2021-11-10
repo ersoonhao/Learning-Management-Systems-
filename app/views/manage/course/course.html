@@ -206,16 +206,22 @@
       },startAdd:function(){
           app.adding = true
           console.log('add started')
-          axios.get(API('/course/allidtitle')).then(response => (
-                        console.log(response.data),
-                        app.courseIds = response.data
-                        ))
+          axios.get(API('/course/allidtitle')).then(response => {
+            console.log(response.data)
+            for(var i=0; i<response.data.length; i++){
+                if(response.data[i].courseId != getParams("courseId")){
+                    app.courseIds.push(response.data[i])
+                }
+            }
+            // app.courseIds = response.data
+          }
+                        )
       },addPrerequisite:function(){
           app.adding = false
           var select_html = document.getElementsByClassName('select_class')
           var preReqIds = []
           for(var i=0; i<select_html.length; i++){
-                          // console.log(lengths_html[i].value)
+                          console.log(lengths_html[i].value)
                           var preReqId = select_html[i].options[select_html[i].selectedIndex].value
                           preReqIds.push(parseInt(preReqId))
           }
