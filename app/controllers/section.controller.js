@@ -97,7 +97,7 @@ exports.getAllCourseMaterials = getAllCourseMaterials
 
 
 //======== START: COURSE MATERIAL  ========
-function addCourseMaterial(title, instructions, source, type, ordering, sectionId, key) {
+function addCourseMaterial(title, instructions, source, type, ordering, sectionId, awskey) {
     if (!title || !ordering || !source || !sectionId) {
         return false;
     }
@@ -108,7 +108,7 @@ function addCourseMaterial(title, instructions, source, type, ordering, sectionI
         type,
         ordering,
         sectionId,
-        key
+        awskey
     }
 
     CourseMaterial.create(coursematerial)

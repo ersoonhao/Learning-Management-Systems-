@@ -150,7 +150,7 @@ app.post('/video', async(req, res) => {
     // }
   
     var sectionId = req.body.sectionId;
-    var key = null;
+    var awskey = null;
 
     const extension = type;
     // if (file == null) {
@@ -229,7 +229,7 @@ app.post('/image', upload.single('image'), async(req, res) => {
     }
     var source; // link  
     var sectionId = req.body.sectionId;
-    var key;
+    var awskey;
 
     const extension = type;
     if (file == null) {
@@ -242,13 +242,13 @@ app.post('/image', upload.single('image'), async(req, res) => {
         console.log(result);
         if (result) {
             source = result.Location
-            key = result.Key;
+            awskey = result.Key;
           
         
         }
 
   
-        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, key);
+        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, awskey);
         console.log("DB results", savetodb);
         if (savetodb) {
        
@@ -307,7 +307,7 @@ app.post('/pdf', upload.single('pdf'), async(req, res) => {
     }
     var source; // link  
     var sectionId = req.body.sectionId;
-    var key;
+    var awskey;
 
     const extension = ".pdf"
     if (file == null) {
@@ -320,14 +320,14 @@ app.post('/pdf', upload.single('pdf'), async(req, res) => {
         console.log(result);
         if (result) {
             source = result.Location
-            key = result.Key;
+            awskey = result.Key;
             // title = file.originalname;
         
         }
 
         // const description = req.body.description
         // var savetodb = await SectionCTRL.getAllCourseMaterials();
-        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, key);
+        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, awskey);
         console.log("DB results", savetodb);
         if (savetodb) {
             // how come this happens? 
@@ -394,7 +394,7 @@ app.post('/docx', upload.single('docx'), async(req, res) => {
     }
     var source; // link  
     var sectionId = req.body.sectionId;
-    var key;
+    var awskey;
 
     const extension = ".pdf"
     if (file == null) {
@@ -407,13 +407,13 @@ app.post('/docx', upload.single('docx'), async(req, res) => {
         console.log(result);
         if (result) {
             source = result.Location
-            key = result.Key;
+            awskey = result.Key;
           
         
         }
 
   
-        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, key);
+        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, awskey);
         console.log("DB results", savetodb);
         if (savetodb) {
        
@@ -426,18 +426,18 @@ app.post('/docx', upload.single('docx'), async(req, res) => {
 
 
 // can embedded the image in 
-app.get('/images/:key', (req, res) => {
+app.get('/images/:awskey', (req, res) => {
     console.log(req.params)
-    const key = req.params.key
-    const readStream = getFileStream(key)
+    const awskey = req.params.awskey
+    const readStream = getFileStream(awskey)
 
     readStream.pipe(res)
 })
 
-app.get('/pdfs/:key', (req, res) => {
+app.get('/pdfs/:awskey', (req, res) => {
     console.log(req.params)
-    const key = req.params.key
-    const readStream = getFileStream(key)
+    const awskey = req.params.awskey
+    const readStream = getFileStream(awskey)
 
     readStream.pipe(res)
 })
