@@ -212,9 +212,8 @@ exports.getSectionPackage = (req, res) => {
                 where: { classId: classId },
                 include: [{ model: db.CourseMaterial }, { model: db.Quiz }]
 
-
-            }).then(data => {
-                res.send({ "sections": data });
+            }).then(sections => {
+                res.send({ "sections": sections });
             }).catch(err => {
                 res.status(500).send({
                     message: err.message || "Some error occured obtaining data"

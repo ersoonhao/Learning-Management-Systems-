@@ -39,7 +39,7 @@ exports.getQuizPackage = (req, res) => {
                 res.send({ "quiz": data });
             }).catch(err=>{
                 res.status(500).send({
-                    message: err.message || "Some error occured obtaining data"
+                    message: err.message || "Some error occurred obtaining data"
                 })
             });
         }
@@ -251,6 +251,7 @@ exports.addQuestion = (req,res) => {
         }
     */
 }
+
 //==== POST: /updateQuestion
 exports.updateQuestion = (req, res) => {
     const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
@@ -443,6 +444,64 @@ exports.updateQuestionOption = (req, res) => {
                 "optionText": "TEST",
                 "isCorrect": true
             },
+            "session": {
+                "username": "robin",
+                "sessionId": "0q8l8"
+            }
+        }
+    */
+}
+//==== POST: /setQuestionOptionAnswer
+exports.setQuestionOptionAnswer = (req, res) => {
+    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if(session){
+            //Init
+            let questionId = req.body.questionId;
+            let questionOptionId = req.body.questionOptionId;
+            
+            if(!questionId || !questionOptionId){
+                res.status(400).send({
+                    message: "Invalid data format"
+                })
+                return
+            }
+            
+            //Update DB
+            QuestionOption.update({ isCorrect: false }, { //Reset
+                where: { questionId: questionId }
+            }).then(num => {
+                QuestionOption.update({ isCorrect: true }, { //Set ans
+                    where: { questionOptionId: questionOptionId }
+                }).then(num => {
+                    if (num == 1) {
+                        res.send({
+                            message: "Successfully updated"
+                        });
+                    }else{
+                        res.status(500).send({
+                            message: "Unable to set as answer"
+                        });
+                    }
+                }).catch(err => {
+                    if (debug) { console.log(err) }
+                    res.status(500).send({
+                        message: "Error updating"
+                    });
+                });
+            }).catch(err => {
+                if (debug) { console.log(err) }
+                res.status(500).send({
+                    message: "Error updating"
+                });
+            });
+        }
+    })
+    /* SAMPLE JSON BODY REQUEST
+    > localhost:8081/api/quiz/setQuestionOptionAnswer
+        {
+            "questionId": 1,
+            "questionOptionId": 1,
             "session": {
                 "username": "robin",
                 "sessionId": "0q8l8"

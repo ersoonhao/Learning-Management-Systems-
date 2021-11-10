@@ -80,6 +80,10 @@ db.Comment = require("./comment.model")(sequelize, Sequelize);
 //Enrollment
 db.Enrollment = require("./enrollment.model")(sequelize, Sequelize);
 
+//QuizAttempt
+db.QuizAttempt = require("./quizAttempt.model")(sequelize, Sequelize);
+db.QuestionAttempt = require("./questionAttempt.model")(sequelize, Sequelize);
+
 //Chat
 db.Message = require("./message.model")(sequelize, Sequelize);
 
@@ -132,6 +136,12 @@ db.Enrollment.belongsTo(db.Account, { foreignKey: 'accountId', targetKey: 'accou
 db.Class.hasMany(db.Enrollment, { foreignKey: 'classId', sourceKey: 'classId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
 db.Enrollment.belongsTo(db.Class, { foreignKey: 'classId', targetKey: 'classId' });
 
+db.Enrollment.hasMany(db.QuizAttempt, { foreignKey: 'enrollmentId', sourceKey: 'enrollmentId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.QuizAttempt.belongsTo(db.Enrollment, { foreignKey: 'enrollmentId', targetKey: 'enrollmentId' });
+
+/* QuizAttempt */
+db.QuizAttempt.hasMany(db.QuestionAttempt, { foreignKey: 'quizAttemptId', sourceKey: 'quizAttemptId', onDelete: 'cascade', onUpdate: 'NO ACTION' });
+db.QuestionAttempt.belongsTo(db.QuizAttempt, { foreignKey: 'quizAttemptId', targetKey: 'quizAttemptId' });
 
 
 // Section

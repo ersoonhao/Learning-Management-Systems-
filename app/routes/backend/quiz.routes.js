@@ -18,8 +18,9 @@ module.exports = app => {
 
     router.post("/addQuestionOption", quiz.addQuestionOption);
     router.post("/updateQuestionOption", quiz.updateQuestionOption);
+    router.post("/setQuestionOptionAnswer", quiz.setQuestionOptionAnswer);
     router.post("/deleteQuestionOption", quiz.deleteQuestionOption);
-
+    
     //router.get("/:id", quiz.findOne);
 
     //======== END: CONTROLLER LOGIC ========

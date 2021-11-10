@@ -31,6 +31,7 @@ app.get("/test", (req, res) => {
 
 require("./app/routes/backend/account.routes")(app);
 require("./app/routes/backend/quiz.routes")(app);
+require("./app/routes/backend/quizAttempt.routes")(app);
 require("./app/routes/backend/course.routes")(app);
 require("./app/routes/backend/class.routes")(app);
 require("./app/routes/backend/forum.routes")(app);
@@ -44,6 +45,7 @@ require("./app/routes/backend/withdrawal.routes")(app);
 
 //Front-end
 require("./app/routes/frontend/main.froutes")(app);
+require("./app/routes/frontend/course.froutes")(app);
 require("./app/routes/frontend/manage.froutes")(app);
 require("./app/routes/frontend/forum.froutes")(app);
 
