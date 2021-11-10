@@ -38,8 +38,8 @@
                             <h4 class="lms-font-semibold mb-3">Quiz - {{ quiz.title }}</h4>
                             <p class="mb-1"><b>Duration: </b> {{ quiz.durationInMins }} mins</p>
                             <p><b>Instructions: </b> {{ quiz.instructions }}</p>
+                            <p v-show="quiz.type=='G'"><b>Passing Requirement: </b> {{ quiz.passScoreRequirement*100 }}%</p>
                             <hr/>
-
                             <div v-if="quizAttempts">
                                 <table class="table">
                                     <thead class="lms-table-head lms-font-semibold">
@@ -387,32 +387,6 @@
                     }
                 }
             });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             function loadClass(cb){
                 let classId = getParams("classId");
                 let courseMaterialId = getParams("courseMaterialId");
@@ -438,7 +412,7 @@
                             }
                             //Load content
                             xhr = new XMLHttpRequest();
-                            xhr.open("POST", API("/section/getall"), true);
+                            xhr.open("POST", API("/section/getLearnersSectionPackage"), true);
                             xhr.setRequestHeader("Content-Type", "application/json");
                             
                             xhr.onreadystatechange = function() {
@@ -446,7 +420,9 @@
                                     if (xhr.status == 200) {
                                         //Successful
                                         let dataJSON = JSON.parse(xhr.responseText);
+                                        console.log(dataJSON);
                                         let sections = dataJSON.sections;
+                                        let gQuiz = dataJSON.gQuiz;
                                         sections.sort((a, b) => a.ordering > b.ordering && 1 || -1)
 
                                         //Selection
@@ -494,8 +470,23 @@
                                             }
                                             secList.push(sec)
                                         }
-                                        // TODO: Add final quiz
-
+                                        //Graded quiz
+                                        if(gQuiz != null){
+                                            if(quizId == gQuiz.quizId.toString()){ //Selection
+                                                sel_sec = sections.length
+                                                sel_cm = 0
+                                                sel_quiz = gQuiz
+                                            }
+                                            let sec = {
+                                                id: "G100001",
+                                                title: "Graded Quiz",
+                                                subtitle: "Passing requirement",
+                                                completed: false, //TODO: Replace dummy data
+                                                lock: lock,
+                                                links: [{ title: gQuiz.title, link: `/class?classId=${classId}&quizId=${gQuiz.quizId}` }]
+                                            }
+                                            secList.push(sec)
+                                        }
 
                                         app.menu = initMenu(secList, sel_sec, sel_cm);
                                         cb({
@@ -528,7 +519,6 @@
                 };
                 xhr.send(JSON.stringify(data));
                 console.log(data);
-
                 /*
                 this.menu = initMenu([{
                     id: "C1",

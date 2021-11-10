@@ -166,9 +166,8 @@ Vue.component("lms-head", {
             </div>
             <ul class="navigation">
                 <li v-show="session"><a href="/chat">Chat</a></li>
-                <li v-show="session"><a href="/mycourses">My Courses</a></li>
                 <li v-show="session"><a href="/forum">Forum</a></li>
-                <li v-show="session != null && (session.isAdmin || session.isTrainer)"><a href="/manage">Manage</a></li>
+                <li v-show="session != null && (session.isAdmin == 'true' || session.isTrainer == 'true')"><a href="/manage">Manage</a></li>
                 <li v-show="session" class="dropdown show">
                     <a id="userMenu" href="#" role="button" data-toggle="dropdown" class="dropdown-toggle"><i class="fa fa-user"></i></a>
                     <div class="dropdown-menu">
@@ -186,7 +185,7 @@ Vue.component("zingo-hs", {
         <div class="lms-wrapper horizontal-wrapper">
             <div class="clearfix">
                 <h6 class="title lms-font-bold" v-text="title"></h6>
-                <div class="action float-right d-block"><a :href="href">View all</a></div>
+                <!--<div class="action float-right d-block"><a :href="href">View all</a></div>-->
             </div>
             <div class="content">
                 <div class="ctnZingoHS">

@@ -67,8 +67,8 @@ describe('The courses route and controller',()=>{
     request(app).post('/api/course/find').send({session: dummy_reload.SESSION_ADMIN, 'id':1}).end(
       (err,response)=>{
         console.log(response.body.course)
-        assert(response.body.course.title == 'Physics')
-        assert(response.body.course.description == 'This course is about Physics')
+        assert(response.body.course.title == 'Cyber Security')
+        assert(response.body.course.description == 'This course is about cyber security')
         assert(response.body.course.active == true)
         assert(response.body.course.CoursePrerequisites.length == 2)
         assert(response.body.course.CoursePrerequisites[0].setNumber == 1)
@@ -113,7 +113,7 @@ describe('The courses route and controller',()=>{
       console.log(response.body)
       assert(response.body.length==8)
       assert(response.body[0]['courseId']==1)
-      assert(response.body[0]['title']=='Physics')
+      assert(response.body[0]['title']=='Cyber Security')
       done()
     }
     )

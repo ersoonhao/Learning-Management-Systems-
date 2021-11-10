@@ -29,7 +29,7 @@ module.exports.load = () => {
         (10, 'george', 'john.d.cheong@gmail.com', 0, 0, 'a', 'csnm2');
 
         INSERT INTO Courses(courseId, title, description, active, courseImage) VALUES
-        (1, 'Physics', 'This course is about Physics', true, 'https://i.picsum.photos/id/236/800/800.jpg?hmac=-m1crl44KO9L8Rs4QGYJq6nuXo0R6V-Zc3v48BUc8WE'),
+        (1, 'Cyber Security', 'This course is about cyber security', true, 'https://i.picsum.photos/id/236/800/800.jpg?hmac=-m1crl44KO9L8Rs4QGYJq6nuXo0R6V-Zc3v48BUc8WE'),
         (2, 'Biology', 'This course is about Biology', true, 'https://i.picsum.photos/id/427/800/800.jpg?hmac=C9qE9ogOx2qI05D2zGZ362KkduRWpt7xDT4DXcfcSDk'),
         (3, 'Chemistry', 'This course is about Chemistry', false,  'https://i.picsum.photos/id/66/800/800.jpg?hmac=QwjZxiyFrWQI9G4d8F44wFqjxZ66zIPLlzeRRiiYrpk'),
         (4, 'Mathematics', 'This course is about Mathematics', false,'https://i.picsum.photos/id/882/800/800.jpg?hmac=No5hTPTge2_1GgssUGsE2qrhWTzL_mJRIhmQxKj6zUE');
@@ -59,9 +59,9 @@ module.exports.load = () => {
         (16, 0, 1, '2021-07-01', NULL, 0, 0, 10, 4);
         
         INSERT INTO Sections(sectionId, title, subtitle, ordering, classId) VALUES
-        (1,"Intro to Newton Laws" , "Newton's Laws 1", 1, 1),
-        (2,"Intro to Newton Laws" , "Newton's Laws 2", 2, 1),
-        (3,"Intro to Newton Laws" , "Newton's Laws 3", 3, 1);
+        (1,"Introduction" , "Computers", 1, 1),
+        (2,"Security Basics" , "Confidentiality", 2, 1),
+        (3,"Security Basics" , "Availability", 3, 1);
 
         INSERT INTO Quizzes(quizId, type, title, instructions, durationInMins, passScoreRequirement, active, courseId, sectionId) VALUES
         (1, 'UG', "Section 1 Quiz", "Please complete the quiz within the time limit", 10, null, true, 1, 1),
@@ -84,12 +84,12 @@ module.exports.load = () => {
         (4, "reading a file", true, 1),
         (5, "True", true, 2),
         (6, "False", false, 2),
-        (7, "True", true, 3),
-        (8, "False", false, 3),
+        (7, "True", false, 3),
+        (8, "False", true, 3),
         (9, "Repudiation", false, 4),
         (10, "Confidentiality", false, 4),
-        (11, "Integrity", false, 4),
-        (12, "Availability", true, 4),
+        (11, "Integrity", true, 4),
+        (12, "Availability", false, 4),
         (13, "making new cats", false, 5),
         (14, "creating a catalogue", false, 5),
         (15, "encrypting a file", false, 5),

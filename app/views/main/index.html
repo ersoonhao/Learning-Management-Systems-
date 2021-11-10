@@ -84,6 +84,9 @@
                     //     completed: true
                     // }
                     // this.dataList = [dummy_class, dummy_class, dummy_class, dummy_class, dummy_class, dummy_class, dummy_class];
+                },
+                mounted: function(){
+                    this.session = getUserSession();
                 }
             });
             function getAvailableClasses(cb){
