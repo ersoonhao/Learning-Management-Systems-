@@ -12,6 +12,7 @@ const S3 = require('aws-sdk/clients/s3')
 const accessKeyId = "AKIARW74HBZIRY7PNJ5G"
 const secretAccessKey = "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"
 const AccountController = require("./account.controller");
+const CourseAccessController = require("./courseAccess.controller");
 
 // s3 init
 // const s3= new S3({
@@ -27,7 +28,7 @@ const db = require("../models");
 // need to create an account table
 // const Section = db.Section; 
 const Op = db.Sequelize.Op;
-const { Section, CourseMaterial } = require("../models");
+const { Section, CourseMaterial, Quiz } = require("../models");
 // helper function to hash. Not used yet.Use if required.
 async function hash(password) {
     return await bcrypt.hash(password, 10);
@@ -126,7 +127,7 @@ exports.addCourseMaterial = addCourseMaterial
     // Create and Save a Section 
 exports.addCourseMaterial2 = (req, res) => {
     // Validate request
-    const permissions = []
+    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
             if (!req.body.title || !req.body.ordering || !req.body.source) {
@@ -161,7 +162,7 @@ exports.addCourseMaterial2 = (req, res) => {
 // delete by ID
 exports.deleteCourseMaterial = (req, res) => {
     // Validate request
-    const permissions = []
+    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
             if (!req.body.title || !req.body.ordering || !req.body.source) {
@@ -195,7 +196,7 @@ exports.deleteCourseMaterial = (req, res) => {
 
 //======== START: SECTION  ========
 exports.getSectionPackage = (req, res) => {
-    const permissions = []
+    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
             let body = req.body;
@@ -207,7 +208,6 @@ exports.getSectionPackage = (req, res) => {
                 })
                 return
             }
-            //TODO: Check if learner is enrolled & has completed previous sections
             Section.findAll({
                 where: { classId: classId },
                 include: [{ model: db.CourseMaterial }, { model: db.Quiz }]
@@ -222,6 +222,51 @@ exports.getSectionPackage = (req, res) => {
         }
     })
 }
+exports.getLearnersSectionPackage = (req, res) => {
+    const permissions = []
+    AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
+        if (session) {
+            let classId = req.body.classId;
+            if (!classId) {
+                res.status(400).send({
+                    message: "Invalid data format"
+                })
+                return
+            }
+            CourseAccessController.isLearnerOfClass(res, session, classId).then(pkg => {
+                if(pkg){
+                    let courseId = pkg.Class.Course.courseId;
+                    if(!courseId){
+                        res.status(400).send({
+                            message: "Unable to get course"
+                        })
+                    }
+                    Section.findAll({
+                        where: { classId: classId },
+                        include: [{ model: db.CourseMaterial }, { model: db.Quiz }]
+        
+                    }).then(sections => {
+                        Quiz.findOne({
+                            where: { courseId: courseId, type: Quiz.QUIZ_TYPES_GRADED }
+                        }).then(gQuiz => {
+                            res.send({ "sections": sections, "gQuiz": gQuiz });
+                        }).catch(err => {
+                            res.status(500).send({
+                                message: err.message || "Some error occured obtaining data"
+                            })
+                        });
+                    }).catch(err => {
+                        res.status(500).send({
+                            message: err.message || "Some error occured obtaining data"
+                        })
+                    });
+                }
+            })
+            
+            
+        }
+    })
+}
 
 
 
@@ -232,7 +277,7 @@ exports.getSectionPackage = (req, res) => {
 // Create and Save a Section 
 exports.createSection = (req, res) => {
     // Validate request
-    const permissions = []
+    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
 
@@ -323,7 +368,7 @@ exports.findOne = (req, res) => {
 
 // routed 
 exports.deleteSection = (req, res) => {
-    const permissions = []
+    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
             if (!req.body.sectionId) {
@@ -373,7 +418,7 @@ exports.deleteSection = (req, res) => {
 
 
 exports.updateSection = (req, res) => {
-    const permissions = []
+    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
             if (!req.body.id || !req.body.subtitle || !req.body.description || !req.body.ordering) {
@@ -414,7 +459,7 @@ exports.updateSection = (req, res) => {
 
 // routed 
 exports.deleteAllSection = (req, res) => {
-    const permissions = []
+    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
 

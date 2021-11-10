@@ -8,6 +8,8 @@ module.exports = app => {
     router.get("/findOne/:id", section.findOne);
     router.get("/findAllSection", section.findAllSection); 
 
+    router.post("/getLearnersSectionPackage", section.getLearnersSectionPackage); //
+    
     router.post("/getSectionPackage", section.getSectionPackage); //
     router.post("/createSection", section.createSection);
     router.post("/deleteSection", section.deleteSection);
