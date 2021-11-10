@@ -1,6 +1,7 @@
 const { Quiz, Question, QuestionOption, Class } = require("../models");
 const AccountController = require("./account.controller");
 const debug = true;
+const CourseAccessController = require("./courseAccess.controller");
 
 //==== POST: /getQuizPackage
 exports.getQuizPackage = (req, res) => {
@@ -19,29 +20,52 @@ exports.getQuizPackage = (req, res) => {
                 })
                 return
             }
-            
-            //TODO: Check if learner is enrolled & has completed previous sections
-            
-            //Get quiz data
-            let q;
-            if(quizId){
-                q = { quizId: quizId }
-            }else if(courseId){
-                q = { courseId: courseId, type: Quiz.QUIZ_TYPES_GRADED }
-            }else if(sectionId){
-                q = { sectionId: sectionId, type: Quiz.QUIZ_TYPES_UNGRADED }
+            if(session.isAdmin){
+                //Admin
+                _getQuizPackage(res, quizId, courseId, sectionId)
+            }else if(session.isTrainer){
+                //Trainer
+                if(quizId){
+                    CourseAccessController.isTrainerForQuiz(res, session, quizId).then(pkg => { //Ensure is trainer for quiz
+                        if(pkg){
+                            _getQuizPackage(res, quizId, courseId, sectionId)
+                        }
+                    })
+                }else if(courseId){
+                    CourseAccessController.isTrainerForCourse(res, session, courseId).then(pkg => { //Ensure is trainer for quiz
+                        if(pkg){
+                            _getQuizPackage(res, quizId, courseId, sectionId)
+                        }
+                    })
+                }else if(sectionId){
+                    CourseAccessController.isTrainerForSection(res, session, sectionId).then(pkg => { //Ensure is trainer for quiz
+                        if(pkg){
+                            _getQuizPackage(res, quizId, courseId, sectionId)
+                        }
+                    })
+                }
+            }else{
+                //TODO: Check if learner has completed previous sections
+                if(quizId){
+                    CourseAccessController.isLearnerForQuiz(res, session, quizId).then(pkg => { //Ensure is learner for quiz 
+                        if(pkg){
+                            _getQuizPackage(res, quizId, courseId, sectionId)
+                        }
+                    })
+                }else if(courseId){
+                    CourseAccessController.isLearnerForCourse(res, session, courseId).then(pkg => { //Ensure is learner for quiz 
+                        if(pkg){
+                            _getQuizPackage(res, quizId, courseId, sectionId)
+                        }
+                    })
+                }else if(sectionId){
+                    CourseAccessController.isLearnerForSection(res, session, sectionId).then(pkg => { //Ensure is learner for quiz 
+                        if(pkg){
+                            _getQuizPackage(res, quizId, courseId, sectionId)
+                        }
+                    })
+                }
             }
-            console.log(q);
-            Quiz.findOne({
-                where: q,
-                include: [ { model: Question, include: [QuestionOption] } ]
-            }).then(data => {
-                res.send({ "quiz": data });
-            }).catch(err=>{
-                res.status(500).send({
-                    message: err.message || "Some error occurred obtaining data"
-                })
-            });
         }
     })
     /* SAMPLE JSON BODY REQUEST
@@ -55,10 +79,29 @@ exports.getQuizPackage = (req, res) => {
         }
     */
 }
-
-function isTrainer(session){
-    
+function _getQuizPackage(res, quizId, courseId, sectionId){
+    //Get quiz data
+    let q;
+    if(quizId){
+        q = { quizId: quizId }
+    }else if(courseId){
+        q = { courseId: courseId, type: Quiz.QUIZ_TYPES_GRADED }
+    }else if(sectionId){
+        q = { sectionId: sectionId, type: Quiz.QUIZ_TYPES_UNGRADED }
+    }
+    console.log(q);
+    Quiz.findOne({
+        where: q,
+        include: [ { model: Question, include: [QuestionOption] } ]
+    }).then(data => {
+        res.send({ "quiz": data });
+    }).catch(err=>{
+        res.status(500).send({
+            message: err.message || "Some error occurred obtaining data"
+        })
+    });
 }
+
 
 //==== POST: /createQuiz
 exports.createQuiz = (req,res) => {
@@ -68,36 +111,33 @@ exports.createQuiz = (req,res) => {
             let body = req.body;
             if(body.courseId && body.quiz.type == Quiz.QUIZ_TYPES_GRADED){ //Graded Quiz
                 if(session.isAdmin){
-                    body.courseId = 1; //TODO: Replace DUMMY data
+                    //Admin
                     _createQuiz(body, res); //CREATE quiz
                     
                 }else if(session.isTrainer){
-                    body.courseId = 1; //TODO: Replace DUMMY data
-                    _createQuiz(body, res); //CREATE quiz | TODO: Remove when below condition is met
-
-                    //TODO: Uncomment when dummy classes are setup
-                    //Ensure is one of the trainers for course
-                    /*let q = { classId: body.courseId, trnAccountId: session.accountId }
-                    Class.findOne({ where: q }).then(c => {
-                        if(!c){
-                            res.status(500).send({ message: "Unable to obtain class" })
-                            return
+                    //Trainer
+                    CourseAccessController.isTrainerForCourse(res, session, body.courseId).then(pkg => { //Ensure is trainer for course
+                        if(pkg){
+                            _createQuiz(body, res); //CREATE quiz
                         }
-                        _createQuiz(body, res); //CREATE quiz
-                    }).catch(err=>{
-                        res.status(500).send({
-                            message: err.message || "Some error occured while creating"
-                        })
-                    });*/
+                    })
                 }else{
                     res.status(500).send({ message: "Invalid session" })
                     return
                 }
             }else if(body.sectionId && body.quiz.type == Quiz.QUIZ_TYPES_UNGRADED){ //Ungraded Quiz
-                //TODO: Ensure is the specific trainer for section
-                
-                body.courseId = 1; //TODO: Replace DUMMY data
-                _createQuiz(body, res);
+                if(session.isAdmin){
+                    //Admin
+                    _createQuiz(body, res); //CREATE quiz 
+                    
+                }else if(session.isTrainer){
+                    //Trainer
+                    CourseAccessController.isTrainerForSection(res, session, body.sectionId).then(pkg => { //Ensure is trainer for section
+                        if(pkg){
+                            _createQuiz(body, res); //CREATE quiz 
+                        }
+                    })
+                }
             }else{
                 res.status(400).send({
                     message: "Invalid data format!"
@@ -164,27 +204,18 @@ exports.updateQuiz = (req, res) => {
             }
             console.log(`Updating: ${quiz}`)
             
-            //Update DB
-            let id = quiz.quizId;
+            if(session.isAdmin){
+                //Admin
+                _updateQuiz(res, quiz)
 
-            Quiz.update(quiz, {
-                where: { quizId: id }
-            }).then(num => {
-                if (num == 1) {
-                    res.send({
-                        message: "Successfully updated."
-                    });
-                } else {
-                    res.send({
-                        message: `Cannot update with id=${id}.`
-                    });
-                }
-            }).catch(err => {
-                if (debug) { console.log(err) }
-                res.status(500).send({
-                    message: "Error updating with id=" + id
-                });
-            });
+            }else if(session.isTrainer){
+                //Trainer
+                CourseAccessController.isTrainerForQuiz(res, session, quiz.quizId).then(pkg => { //Ensure is trainer for quiz
+                    if(pkg){
+                        _updateQuiz(res, quiz)
+                    }
+                })
+            }
         }
     })
     /* SAMPLE JSON BODY REQUEST
@@ -206,6 +237,29 @@ exports.updateQuiz = (req, res) => {
         }
     */
 }
+function _updateQuiz(res, quiz){
+    //Update DB
+    let id = quiz.quizId;
+
+    Quiz.update(quiz, {
+        where: { quizId: id }
+    }).then(num => {
+        if (num == 1) {
+            res.send({
+                message: "Successfully updated."
+            });
+        } else {
+            res.send({
+                message: `Cannot update with id=${id}.`
+            });
+        }
+    }).catch(err => {
+        if (debug) { console.log(err) }
+        res.status(500).send({
+            message: "Error updating with id=" + id
+        });
+    });
+}
 
 //=== POST: /addQuestion
 exports.addQuestion = (req,res) => {
@@ -221,17 +275,18 @@ exports.addQuestion = (req,res) => {
                 })
                 return
             }
+            if(session.isAdmin){
+                //Admin
+                _addQuestion(res, question)
 
-            //Write to DB
-            Question.create(question).then(data => {
-                res.send({ "question": data })
-
-            }).catch(err=>{
-                if (debug) { console.log(err) }
-                res.status(500).send({
-                    message: err.message || "Some error occured while creating"
+            }else if(session.isTrainer){
+                //Trainer
+                CourseAccessController.isTrainerForQuiz(res, session, body.quizId).then(pkg => { //Ensure is trainer for quiz
+                    if(pkg){
+                        _addQuestion(res, question)
+                    }
                 })
-            })
+            }
         }
     })
     /* SAMPLE JSON BODY REQUEST
@@ -250,6 +305,18 @@ exports.addQuestion = (req,res) => {
             }
         }
     */
+}
+function _addQuestion(res, question){
+    //Write to DB
+    Question.create(question).then(data => {
+        res.send({ "question": data })
+
+    }).catch(err=>{
+        if (debug) { console.log(err) }
+        res.status(500).send({
+            message: err.message || "Some error occured while creating"
+        })
+    })
 }
 
 //==== POST: /updateQuestion

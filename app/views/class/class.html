@@ -185,6 +185,7 @@
                     }, 
                     _renderQuiz: function(quizAttempt){
                         //Load quiz
+                        this.questionList = []
                         let data = { 
                             quizId: this.quiz.quizId,
                             session: getUserSession() 
@@ -352,7 +353,7 @@
                         if(this.c.classId == ""){
                             return "";
                         }else{
-                            return 'Course: ' + this.c.Course.courseId + '| Class: '+this.c.classId+' | '+this.c.Account.username;
+                            return 'Course: ' + this.c.Course.courseId + '| Class: '+this.c.classId+' | Trainer: '+this.c.Account.username;
                         }
                     },
                     hasOngoingQuiz: function(){
