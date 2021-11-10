@@ -39,8 +39,7 @@
                <!--  SINGLE FILE ONLY -->
                <h1>Upload Your Document </h1>
                
-               application/x-www-form-urlencoded
-               multipart/form-data
+        
                 <h1> URL: {{type}} </h1>
                 <!-- {{if type == 'VIDEO' ? 'application/x-www-form-urlencoded' : 'multipart/form-data' }} -->
                 <!-- <form @submit.stop.prevent="submit" action="computedAction" enctype="multipart/form-data" method="POST">  -->
@@ -165,10 +164,10 @@
             },
             computeEnctype: function () {
                 if (this.type == "VIDEO") {
-                    alert("application/x-www-form-urlencoded");
+                    // alert("application/x-www-form-urlencoded");
                     return "application/x-www-form-urlencoded";
                 } else {
-                    alert("multipart/form-data");
+                    // alert("multipart/form-data");
                     return "multipart/form-data";
                 }
             //    return (this.type == 'VIDEO') ? 'application/x-www-form-urlencoded' : 'multipart/form-data'

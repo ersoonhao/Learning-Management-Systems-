@@ -95,7 +95,7 @@
         },
         methods: {
           loadData: function() {
-            axios.post(API(`/section/getall`), {
+            axios.post(API(`/section/getSectionPackage`), {
               session: getUserSession(),
               classId: getParams("classId")
             }).then(response => {
@@ -103,7 +103,7 @@
             })
           },
           deleteSection: function(inputSectionId) {
-            axios.post(API(`/section/delete`), {
+            axios.post(API(`/section/deleteSection`), {
               session: getUserSession(),
               sectionId: inputSectionId
             }).then(response => {
@@ -116,7 +116,7 @@
             if (app.sectionTitle == "" || app.sectionSubtitle == "" || app.sectionOrder == null) {
               alert("Please fill out all fields");
             } else {
-              axios.post(API(`/section/`), {
+              axios.post(API(`/section/createSection`), {
                 session: getUserSession(),
                 classId: app.classId,
                 title: app.sectionTitle,

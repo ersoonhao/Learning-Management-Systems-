@@ -5,15 +5,14 @@ module.exports = app => {
     //======== START: CONTROLLER LOGIC ========
     const section = require("../../controllers/section.controller");
 
+    router.get("/findOne/:id", section.findOne);
+    router.get("/findAllSection", section.findAllSection); 
 
-    router.get("/allsections", section.findAllSection);
-    router.post("/getall", section.getSectionPackage);
-    router.get("/:id", section.findOne);
-
-    router.post("/", section.createSection);
-    router.post("/delete", section.deleteSection);
-    router.post('/update', section.updateSection);
-    router.post("/deleteall", section.deleteAllSection);
+    router.post("/getSectionPackage", section.getSectionPackage); //
+    router.post("/createSection", section.createSection);
+    router.post("/deleteSection", section.deleteSection);
+    router.post('/updateSection', section.updateSection);
+    router.post("/deleteAllSection", section.deleteAllSection);
 
     //======== END: CONTROLLER LOGIC ========
 
