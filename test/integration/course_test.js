@@ -88,7 +88,7 @@ describe('The courses route and controller',()=>{
     (err,response)=>{
       // console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==8)
+      assert(response.body.length==9)
       done()
     }
     )
@@ -99,7 +99,7 @@ describe('The courses route and controller',()=>{
     (err,response)=>{
       // console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==8)
+      assert(response.body.length==9)
       assert(response.body[0]==1)
       done()
     }
@@ -111,7 +111,7 @@ describe('The courses route and controller',()=>{
     (err,response)=>{
       // console.log(response.body)
       console.log(response.body)
-      assert(response.body.length==8)
+      assert(response.body.length==9)
       assert(response.body[0]['courseId']==1)
       assert(response.body[0]['title']=='Cyber Security')
       done()
