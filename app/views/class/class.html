@@ -63,7 +63,12 @@
                             </div>
                             <div v-else-if="quizAttempt">
                                 <q-input v-for="q in questionList" :qn="q" @select="selectQuestion"></q-input>
+                                <button class="btn btn-primary" @click="submitQuiz">Submit</button>
                             </div>
+                        </div>
+                        <div v-else-if="!quizId&&!courseMaterialId" class="text-center pt-4">
+                            <h3>Welcome to back</h3>
+                            <h5>Please select a module</h5>
                         </div>
                     </m-div>
                 </div>
@@ -82,6 +87,8 @@
                 data: {
                     session: getUserSession(),
                     classId: getParams("classId"),
+                    quizId: getParams("quizId"),
+                    courseMaterialId: getParams("courseMaterialId"),
                     menu: initMenu([], 0, 0),
                     c: { classId: "", Course: { title: "" }, Account: { username: "" } }, 
                     courseMaterial: null,
@@ -104,6 +111,8 @@
                         this.courseMaterial = courseMaterial;
                         
                         //SOONHAO: FILL HERE 
+
+
 
 
                     },
@@ -299,7 +308,44 @@
                         console.log(data);
                     },
                     submitQuiz: function(){
+                        if(this.questionsLeft > 0){
+                            alert("Please answer all the questions");
+                            return
+                        }
+                        let quizAttemptId = this.quizAttempt.quizAttemptId;
+                        if(!quizAttemptId){
+                            console.log("Unable to submit quiz")
+                            return;
+                        }
+                        let data = {
+                            quizAttemptId: quizAttemptId,
+                            session: getUserSession(),
+                        }
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", API("/quizAttempt/submitQuizAttempt"), true);
+                        xhr.setRequestHeader("Content-Type", "application/json");
                         
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                if (xhr.status == 200) {
+                                    let dataJSON = JSON.parse(xhr.responseText);
+                                    let quizAttempt = dataJSON.quizAttempt;
+                                    if(quizAttempt != null){
+                                        app.quizAttempt = null;
+                                        app.loadQuiz(app.quiz);
+                                    }
+                                }else if(xhr.status == 401){
+                                    sessionExpired();
+                                    return;
+                                } else {
+                                    alert("An error has occured - " + xhr.status);
+                                    console.log(xhr.responseText);
+                                    return;
+                                }
+                            }
+                        };
+                        xhr.send(JSON.stringify(data));
+                        console.log(data);
                     }
                 }, computed: {
                     classTitle: function(){
@@ -329,6 +375,15 @@
                             }
                         }
                         return score;
+                    },
+                    questionsLeft: function(){
+                        let i = 0;
+                        for(let q of this.questionList){
+                            if(q.value == "" || q.value == null){
+                                i++;
+                            }
+                        }
+                        return i;
                     }
                 }
             });
@@ -395,8 +450,8 @@
                                         sections.sort((a, b) => a.ordering > b.ordering && 1 || -1)
 
                                         //Selection
-                                        let sel_sec = 0;
-                                        let sel_cm = 0;
+                                        let sel_sec = null;
+                                        let sel_cm = null;
                                         let sel_courseMaterial = null;
                                         let sel_quiz = null;
 
