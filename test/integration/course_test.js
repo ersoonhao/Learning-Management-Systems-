@@ -13,10 +13,10 @@ describe('The courses route and controller',()=>{
   })
 
   it('creates one course through post request with courseId',(done)=>{
-    request(app).post('/api/course').send({session: dummy_reload.SESSION_ADMIN, courseId: 5, title: 'Biology', description:"Course on Biology", active: true}).end(
+    request(app).post('/api/course').send({session: dummy_reload.SESSION_ADMIN, courseId: 6, title: 'Biology', description:"Course on Biology", active: true}).end(
       (err,response)=>{console.log(response.body)
         assert(response.body.course_data.description === "Course on Biology")
-        assert(response.body.course_data.courseId === 5)
+        assert(response.body.course_data.courseId === 6)
         assert(response.body.course_data.active === true)
         assert(response.body.course_data.title == 'Biology')
         done()
