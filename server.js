@@ -446,7 +446,7 @@ app.get('/pdfs/:key', (req, res) => {
 
 // ================ SETUP ================
 const PORT = process.env.PORT || 8081; //Set port, listen for requests
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
 });
 
