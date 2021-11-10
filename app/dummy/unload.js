@@ -9,12 +9,14 @@ module.exports.unload = () => {
         DELETE FROM QuestionOptions;
         DELETE FROM Questions;
         DELETE FROM Quizzes;
+        DELETE FROM CourseMaterials;
         DELETE FROM Sections;
         DELETE FROM Courses;
         DELETE FROM Accounts;
         DELETE FROM Messages;
         DELETE FROM PrerequisiteSets;
         DELETE FROM CoursePrerequisites;
+        
     `);
 };
 
