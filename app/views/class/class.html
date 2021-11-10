@@ -26,7 +26,7 @@
                     <m-div :menu="menu" :title="c.Course.title" :subtitle="classTitle">
                         <!-- COURSE MATERIAL -->
                         <div v-if="courseMaterial">
-                            COURSE MATERIAL
+                            <h1>COURSE MATERIAL</h1>
 
                             <!-- SOONHAO: FILL HERE  -->
                             <!-- {{courseMaterial.source}} -->
@@ -36,14 +36,16 @@
                                 type="application/pdf"
                                 frameBorder="0"
                                 scrolling="auto"
-                                height="100%"
+                                height="150%"
                                 width="100%"
                             ></embed>
 
                             <!-- <object :data="courseMaterial.source" type="application/pdf">
                                 <div>No online PDF viewer installed</div>
                             </object> -->
-                            <a :href="courseMaterial.source">Download</a>
+                            <!-- <button type="button" class="btn btn-primary" :href="courseMaterial.source">Download</button> -->
+                            <!-- <a :href="courseMaterial.source">Download</a> -->
+                            <a class="btn btn-primary" target="_blank" :href="courseMaterial.source">Download</a>
 
 
                         </div>
