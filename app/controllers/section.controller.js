@@ -233,7 +233,7 @@ exports.getLearnersSectionPackage = (req, res) => {
                 })
                 return
             }
-            CourseAccessController.isLearnerOfClass(res, session, classId).then(pkg => {
+            CourseAccessController.isLearnerForClass(res, session, classId).then(pkg => {
                 if(pkg){
                     let courseId = pkg.Class.Course.courseId;
                     if(!courseId){
