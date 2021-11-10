@@ -5,8 +5,10 @@ const {
     Course,
     PrerequisiteSet,
     CoursePrerequisite
-} = require('../models')
-const AccountController = require('./account.controller')
+} = require('../models');
+
+const { Sequelize } = require('sequelize');
+const AccountController = require('./account.controller');
 
 //==== POST: /isEligibleForCourse
 exports.isEligibleForCourse = (req, res) => {
@@ -42,6 +44,7 @@ exports.isEligibleForCourse = (req, res) => {
                     }
                 })
                 .then(data => {
+
                     var prereqDict = {}
                     var eligible = false
                     if (data.CoursePrerequisites.length == 0) {
@@ -53,7 +56,7 @@ exports.isEligibleForCourse = (req, res) => {
                             }
                             set.PrerequisiteSets.forEach(prereq => {
                                 prereqDict[set.setNumber][prereq.course_fk] = !(
-                                    prereq.Class == null
+                                    prereq.Course.Classes[0] == null
                                 )
                             })
                         })
