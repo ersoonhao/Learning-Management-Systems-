@@ -30,7 +30,7 @@ exports.withdraw = (req, res) => {
                     where: {
                         enrollmentId: enrollmentId,
                         accountId: session.accountId
-                        //whoever logging in has the same accountId as the enrollmentId
+                            //whoever logging in has the same accountId as the enrollmentId
                     },
                     include: {
                         model: Class,
@@ -68,7 +68,7 @@ exports.HRWithdraw = (req, res) => {
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
             const enrollmentId = req.body.enrollmentId;
-            const isWithdrawn = req.body.isWithdrawn;
+            //const isWithdrawn = req.body.isWithdrawn;
 
             Enrollment.update({
                     isWithdrawn: true
