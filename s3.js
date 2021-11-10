@@ -39,12 +39,29 @@ function uploadFile(file, extension) {
     console.log("key HERE", file.filename)
     var pdfkey = file.filename + ".pdf";
     var filekey = file.filename + extension;
+
+    var specifiedContentType="";
+
+    if(extension==".pdf"){
+        specifiedContentType="application/pdf";
+    }else if(extension==".docx" || extension==".doc"){
+        specifiedContentType="text/plain"
+    }
+    else if(extension=="iamge"){
+        specifiedContentType="image/jpeg"
+    }
+    else{
+        specifiedContentType="application/octet-stream"
+    }
+    
     const uploadParams = {
         Bucket: bucketName,
         Body: fileStream,
         //   Key: file.filename,
         Key: filekey,
-        ACL: 'public-read'
+        ACL: 'public-read',
+        ContentType: specifiedContentType
+
     }
     return s3.upload(uploadParams).promise()
 }
