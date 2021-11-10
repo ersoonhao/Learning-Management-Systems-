@@ -28,7 +28,7 @@ module.exports = (sequelize, Sequelize) => {
         sectionId: {
             type: Sequelize.INTEGER
         },
-        key: {
+        awskey: {
             type: Sequelize.STRING
         }
       
