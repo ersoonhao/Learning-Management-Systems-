@@ -5,7 +5,7 @@ module.exports.SESSION_ADMIN = { username: "soonhao", sessionId: "gee43" }
 module.exports.SESSION_TRAINER = { username: "john", sessionId: "daoi0" }
 module.exports.SESSION_TRAINER_ALT_1 = { username: "varun", sessionId: "dsaw2" }
 module.exports.SESSION_TRAINER_ALT_2 = { username: "joshua", sessionId: "eka31" }
-module.exports.SESSION_TRAINER_ALT_3 = { username: "alvin", sessionId: "pr2o3" }
+module.exports.SESSION_TRAINER_ALT_3 = { username: "nicholas", sessionId: "pr2o3" }
 module.exports.SESSION_LEARNER = { username: "asher", sessionId: "dsa98" }
 module.exports.SESSION_LEARNER_ALT_1 = { username: "bob", sessionId: "1cxm2" }
 module.exports.SESSION_LEARNER_ALT_2 = { username: "sean", sessionId: "oei21" }
@@ -18,27 +18,28 @@ module.exports.load = () => {
     return db.sequelize.query(`
         INSERT INTO Accounts(accountId, username, email, isAdmin, isTrainer, password, sessionId) VALUES
         (1, 'robin', 'wafturerobin@gmail.com', 1, 1, 'a', '0q8l8'),
-        (2, 'soonhao', 'john.d.cheong@gmail.com', 1, 0, 'a', 'gee43'),
+        (2, 'soonhao', 'soonhao.er.2019@smu.edu.sg', 1, 0, 'a', 'gee43'),
         (3, 'john', 'john.d.cheong@gmail.com', 0, 1, 'a', 'daoi0'),
-        (4, 'varun', 'john.d.cheong@gmail.com', 0, 1, 'a', 'dsaw2'),
+        (4, 'varun', 'balamuniap.2019@smu.edu.sg', 0, 1, 'a', 'dsaw2'),
         (5, 'joshua', 'john.d.cheong@gmail.com', 0, 1, 'a', 'eka31'),
-        (6, 'alvin', 'john.d.cheong@gmail.com', 0, 1, 'a', 'pr2o3'),
-        (7, 'asher', 'john.d.cheong@gmail.com', 0, 0, 'a', 'dsa98'),
-        (8, 'bob', 'john.d.cheong@gmail.com', 0, 0, 'a', '1cxm2'),
-        (9, 'sean', 'john.d.cheong@gmail.com', 0, 0, 'a', 'oei21'),
-        (10, 'george', 'john.d.cheong@gmail.com', 0, 0, 'a', 'csnm2');
+        (6, 'nicholas', 'nicholastch@smu.edu.sg', 0, 1, 'a', 'pr2o3'),
+        (7, 'asher', 'asherleong.2019@scis.smu.edu.sg', 0, 0, 'a', 'dsa98'),
+        (8, 'bob', 'wafturerobin@gmail.com', 0, 0, 'a', '1cxm2'),
+        (9, 'sean', 'wafturerobin@gmail.com', 0, 0, 'a', 'oei21'),
+        (10, 'george', 'wafturerobin@gmail.com', 0, 0, 'a', 'csnm2');
 
         INSERT INTO Courses(courseId, title, description, active, courseImage) VALUES
         (1, 'Cyber Security', 'This course is about cyber security', true, 'https://i.picsum.photos/id/236/800/800.jpg?hmac=-m1crl44KO9L8Rs4QGYJq6nuXo0R6V-Zc3v48BUc8WE'),
         (2, 'Biology', 'This course is about Biology', true, 'https://i.picsum.photos/id/427/800/800.jpg?hmac=C9qE9ogOx2qI05D2zGZ362KkduRWpt7xDT4DXcfcSDk'),
         (3, 'Chemistry', 'This course is about Chemistry', false,  'https://i.picsum.photos/id/66/800/800.jpg?hmac=QwjZxiyFrWQI9G4d8F44wFqjxZ66zIPLlzeRRiiYrpk'),
-        (4, 'Mathematics', 'This course is about Mathematics', false,'https://i.picsum.photos/id/882/800/800.jpg?hmac=No5hTPTge2_1GgssUGsE2qrhWTzL_mJRIhmQxKj6zUE');
+        (4, 'Mathematics', 'This course is about Mathematics', false,'https://i.picsum.photos/id/882/800/800.jpg?hmac=No5hTPTge2_1GgssUGsE2qrhWTzL_mJRIhmQxKj6zUE'),
+        (5, 'Econometrics', 'This course is about Econometrics', true,'https://i.picsum.photos/id/67/800/800.jpg?hmac=5EQTN86WBRMFbDXFqpQPIMgprmj49nXxKKReaPFR6NY');
 
         INSERT INTO Classes(classId, selfEnrollStartDateTime, selfEnrollEndDateTime, classStartDateTime, classEndDateTime, maxCapacity, courseId, trnAccountId, adminAccountId) VALUES
-        (1, '2021-07-01', '2021-08-30', '2021-09-01', '2022-01-01', 50, 1, 3, 1),
-        (2, '2021-08-01', '2021-09-30', '2021-10-01', '2022-02-01', 50, 2, 3, 1),
-        (3, '2021-09-01', '2021-10-30', '2021-11-01', '2022-03-01', 50, 3, 3, 1),
-        (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 4, 3, 1);
+        (1, '2021-07-01', '2021-08-30', '2021-09-01', '2022-01-01', 50, 1, 6, 1),
+        (2, '2021-08-01', '2021-09-30', '2021-10-01', '2022-02-01', 50, 2, 6, 1),
+        (3, '2021-09-01', '2021-10-30', '2021-11-01', '2022-03-01', 50, 3, 5, 1),
+        (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 4, 5, 1);
 
         INSERT INTO enrollments(enrollmentId, isSelfEnrollment, isEnrolled, dateCreated, enrolledDate, coursePassed, isWithdrawn, accountId, classId) VALUES
         (1, 1, 0, '2021-07-01', NULL, 0, 0, 7, 1),
@@ -64,10 +65,10 @@ module.exports.load = () => {
         (3,"Security Basics" , "Availability", 3, 1);
 
         INSERT INTO Quizzes(quizId, type, title, instructions, durationInMins, passScoreRequirement, active, courseId, sectionId) VALUES
-        (1, 'UG', "Section 1 Quiz", "Please complete the quiz within the time limit", 10, null, true, 1, 1),
-        (2, 'G', "Final Quiz", "Please complete the quiz within the time limit", 10, 0.7, true, 1, 1),
-        (3, 'UG', "Section 2 Quiz", "Please complete the quiz within the time limit", 10, null, false, 1, 2),
-        (4, 'UG', "Section 2 Quiz", "Please complete the quiz within the time limit", 10, null, false, 1, 2);
+        (1, 'UG', "Section 1 Quiz", "Please complete the quiz within the time limit", 10, NULL, true, NULL, 1),
+        (2, 'G', "Final Quiz", "Please complete the quiz within the time limit", 10, 0.7, true, 1, NULL),
+        (3, 'UG', "Section 2 Quiz", "Please complete the quiz within the time limit", 10, NULL, false, NULL, 2),
+        (4, 'UG', "Section 2 Quiz", "Please complete the quiz within the time limit", 10, NULL, false, NULL, 2);
 
         INSERT INTO Questions(questionId, question, autoGraded, type, quizId) VALUES
         (1, "In Linux terminal, the command 'cat' is for", true, 'MCQ', 1),
@@ -167,7 +168,7 @@ module.exports.load = () => {
 // const QuestionOption = db.QuestionOption;
 
 // let dummy_quiz = [
-//     { quizId: 1, type: Quiz.QUIZ_TYPES_UNGRADED, title: "Section 1 Quiz", instructions: "Please complete the quiz within the time limit", durationInMins: 10, passScoreRequirement: null, active: false, courseId: 1, sectionId: 1  },
+//     { quizId: 1, type: Quiz.QUIZ_TYPES_UNGRADED, title: "Section 1 Quiz", instructions: "Please complete the quiz within the time limit", durationInMins: 10, passScoreRequirement: NULL, active: false, courseId: 1, sectionId: 1  },
 //     { quizId: 2, type: Quiz.QUIZ_TYPES_GRADED, title: "Final Quiz", instructions: "Please complete the quiz within the time limit", durationInMins: 10, passScoreRequirement: 0.7, active: false, courseId: 1, sectionId: 1 }
 // ]
 // let dummy_question = [
@@ -177,18 +178,18 @@ module.exports.load = () => {
 //     { questionId: 4, question: "Security property provided by our identity card (e.g. SG IC)", autoGraded: true, type: Question.QUESTION_TYPES_MCQ, quizId: 2 }
 // ]
 // let dummy_questionOption = [
-//     { questionOptionId: null, optionText: "making new cats", isCorrect: false, questionId: 1 },
-//     { questionOptionId: null, optionText: "creating a catalogue", isCorrect: false, questionId: 1 },
-//     { questionOptionId: null, optionText: "encrypting a file", isCorrect: false, questionId: 1 },
-//     { questionOptionId: null, optionText: "reading a file", isCorrect: true, questionId: 1 },
-//     { questionOptionId: null, optionText: "True", isCorrect: true, questionId: 2 },
-//     { questionOptionId: null, optionText: "False", isCorrect: false, questionId: 2 },
-//     { questionOptionId: null, optionText: "True", isCorrect: true, questionId: 3 },
-//     { questionOptionId: null, optionText: "False", isCorrect: false, questionId: 3 },
-//     { questionOptionId: null, optionText: "Repudiation", isCorrect: false, questionId: 4 },
-//     { questionOptionId: null, optionText: "Confidentiality", isCorrect: false, questionId: 4 },
-//     { questionOptionId: null, optionText: "Integrity", isCorrect: false, questionId: 4 },
-//     { questionOptionId: null, optionText: "Availability", isCorrect: true, questionId: 4 }
+//     { questionOptionId: NULL, optionText: "making new cats", isCorrect: false, questionId: 1 },
+//     { questionOptionId: NULL, optionText: "creating a catalogue", isCorrect: false, questionId: 1 },
+//     { questionOptionId: NULL, optionText: "encrypting a file", isCorrect: false, questionId: 1 },
+//     { questionOptionId: NULL, optionText: "reading a file", isCorrect: true, questionId: 1 },
+//     { questionOptionId: NULL, optionText: "True", isCorrect: true, questionId: 2 },
+//     { questionOptionId: NULL, optionText: "False", isCorrect: false, questionId: 2 },
+//     { questionOptionId: NULL, optionText: "True", isCorrect: true, questionId: 3 },
+//     { questionOptionId: NULL, optionText: "False", isCorrect: false, questionId: 3 },
+//     { questionOptionId: NULL, optionText: "Repudiation", isCorrect: false, questionId: 4 },
+//     { questionOptionId: NULL, optionText: "Confidentiality", isCorrect: false, questionId: 4 },
+//     { questionOptionId: NULL, optionText: "Integrity", isCorrect: false, questionId: 4 },
+//     { questionOptionId: NULL, optionText: "Availability", isCorrect: true, questionId: 4 }
 // ]
 
 // for(let q of dummy_quiz){ Quiz.create(q) }

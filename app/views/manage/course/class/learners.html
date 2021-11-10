@@ -1,255 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-            integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-            <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
-        <title>LMS</title>
-        <link rel="stylesheet" href="/style/master.css">
-    </head>
-    <body>
-        <div id="app">
-            <lms-head :session="session"></lms-head>
-            <div class="content">
-                <div class=container>
-                    <m-div :menu="menu" title="Learners" :subtitle="'For Class ID: '+classId">
-                        <div v-show="session.isAdmin" class="mb-4">
-                            <h5 class="lms-font-semibold">Enroll New Learner</h5>
-                            <div class="lms-input">
-                                <label class="lms-input-label">Learner</label>
-                                <select v-model="learnerAccountId">
-                                    <option v-for="l in learners" :value="l.accountId">{{ l.username }} (AccountId: {{ l.accountId }})</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-secondary mb-2" @click="enrollLearner">Enroll learner</button>
-                            <hr/>
-                        </div>
-                        <h4 class="mb-4 lms-font-semibold">Learners for class</h4>
-                        <!-- <a href="/manage/class?classId=1">Specific class</a> -->
-                        <table class="table">
-                            <thead class="lms-table-head lms-font-semibold">
-                                <tr>
-                                    <th>Enrollment Id</th> 
-                                    <th>Learner</th>
-                                    <th>Status</th>
-                                    <th>Progress</th>
-                                    <th>Passed Course</th>
-                                    <td></td>
-                                    </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="e in enrollments">
-                                    <td>{{ e.enrollmentId }}</td>
-                                    <td>{{ e.Account.username }}</td>
-                                    <td>{{ enrollmentStatus(e) }}</td> 
-                                    <td>-</td>
-                                    <td>{{ e.coursePassed }}</td>
-                                    <td>
-                                        <button v-show="e.isEnrolled==null&&session.isAdmin" class="btn btn-primary" @click="respondApplication(e.enrollmentId, true)">Accept</button>
-                                        <button v-show="e.isEnrolled==null&&session.isAdmin" class="btn btn-danger" @click="respondApplication(e.enrollmentId, false)">Decline</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </m-div>
-                </div>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <title>LMS</title>
+    <link rel="stylesheet" href="/style/master.css">
+  </head>
+  <body>
+    <div id="app">
+      <lms-head :session="session"></lms-head>
+      <div class="content">
+        <div class=container>
+          <m-div :menu="menu" title="Learners" :subtitle="'For Class ID: '+classId">
+            <div v-show="session.isAdmin" class="mb-4">
+              <h5 class="lms-font-semibold">Enroll New Learner</h5>
+              <div class="lms-input">
+                <label class="lms-input-label">Learner</label>
+                <select v-model="learnerAccountId">
+                  <option v-for="l in learners" :value="l.accountId">{{ l.username }} (AccountId: {{ l.accountId }})</option>
+                </select>
+              </div>
+              <button class="btn btn-secondary mb-2" @click="enrollLearner">Enroll learner</button>
+              <hr />
             </div>
+            <h4 class="mb-4 lms-font-semibold">Learners for class</h4>
+            <!-- <a href="/manage/class?classId=1">Specific class</a> -->
+            <table class="table">
+              <thead class="lms-table-head lms-font-semibold">
+                <tr>
+                  <th>Enrollment Id</th>
+                  <th>Learner</th>
+                  <th>Status</th>
+                  <th>Progress</th>
+                  <th>Passed Course</th>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="e in enrollments">
+                  <td>{{ e.enrollmentId }}</td>
+                  <td>{{ e.Account.username }}</td>
+                  <td>{{ enrollmentStatus(e) }}</td>
+                  <td>-</td>
+                  <td>{{ e.coursePassed }}</td>
+                  <td>
+                    <button v-show="e.isEnrolled==null&&session.isAdmin" class="btn btn-primary" @click="respondApplication(e.enrollmentId, true)">Accept</button>
+                    <button v-show="e.isEnrolled==null&&session.isAdmin" class="btn btn-danger" @click="respondApplication(e.enrollmentId, false)">Decline</button>
+                    <button v-show="e.isEnrolled==true&&e.isWithdrawn==false&&session.isAdmin" class="btn btn-danger" @click="withdrawLearner(e.enrollmentId)">Withdraw</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </m-div>
         </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
-        </script>
-        <script src="/js/lib/vue.js"></script>
-        <script src="/js/lms/main/master.js"></script>
-        <script src="/js/lms/main/manage.js"></script>
-        <script>
-            const app = new Vue({
-                el: '#app',
-                data: {
-                    session: getUserSession(),
-                    classId: getParams("classId"),
-                    menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 1),
-                    enrollments: [],
-                    learners: [],
-                    learnerAccountId: null
-                }, created: () => {
-                    let data = { 
-                        classId: getParams("classId"),
-                        session: getUserSession(),
-                    };
-                    let xhr = new XMLHttpRequest();
-                    xhr.open("POST", API("/enrollment/getAllClassEnrollments"), true);
-                    xhr.setRequestHeader("Content-Type", "application/json");
-                    
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState == XMLHttpRequest.DONE) {
-                            if (xhr.status == 200) {
-                                //Successful
-                                let dataJSON = JSON.parse(xhr.responseText);
-                                let enrollments = dataJSON.enrollment;
-                                if(enrollments != null){
-                                    app.enrollments = enrollments;
-                                    app.loadLearners();
-                                }else{
-                                    alert("Unable to obtain classes")
-                                }
-                            }else if(xhr.status == 401){
-                                sessionExpired();
-                                return;
-                            } else {
-                                alert("An error has occured - " + xhr.status);
-                                console.log(xhr.responseText);
-                                return;
-                            }
-                        }
-                    };
-                    xhr.send(JSON.stringify(data));
-                    console.log(data);
-
-                }, methods: {
-                    respondApplication: function(enrollmentId, isApproved){
-                        let data = { 
-                            enrollmentId: enrollmentId,
-                            isApproved: isApproved,
-                            session: getUserSession(),
-                        };
-                        var xhr = new XMLHttpRequest();
-                        xhr.open("POST", API("/enrollment/respondApplication"), true);
-                        xhr.setRequestHeader("Content-Type", "application/json");
-                        
-                        xhr.onreadystatechange = function() {
-                            if (xhr.readyState == XMLHttpRequest.DONE) {
-                                if (xhr.status == 200) {
-                                    //Successful
-                                    for(let i = 0; i < app.enrollments.length; i++){
-                                        if(app.enrollments[i].enrollmentId == enrollmentId){
-                                            app.enrollments[i].isEnrolled = true;
-                                        }
-                                    }
-                                }else if(xhr.status == 401){
-                                    sessionExpired();
-                                    return;
-                                } else {
-                                    alert("An error has occured - " + xhr.status);
-                                    console.log(xhr.responseText);
-                                    return;
-                                }
-                            }
-                        };
-                        xhr.send(JSON.stringify(data));
-                        console.log(data);
-                    },
-                    loadLearners: function(){
-                        let data = { 
-                            session: getUserSession(),
-                        };
-                        let xhr = new XMLHttpRequest();
-                        xhr.open("POST", API("/account/getLearners"), true);
-                        xhr.setRequestHeader("Content-Type", "application/json");
-                        
-                        xhr.onreadystatechange = function() {
-                            if (xhr.readyState == XMLHttpRequest.DONE) {
-                                if (xhr.status == 200) {
-                                    //Successful
-                                    let dataJSON = JSON.parse(xhr.responseText);
-                                    let learners = dataJSON.learners;
-                                    if(learners != null){
-                                        app.learners = []
-                                        for(let l of learners){
-                                            let enrolled = false;
-                                            for(let e of app.enrollments){
-                                                if(e.accountId == l.accountId){
-                                                    enrolled = true;
-                                                }
-                                            }
-                                            if(!enrolled){
-                                                app.learners.push(l);
-                                            }
-                                        }
-                                    }else{
-                                        alert("Unable to obtain learners")
-                                    }
-                                }else if(xhr.status == 401){
-                                    sessionExpired();
-                                    return;
-                                } else {
-                                    alert("An error has occured - " + xhr.status);
-                                    console.log(xhr.responseText);
-                                    return;
-                                }
-                            }
-                        };
-                        xhr.send(JSON.stringify(data));
-                        console.log(data);
-                    },
-                    enrollLearner: function(){
-                        if(app.learnerAccountId == null || app.learnerAccountId == ""){
-                            alert("Please select a learner");
-                            return
-                        }
-                        let data = { 
-                            classId: parseInt(this.classId),
-                            accountId: this.learnerAccountId,
-                            session: getUserSession(),
-                        };
-                        var xhr = new XMLHttpRequest();
-                        xhr.open("POST", API("/enrollment/enrollLearner"), true);
-                        xhr.setRequestHeader("Content-Type", "application/json");
-                        
-                        xhr.onreadystatechange = function() {
-                            if (xhr.readyState == XMLHttpRequest.DONE) {
-                                if (xhr.status == 200) {
-                                    //Successful
-                                    let newLearner = null;
-                                    let dataJSON = JSON.parse(xhr.responseText);
-                                    for(let i = 0; i < app.learners.length; i++){
-                                        if(app.learners[i].accountId == app.learnerAccountId){
-                                            newLearner = app.learners.splice(i, 1)[0];
-                                        }
-                                    }
-                                    let enrollment = dataJSON.enrollment;
-                                    if(enrollment != null && newLearner != null){
-                                        enrollment.Account = newLearner;
-                                        console.log(enrollment);
-                                        app.enrollments.push(enrollment);
-                                    }
-                                    app.learnerAccountId = null;
-                                    alert("Successfully enrolled learner!");
-                                }else if(xhr.status == 401){
-                                    sessionExpired();
-                                    return;
-                                } else {
-                                    alert("An error has occured - " + xhr.status);
-                                    console.log(xhr.responseText);
-                                    return;
-                                }
-                            }
-                        };
-                        xhr.send(JSON.stringify(data));
-                        console.log(data);
-                    },
-                    enrollmentStatus: function(e){
-                        if(e.isEnrolled == null){
-                            return "Pending enrollment"
-                        }else if(e.isWithdrawn){
-                            return "Withdrawn";
-                        }else if(e.isEnrolled){
-                            if(e.isSelfEnrollment){
-                                return "Enrolled (self)";
-                            }else{
-                                return "Enrolled (assigned)"
-                            }
-                        }else if(!e.isEnrolled){
-                            return "Enrollment Rejected";
-                        }
-                    }
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="/js/lib/vue.js"></script>
+    <script src="/js/lms/main/master.js"></script>
+    <script src="/js/lms/main/manage.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const app = new Vue({
+        el: '#app',
+        data: {
+          session: getUserSession(),
+          classId: getParams("classId"),
+          menu: initMenu(generateMenuSections_Class(getParams("classId")), 0, 1),
+          enrollments: [],
+          learners: [],
+          learnerAccountId: null
+        },
+        created: () => {
+          let data = {
+            classId: getParams("classId"),
+            session: getUserSession(),
+          };
+          let xhr = new XMLHttpRequest();
+          xhr.open("POST", API("/enrollment/getAllClassEnrollments"), true);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+              if (xhr.status == 200) {
+                //Successful
+                let dataJSON = JSON.parse(xhr.responseText);
+                let enrollments = dataJSON.enrollment;
+                if (enrollments != null) {
+                  app.enrollments = enrollments;
+                  app.loadLearners();
+                } else {
+                  alert("Unable to obtain classes")
                 }
+              } else if (xhr.status == 401) {
+                sessionExpired();
+                return;
+              } else {
+                alert("An error has occured - " + xhr.status);
+                console.log(xhr.responseText);
+                return;
+              }
+            }
+          };
+          xhr.send(JSON.stringify(data));
+          console.log(data);
+        },
+        methods: {
+          withdrawLearner: function(enrollmentId) {
+            let enrollObj = {
+              enrollmentId: enrollmentId,
+              session: getUserSession(),
+            };
+            axios.put(API('/withdrawal/HRWithdraw'), enrollObj).then((response) => {
+              console.log(response);
+              if (response.status == 200) {
+                alert("Submitted withrawal successfully")
+                location.reload();
+              }
+              
+            }, (error) => {
+              console.log(error);
             });
-        </script>
-    </body>
+          },
+          respondApplication: function(enrollmentId, isApproved) {
+            let data = {
+              enrollmentId: enrollmentId,
+              isApproved: isApproved,
+              session: getUserSession(),
+            };
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", API("/enrollment/respondApplication"), true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState == XMLHttpRequest.DONE) {
+                if (xhr.status == 200) {
+                  //Successful
+                  for (let i = 0; i < app.enrollments.length; i++) {
+                    if (app.enrollments[i].enrollmentId == enrollmentId) {
+                      app.enrollments[i].isEnrolled = true;
+                    }
+                  }
+                } else if (xhr.status == 401) {
+                  sessionExpired();
+                  return;
+                } else {
+                  alert("An error has occured - " + xhr.status);
+                  console.log(xhr.responseText);
+                  return;
+                }
+              }
+            };
+            xhr.send(JSON.stringify(data));
+            console.log(data);
+          },
+          loadLearners: function() {
+            let data = {
+              session: getUserSession(),
+            };
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", API("/account/getLearners"), true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState == XMLHttpRequest.DONE) {
+                if (xhr.status == 200) {
+                  //Successful
+                  let dataJSON = JSON.parse(xhr.responseText);
+                  let learners = dataJSON.learners;
+                  if (learners != null) {
+                    app.learners = []
+                    for (let l of learners) {
+                      let enrolled = false;
+                      for (let e of app.enrollments) {
+                        if (e.accountId == l.accountId) {
+                          enrolled = true;
+                        }
+                      }
+                      if (!enrolled) {
+                        app.learners.push(l);
+                      }
+                    }
+                  } else {
+                    alert("Unable to obtain learners")
+                  }
+                } else if (xhr.status == 401) {
+                  sessionExpired();
+                  return;
+                } else {
+                  alert("An error has occured - " + xhr.status);
+                  console.log(xhr.responseText);
+                  return;
+                }
+              }
+            };
+            xhr.send(JSON.stringify(data));
+            console.log(data);
+          },
+          enrollLearner: function() {
+            if (app.learnerAccountId == null || app.learnerAccountId == "") {
+              alert("Please select a learner");
+              return
+            }
+            let data = {
+              classId: parseInt(this.classId),
+              accountId: this.learnerAccountId,
+              session: getUserSession(),
+            };
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", API("/enrollment/enrollLearner"), true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState == XMLHttpRequest.DONE) {
+                if (xhr.status == 200) {
+                  //Successful
+                  let newLearner = null;
+                  let dataJSON = JSON.parse(xhr.responseText);
+                  for (let i = 0; i < app.learners.length; i++) {
+                    if (app.learners[i].accountId == app.learnerAccountId) {
+                      newLearner = app.learners.splice(i, 1)[0];
+                    }
+                  }
+                  let enrollment = dataJSON.enrollment;
+                  if (enrollment != null && newLearner != null) {
+                    enrollment.Account = newLearner;
+                    console.log(enrollment);
+                    app.enrollments.push(enrollment);
+                  }
+                  app.learnerAccountId = null;
+                  alert("Successfully enrolled learner!");
+                } else if (xhr.status == 401) {
+                  sessionExpired();
+                  return;
+                } else {
+                  alert("An error has occured - " + xhr.status);
+                  console.log(xhr.responseText);
+                  return;
+                }
+              }
+            };
+            xhr.send(JSON.stringify(data));
+            console.log(data);
+          },
+          enrollmentStatus: function(e) {
+            if (e.isEnrolled == null) {
+              return "Pending enrollment"
+            } else if (e.isWithdrawn) {
+              return "Withdrawn";
+            } else if (e.isEnrolled) {
+              if (e.isSelfEnrollment) {
+                return "Enrolled (self)";
+              } else {
+                return "Enrolled (assigned)"
+              }
+            } else if (!e.isEnrolled) {
+              return "Enrollment Rejected";
+            }
+          }
+        }
+      });
+    </script>
+  </body>
 </html>

@@ -182,7 +182,7 @@ exports.findAll = (req, res) => {
 
 exports.findAllPostAdmin = (req, res) => {
 
-    const permissions = [AccountController.PERM_ADMIN]
+    const permissions = [AccountController.PERM_ADMIN, AccountController.PERM_TRAINER]
     AccountController.validAuthNAccess(req, res, permissions).then(session => {
         if (session) {
             Course.findAll()
