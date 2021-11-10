@@ -133,11 +133,11 @@ module.exports.load = () => {
         (2, 1),
         (2, 3);
 
-        INSERT INTO CourseMaterials(CourseMaterialId, title, instructions, source, type, sectionId, ordering, key) VALUES
-        (1, 'Symmetric Encryption', 'Complete the labs', 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/65bc4c8b2dc2af52ad7e208db75af032.pdf', 'pdf', 1, 1, '65bc4c8b2dc2af52ad7e208db75af032.pdf'),
-        (2, 'Asymmetric lab', 'Do the lab', 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/a44d43be9c3b953653485f1aff0b7cb1.pdf', 'docx', 2, 1, 'a44d43be9c3b953653485f1aff0b7cb1.pdf'),
-        (3, 'SQL Injection', 'Watch the video', 'https://www.youtube.com/watch?v=cx6Xs3F_1Uc&ab_channel=LoiLiangYang', 'link', 3, 1, null),
-        (4, 'Additional notes on Cybersecurity', 'Please read' , 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/77c7a5e2263fce73b530f6ea97f9df07.pdf', 'pdf', 3, 3, '77c7a5e2263fce73b530f6ea97f9df07.pdf');
+        INSERT INTO CourseMaterials(CourseMaterialId, title, instructions, source, type, sectionId, ordering) VALUES
+        (1, 'Symmetric Encryption', 'Complete the labs', 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/65bc4c8b2dc2af52ad7e208db75af032.pdf', 'pdf', 1, 1),
+        (2, 'Asymmetric lab', 'Do the lab', 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/a44d43be9c3b953653485f1aff0b7cb1.pdf', 'docx', 2, 1),
+        (3, 'SQL Injection', 'Watch the video', 'https://www.youtube.com/watch?v=cx6Xs3F_1Uc&ab_channel=LoiLiangYang', 'link', 3, 1),
+        (4, 'Additional notes on Cybersecurity', 'Please read' , 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/77c7a5e2263fce73b530f6ea97f9df07.pdf', 'pdf', 3, 3);
 
 
 
