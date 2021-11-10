@@ -26,7 +26,7 @@ module.exports.load = () => {
         (7, 'asher', 'asherleong.2019@scis.smu.edu.sg', 0, 0, 'a', 'dsa98'),
         (8, 'bob', 'wafturerobin@gmail.com', 0, 0, 'a', '1cxm2'),
         (9, 'sean', 'wafturerobin@gmail.com', 0, 0, 'a', 'oei21'),
-        (10, 'george', 'wafturerobin@gmail.com', 0, 0, 'a', 'csnm2');
+        (10, 'george', 'asherleong.2019@scis.smu.edu.sg', 0, 0, 'a', 'csnm2');
 
         INSERT INTO Courses(courseId, title, description, active, courseImage) VALUES
         (1, 'Cyber Security', 'This course is about cyber security', true, 'https://i.picsum.photos/id/236/800/800.jpg?hmac=-m1crl44KO9L8Rs4QGYJq6nuXo0R6V-Zc3v48BUc8WE'),
@@ -39,7 +39,10 @@ module.exports.load = () => {
         (1, '2021-07-01', '2021-08-30', '2021-09-01', '2022-01-01', 50, 1, 6, 1),
         (2, '2021-08-01', '2021-09-30', '2021-10-01', '2022-02-01', 50, 2, 6, 1),
         (3, '2021-09-01', '2021-10-30', '2021-11-01', '2022-03-01', 50, 3, 5, 1),
-        (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 4, 5, 1);
+        (4, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 4, 5, 1),
+        (5, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 4, 5, 1),
+        (6, '2021-11-21', '2021-12-02', '2021-11-01', '2021-11-13', 50, 4, 3, 1),
+        (7, '2021-11-3', '2021-11-30', '2021-11-02', '2021-11-13', 50, 4, 4, 1);
 
         INSERT INTO enrollments(enrollmentId, isSelfEnrollment, isEnrolled, dateCreated, enrolledDate, coursePassed, isWithdrawn, accountId, classId) VALUES
         (1, 1, 0, '2021-07-01', NULL, 0, 0, 7, 1),
@@ -57,7 +60,8 @@ module.exports.load = () => {
         (13, 1, 0, '2021-07-01', NULL, 0, 0, 7, 4),
         (14, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 4),
         (15, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 4),
-        (16, 0, 1, '2021-07-01', NULL, 0, 0, 10, 4);
+        (16, 0, 1, '2021-07-01', NULL, 0, 0, 10, 4),
+        (17, 0, 1, '2021-07-01', NULL, 0, 0, 1, 1);
         
         INSERT INTO Sections(sectionId, title, subtitle, ordering, classId) VALUES
         (1,"Introduction" , "Computers", 1, 1),
