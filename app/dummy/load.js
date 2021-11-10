@@ -32,7 +32,8 @@ module.exports.load = () => {
         (1, 'Cyber Security', 'This course is about cyber security', true, 'https://i.picsum.photos/id/236/800/800.jpg?hmac=-m1crl44KO9L8Rs4QGYJq6nuXo0R6V-Zc3v48BUc8WE'),
         (2, 'Biology', 'This course is about Biology', true, 'https://i.picsum.photos/id/427/800/800.jpg?hmac=C9qE9ogOx2qI05D2zGZ362KkduRWpt7xDT4DXcfcSDk'),
         (3, 'Chemistry', 'This course is about Chemistry', false,  'https://i.picsum.photos/id/66/800/800.jpg?hmac=QwjZxiyFrWQI9G4d8F44wFqjxZ66zIPLlzeRRiiYrpk'),
-        (4, 'Mathematics', 'This course is about Mathematics', false,'https://i.picsum.photos/id/882/800/800.jpg?hmac=No5hTPTge2_1GgssUGsE2qrhWTzL_mJRIhmQxKj6zUE');
+        (4, 'Mathematics', 'This course is about Mathematics', false,'https://i.picsum.photos/id/882/800/800.jpg?hmac=No5hTPTge2_1GgssUGsE2qrhWTzL_mJRIhmQxKj6zUE'),
+        (5, 'Econometrics', 'This course is about Econometrics', true,'https://i.picsum.photos/id/67/800/800.jpg?hmac=5EQTN86WBRMFbDXFqpQPIMgprmj49nXxKKReaPFR6NY');
 
         INSERT INTO Classes(classId, selfEnrollStartDateTime, selfEnrollEndDateTime, classStartDateTime, classEndDateTime, maxCapacity, courseId, trnAccountId, adminAccountId) VALUES
         (1, '2021-07-01', '2021-08-30', '2021-09-01', '2022-01-01', 50, 1, 6, 1),
