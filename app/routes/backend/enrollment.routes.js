@@ -12,7 +12,7 @@ module.exports = app => {
     router.post('/getMyEnrolledClasses', enrollment.getMyEnrolledClasses)
     router.post('/getMyEnrollmentByCourse', enrollment.getMyEnrollmentByCourse)
     router.post('/getAllClassEnrollments', enrollment.getAllClassEnrollments)
-    router.get('/getPendingEnrollments', enrollment.getPendingEnrollments)
+    //router.get('/getPendingEnrollments', enrollment.getPendingEnrollments)
     router.post('/applyCourseClass', enrollment.applyCourseClass)
     router.post('/enrollLearner', enrollment.enrollLearner)
     router.post('/respondApplication', enrollment.respondApplication)
