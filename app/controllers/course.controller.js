@@ -4,7 +4,7 @@ const Op = db.Sequelize.Op;
 const AccountController = require("./account.controller");
 const sequelize = db.sequelize;
 
-exports.findOneCourse = (req, res) => {
+exports.findOneCourse = (req, res) => { //getCoursePackage
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => {
         const id = req.body.id;
@@ -45,7 +45,7 @@ exports.findOneCourse = (req, res) => {
 
 }
 
-exports.create = (req, res) => {
+exports.create = (req, res) => { //createCourse
     const permissions = [AccountController.PERM_ADMIN]
     AccountController.validAuthNAccess(req, res, permissions).then(session => {
         if (!req.body) {
@@ -165,7 +165,7 @@ exports.create = (req, res) => {
     })
 }
 
-exports.findAll = (req, res) => {
+exports.findAll = (req, res) => { //getCourses
     const permissions = []
     AccountController.validAuthNAccess(req, res, permissions).then(session => {
         Course.findAll()
@@ -200,7 +200,7 @@ exports.findAllPostAdmin = (req, res) => {
 
 
 
-exports.findAllId = (req, res) => {
+exports.findAllId = (req, res) => { //
     var ids = []
     Course.findAll()
         .then(data => {
