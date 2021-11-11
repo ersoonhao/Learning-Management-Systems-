@@ -84,9 +84,7 @@ describe('The courses route and controller', () => {
                 assert(response.body.course.CoursePrerequisites[0].courseId == 1)
                 assert(response.body.course.CoursePrerequisites[0].PrerequisiteSets.length == 2)
                 assert(response.body.course.CoursePrerequisites[0].PrerequisiteSets[0].setNumber == 1)
-                assert(response.body.course.CoursePrerequisites[0].PrerequisiteSets[0].course_fk == 2)
                 assert(response.body.course.CoursePrerequisites[0].PrerequisiteSets[1].setNumber == 1)
-                assert(response.body.course.CoursePrerequisites[0].PrerequisiteSets[1].course_fk == 4)
                 done()
             }
         )
