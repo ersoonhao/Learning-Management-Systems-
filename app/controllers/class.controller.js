@@ -170,21 +170,21 @@ exports.getAvailableCourseClasses = (req, res) => {
     AccountController.validAuthNAccess(req, res, permissions).then(session => {
             if (session) {
                 Class.findAll({
-                        where: { 
+                        where: {
                             [Op.and]: {
-                                selfEnrollStartDateTime: { 
+                                selfEnrollStartDateTime: {
                                     [Op.lt]: new Date()
                                 },
-                                selfEnrollEndDateTime: { 
+                                selfEnrollEndDateTime: {
                                     [Op.gt]: new Date()
                                 }
                             }
                         },
-                        include: [ 
-                            { model: Account }, 
+                        include: [
+                            { model: Account },
                             { model: Enrollment },
                             { model: Course }
-                        ] 
+                        ]
                     })
                     .then(data => {
                         res.send({ "classes": data })
@@ -221,7 +221,7 @@ exports.getCourseClasses = (req, res) => {
                 }
                 Class.findAll({
                         where: { courseId: courseId },
-                        include: Account
+                        include: [Account, Enrollment]
                     })
                     .then(data => {
                         res.send({ "classes": data })

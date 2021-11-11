@@ -57,7 +57,7 @@
                                 <tr>
                                     <th>Class Id</th>
                                     <th>Trainer</th>
-                                    <th>Current Capacity</th>
+                                    <th>Slots Left</th>
                                     <th>Max Capacity</th>
                                     <th>Enrollment Start Date</th>
                                     <th>Enrollment End Date</th>
@@ -70,7 +70,7 @@
                                 <tr v-for="c in classes" :key="c.classId">
                                     <td>{{ c.classId }}</td>
                                     <td>{{ c.Account.username }}</td>
-                                    <td>-</td>
+                                    <td>{{ c.maxCapacity - c.enrollments.length }}</td>
                                     <td>{{ c.maxCapacity }}</td>
                                     <td>{{ dateFormat(c.selfEnrollStartDateTime) }}</td>
                                     <td>{{ dateFormat(c.selfEnrollEndDateTime) }}</td>
