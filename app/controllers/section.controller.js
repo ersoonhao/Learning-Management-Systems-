@@ -233,24 +233,24 @@ exports.getLearnersSectionPackage = (req, res) => {
                 })
                 return
             }
-            if(session.isAdmin || session.isTrainer){
+            if (session.isAdmin || session.isTrainer) {
                 Class.findOne({
                     where: { classId: classId }
                 }).then(data => {
-                    if(!data){
-                        res.status(400).send({  message: "Unable to find class" })
+                    if (!data) {
+                        res.status(400).send({ message: "Unable to find class" })
                         return
                     }
                     _getLearnersSectionPackage(res, data.courseId, classId)
-                    
+
                 }).catch(err => {
                     res.status(500).send({
                         message: err.message + "HI1" || "Some error occured obtaining data"
                     })
                 });
-            }else{
+            } else {
                 CourseAccessController.isLearnerForClass(res, session, classId).then(pkg => {
-                    if(pkg){
+                    if (pkg) {
                         let courseId = pkg.Class.Course.courseId;
                         _getLearnersSectionPackage(res, courseId, classId)
                     }
@@ -259,8 +259,9 @@ exports.getLearnersSectionPackage = (req, res) => {
         }
     })
 }
-function _getLearnersSectionPackage(res, courseId, classId){
-    if(!courseId){
+
+function _getLearnersSectionPackage(res, courseId, classId) {
+    if (!courseId) {
         res.status(400).send({
             message: "Unable to get course"
         })
@@ -313,6 +314,7 @@ exports.createSection = (req, res) => {
 
             Section.create(section)
                 .then(data => {
+                    //console.log(data.Section)
                     res.status(200).send(data);
                 })
                 .catch(err => {
@@ -330,7 +332,6 @@ exports.createSection = (req, res) => {
 
 // routed 
 exports.findAllSection = (req, res) => {
-
 
     // handle the request
     Section.findAll()
