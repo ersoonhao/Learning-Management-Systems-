@@ -81,17 +81,6 @@ describe('The enrollment route and controller', () => {
         )
     })
 
-    it('get pending enrollments', (done) => {
-        request(app).get('/api/enrollment/getPendingEnrollments').send().end(
-            (err, response) => {
-                console.log(response.body)
-                assert(response.body.enrollment[0].enrollmentId === 1)
-                assert(response.body.enrollment[1].enrollmentId === 2)
-                assert(response.body.enrollment[2].enrollmentId === 3)
-                done()
-            }
-        )
-    })
     it('creates one self-enrollment through post request with classId', (done) => {
         request(app).post('/api/enrollment/applyCourseClass').send({ session: dummy_reload.SESSION_LEARNER_ALT_1, classId: 4 }).end(
             (err, response) => {

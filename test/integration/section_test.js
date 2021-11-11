@@ -43,7 +43,7 @@ describe('The Section route and controller', () => {
             })
     })
 
-    it('creates get Section package', done => {
+    it('get Section package', done => {
         request(app)
             .post('/api/section/getSectionPackage')
             .send({
@@ -59,7 +59,7 @@ describe('The Section route and controller', () => {
             })
     })
 
-    it('creates get Learner Section package', done => {
+    it('get Learner Section package', done => {
         request(app)
             .post('/api/section/getLearnersSectionPackage')
             .send({
