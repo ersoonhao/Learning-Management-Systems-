@@ -45,7 +45,6 @@ exports.getQuizPackage = (req, res) => {
                     })
                 }
             }else{
-                //TODO: Check if learner has completed previous sections
                 if(quizId){
                     CourseAccessController.isLearnerForQuiz(res, session, quizId).then(pkg => { //Ensure is learner for quiz 
                         if(pkg){
