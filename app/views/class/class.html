@@ -30,15 +30,29 @@
 
                             <!-- SOONHAO: FILL HERE  -->
                             <!-- {{courseMaterial.source}} -->
+                            <!-- :src=" courseMaterial.source+'#toolbar=0&navpanes=0&scrollbar=0'" -->
+                            
 
-                            <embed
-                                :src=" courseMaterial.source+'#toolbar=0&navpanes=0&scrollbar=0'"
-                                type="application/pdf"
+                            <div v-if="renderiframe">
+                                <!-- <h1>showing iframe</h1> -->
+                                <iframe :src="embeddedSrc" height="200" width="300"></iframe>
+
+                            </div>
+<!-- 
+                            <div v-else> -->
+                                <!-- <h1>showing embed</h1> -->
+                                <embed
+                                :src="courseMaterial.source+'#toolbar=0&navpanes=0&scrollbar=0'" 
+                                :type="mediaType"
                                 frameBorder="0"
                                 scrolling="auto"
                                 height="1000px"
                                 width="100%"
                             ></embed>
+                            <!-- </div> -->
+                           
+
+                           
 
                             <!-- <object :data="courseMaterial.source" type="application/pdf">
                                 <div>No online PDF viewer installed</div>
@@ -112,7 +126,10 @@
                     quiz: null,
                     quizAttempts: null,
                     quizAttempt: null,
-                    questionList: []
+                    questionList: [],
+                    mediaType:"",
+                    embeddedSrc:"",
+                    renderiframe: false 
                 }, mounted: function(){
                     loadClass((component) => { 
                         this.c = component.class;
@@ -125,7 +142,24 @@
                 }, methods: {
                     //COURSE MATERIALS
                     loadCourseMaterial: function(courseMaterial){
-                        this.courseMaterial = courseMaterial;
+                        
+                        this.courseMaterial=courseMaterial; 
+                        if(this.courseMaterial.type=="pdf"){
+                            // alert(app.embeddedSrc);
+                            app.mediaType="application/pdf";
+                            app.embeddedSrc=this.courseMaterial.source+"#toolbar=0&navpanes=0&scrollbar=0";
+                        }
+                        else if(this.courseMaterial.type=="image"){
+                            app.mediaType="image/png";
+                            app.embeddedSrc=this.courseMaterial.source+"#toolbar=0&navpanes=0&scrollbar=0";
+                        }
+                        else if(this.courseMaterial.type=="docx"){
+                            app.mediaType=""; 
+                            console.log(this.courseMaterial.source);
+                            app.renderiframe=true;
+                            app.embeddedSrc="http://docs.google.com/gview?url="+this.courseMaterial.source +"&embedded=true";
+                            console.log(app.embeddedSrc)
+                        }
                         
                         //SOONHAO: FILL HERE 
 
