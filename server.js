@@ -396,7 +396,7 @@ app.post('/docx', upload.single('docx'), async(req, res) => {
     var sectionId = req.body.sectionId;
     var awskey;
 
-    const extension = ".pdf"
+    const extension = ".docx"
     if (file == null) {
         console.log("FILE IS NULL");
         res.status(400).send({ message: "No file uploaded" });
