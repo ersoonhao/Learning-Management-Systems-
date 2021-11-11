@@ -18,12 +18,17 @@
             <div class="content">
                 <div class=container>
                     <m-div :menu="menu" title="Class Settings" :subtitle="'For Class ID: '+classId">
-                        <h3 v-show="!classId" class="mb-3 lms-font-semibold">Create Class</h1>
-                        <h3 v-show="classId" class="mb-3 lms-font-semibold">Update Class</h1>
+                        <h3 v-show="session.isAdmin!='true'" class="mb-3 lms-font-semibold">Class</h3>
+                        <h3 v-show="!classId&&session.isAdmin=='true'" class="mb-3 lms-font-semibold">Create Class</h3>
+                        <h3 v-show="classId&&session.isAdmin=='true'" class="mb-3 lms-font-semibold">Update Class</h3>
+                        <a :href="'/class?classId='+c.classId">View learner's view</a>
                         <!-- <h1 class="">ADD CLASS SETTINGS HERE</h1> -->
                         <div class="lms-input">
                             <label class="lms-input-label">Trainer</label>
-                            <select v-model="c.trnAccountId">
+                            <select v-model="c.trnAccountId" v-if="session.isAdmin=='true'"> 
+                                <option v-for="t in trainers" :value="t.accountId">{{ t.username }} (AccountId: {{ t.accountId }})</option>
+                            </select>
+                            <select v-model="c.trnAccountId" disabled v-else> 
                                 <option v-for="t in trainers" :value="t.accountId">{{ t.username }} (AccountId: {{ t.accountId }})</option>
                             </select>
                         </div>
@@ -47,7 +52,7 @@
                             <label class="lms-input-label">Class End Date</label>
                             <input type="date" v-model="c.classEndDateTime"/>
                         </div>
-                        <button class="btn bg-highlight text-white my-3 px-3" @click="submit" v-text="classId?'Save class':'Create class'"></button>
+                        <button v-show="session.isAdmin=='true'" class="btn bg-highlight text-white my-3 px-3" @click="submit" v-text="classId?'Save class':'Create class'"></button>
                     </m-div>
                 </div>
             </div>
