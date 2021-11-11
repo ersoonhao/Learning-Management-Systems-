@@ -114,7 +114,7 @@ exports.login = (req, res) => {
 
 //==== POST: /getTrainers
 exports.getTrainers = (req, res) => {
-    const permissions = [this.PERM_ADMIN]
+    const permissions = [this.PERM_ADMIN, this.PERM_TRAINER]
     this.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if(session){
             Account.findAll({
