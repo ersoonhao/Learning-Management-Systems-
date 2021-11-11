@@ -65,11 +65,11 @@ module.exports = (sequelize, Sequelize) => {
     }
 
     Enrollment.updateEnrollment = function(enrollment) {
-        if (enrollment == null) {
+        if (enrollment == null || enrollment.enrollmentId == null) {
             return null
         }
 
-        if (isValidPost(enrollment, false)) {
+        if (isValidEnrollment(enrollment, false)) {
             return enrollment
         }
         return null
