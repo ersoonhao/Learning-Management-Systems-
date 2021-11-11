@@ -138,8 +138,8 @@ describe('The courses route and controller', () => {
   //   )
   // })
 
-    it('retrieves all courses through post request', (done) => {
-        request(app).post('/api/course/all').send({ session: dummy_reload.SESSION_ADMIN }).end(
+it('retrieves all courses through post request', (done) => {
+        request(app).post('/api/course/alladmin').send({ session: dummy_reload.SESSION_ADMIN }).end(
             (err, response) => {
                 // console.log(response.body)
                 console.log(response.body.length)
@@ -147,7 +147,7 @@ describe('The courses route and controller', () => {
                 done()
             }
         )
-    })
+  })
 
     
     it('retrieves all course ids and titles through get request', (done) => {
@@ -180,8 +180,5 @@ describe('The courses route and controller', () => {
       }
     )
   })
-
-})
-
 
 })
