@@ -3,15 +3,15 @@ module.exports = app => {
     var router = require("express").Router();
 
     //======== START: CONTROLLER LOGIC ========
-    const prerequisiteSet = require("../../controllers/prerequisiteSet.controller");
+    // const prerequisiteSet = require("../../controllers/prerequisiteSet.controller");
+    const course = require("../../controllers/course.controller");
+    // router.get("/all", prerequisiteSet.findAll);
 
-    router.get("/all", prerequisiteSet.findAll);
+    // router.post("/course_fk", prerequisiteSet.findAllByCourseFK)
 
-    router.post("/course_fk", prerequisiteSet.findAllByCourseFK)
+    // router.post("/setnumber", prerequisiteSet.findAllBySetNumber)
 
-    router.post("/setnumber", prerequisiteSet.findAllBySetNumber)
-
-    router.post("/new",prerequisiteSet.newPrerequisiteSetCoursePrereq)
+    router.post("/new",course.newPrerequisiteSetCoursePrereq)
 
     //======== END: CONTROLLER LOGIC ========
     

@@ -5,23 +5,23 @@ module.exports = app => {
     //======== START: CONTROLLER LOGIC ========
     const course = require("../../controllers/course.controller");
 
-    router.post("/",course.create);
+    router.post("/",course.createCourse);
 
-    router.post('/all',course.findAll)
+    // router.post('/all',course.findAll)
 
-    router.post("/alladmin", course.findAllPostAdmin);
+    router.post("/alladmin", course.getCourses);
 
-    router.get("/allid", course.findAllId);
+    // router.get("/allid", course.findAllId);
 
     router.get("/allidtitle", course.findAllIdTitle);
 
-    router.get("/", course.findOne);
+    // router.get("/", course.findOne);
 
-    router.post("/find",course.findOneCourse);
+    router.post("/find",course.getCoursePackage);
 
-    router.post("/delete",course.delete)
+    router.post("/delete",course.deleteCourse)
 
-    router.post('/update', course.update)
+    router.post('/update', course.updateCourse)
 
     //======== END: CONTROLLER LOGIC ========
     
