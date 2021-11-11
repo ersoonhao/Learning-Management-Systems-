@@ -3,9 +3,9 @@ module.exports = app => {
     var router = require("express").Router();
 
     //======== START: CONTROLLER LOGIC ========
-    const coursePrequisite = require("../../controllers/coursePrerequisite.controller");
+    const course = require("../../controllers/course.controller");
 
-    router.post("/delete",coursePrequisite.deleteBySetNumberCourseFK)
+    router.post("/delete",course.deleteBySetNumberCourseFK)
 
 
     //======== END: CONTROLLER LOGIC ========
