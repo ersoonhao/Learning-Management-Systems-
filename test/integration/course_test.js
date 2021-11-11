@@ -148,8 +148,8 @@ it('retrieves all courses through post request', (done) => {
   })
 
     
-    it('retrieves all course ids and titles through get request', (done) => {
-        request(app).get('/api/course/allidtitle').end(
+    it('retrieves all course ids and titles through post request', (done) => {
+        request(app).post('/api/course/allidtitle').send({session: dummy_reload.SESSION_ADMIN}).end(
             (err, response) => {
                 // console.log(response.body)
                 console.log(response.body)

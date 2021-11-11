@@ -190,20 +190,25 @@ exports.getCourses = (req, res) => {
 };
 
 exports.findAllIdTitle = (req, res) => {
-    var id_title = []
-    Course.findAll()
-        .then(data => {
-            for (var i = 0; i < data.length; i++) {
-                id_title.push({ courseId: data[i]['courseId'], title: data[i]['title'] })
-
-            }
-            res.send(id_title); //change this to render
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving courses."
-            });
-        });
+    const permissions = [AccountController.PERM_ADMIN]
+    AccountController.validAuthNAccess(req, res, permissions).then(session => {
+        if(session){
+            var id_title = []
+            Course.findAll()
+                .then(data => {
+                    for (var i = 0; i < data.length; i++) {
+                        id_title.push({ courseId: data[i]['courseId'], title: data[i]['title'] })
+        
+                    }
+                    res.send(id_title); //change this to render
+                })
+                .catch(err => {
+                    res.status(500).send({
+                        message: err.message || "Some error occurred while retrieving courses."
+                    });
+                });
+        }})
+    
 };
 
 exports.deleteCourse = (req, res) => {

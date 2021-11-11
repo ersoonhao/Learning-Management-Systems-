@@ -206,7 +206,7 @@
       },startAdd:function(){
           app.adding = true
           console.log('add started')
-          axios.get(API('/course/allidtitle')).then(response => {
+          axios.post(API('/course/allidtitle'), {session: getUserSession()}).then(response => {
             console.log(response.data)
             for(var i=0; i<response.data.length; i++){
                 if(response.data[i].courseId != getParams("courseId")){
