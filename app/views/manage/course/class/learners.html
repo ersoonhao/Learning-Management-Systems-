@@ -141,7 +141,7 @@
                   //Successful
                   for (let i = 0; i < app.enrollments.length; i++) {
                     if (app.enrollments[i].enrollmentId == enrollmentId) {
-                      app.enrollments[i].isEnrolled = true;
+                      app.enrollments[i].isEnrolled = isApproved;
                     }
                   }
                 } else if (xhr.status == 401) {
