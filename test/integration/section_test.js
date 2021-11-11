@@ -74,4 +74,10 @@ describe('The Section route and controller', () => {
                 done()
             })
     })
+
+    after(function(done) {
+        dummy_reload.reload().then(() => {
+            done()
+        })
+    })
 })
