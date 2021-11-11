@@ -13,7 +13,7 @@ module.exports = app => {
 
     // router.get("/allid", course.findAllId);
 
-    router.get("/allidtitle", course.findAllIdTitle);
+    router.post("/allidtitle", course.findAllIdTitle);
 
     // router.get("/", course.findOne);
 
