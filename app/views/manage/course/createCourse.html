@@ -156,7 +156,7 @@
                         });
                     }},
                     created: () => {
-                      axios.get(API('/course/allidtitle')).then(response => (
+                      axios.post(API('/course/allidtitle'), {session: getUserSession()}).then(response => (
                         console.log(response.data),
                         app.courseIds = response.data
                         ))
