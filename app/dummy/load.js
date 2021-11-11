@@ -140,12 +140,12 @@ module.exports.load = () => {
         (1, 4),
         (2, 1),
         (2, 3);
-
+        
         INSERT INTO CourseMaterials(CourseMaterialId, title, instructions, source, type, sectionId, ordering) VALUES
         (1, 'Digitor Case Study', 'Read the labs before attempting the quiz', 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/a4ba70a547a6d6e25ed16b9ef6820af4.pdf', 'pdf', 1, 1),
         (2, 'Symmetric Lab', 'Do the lab before the quiz', 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/b2d3eef77d89f8b381c64864a2b81fb4.pdf', 'pdf', 2, 1),
         (3, 'Assymetric Lab', 'Do the lab before the quiz', 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/1be32552caee7900652ae9931e3b4a63.pdf', 'pdf', 3, 1),
-        (4, 'Digitor Case Study 2', 'Please read' , 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/a4ba70a547a6d6e25ed16b9ef6820af4.pdf', 'pdf', 3, 3);
+        (4, 'Digitor Case Study 2', 'Please read' , 'https://spm-files-upload.s3.ap-southeast-1.amazonaws.com/d7e19660778df57228368f10f81a9ebf.docx', 'docx', 3, 3);
 
 
 
