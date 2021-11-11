@@ -13,10 +13,10 @@ describe('The courses route and controller',()=>{
   })
 
   it('creates one course through post request with courseId',(done)=>{
-    request(app).post('/api/course').send({session: dummy_reload.SESSION_ADMIN, courseId: 6, title: 'Biology', description:"Course on Biology", active: true}).end(
+    request(app).post('/api/course').send({session: dummy_reload.SESSION_ADMIN, courseId: 7, title: 'Biology', description:"Course on Biology", active: true}).end(
       (err,response)=>{console.log(response.body)
         assert(response.body.course_data.description === "Course on Biology")
-        assert(response.body.course_data.courseId === 6)
+        assert(response.body.course_data.courseId === 7)
         assert(response.body.course_data.active === true)
         assert(response.body.course_data.title == 'Biology')
         done()
@@ -88,7 +88,7 @@ describe('The courses route and controller',()=>{
     (err,response)=>{
       // console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==9)
+      assert(response.body.length==10)
       done()
     }
     )
@@ -99,7 +99,7 @@ describe('The courses route and controller',()=>{
     (err,response)=>{
       // console.log(response.body)
       console.log(response.body.length)
-      assert(response.body.length==9)
+      assert(response.body.length==10)
       assert(response.body[0]==1)
       done()
     }
@@ -111,7 +111,7 @@ describe('The courses route and controller',()=>{
     (err,response)=>{
       // console.log(response.body)
       console.log(response.body)
-      assert(response.body.length==9)
+      assert(response.body.length==10)
       assert(response.body[0]['courseId']==1)
       assert(response.body[0]['title']=='Cyber Security')
       done()
