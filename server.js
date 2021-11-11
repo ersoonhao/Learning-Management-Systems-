@@ -143,7 +143,7 @@ app.post('/video', async(req, res) => {
         sectionId = 1;
     }
 
-   
+
     var type = "link";
     // if (type.toLowerCase() != "png" || type.toLowerCase() != "jpg" || type.toLowerCase() != "jpeg") {
     //     res.status(400).send({ message: "Only images are allowed" });
@@ -172,8 +172,8 @@ app.post('/video', async(req, res) => {
         res.status(400).send({ message: "Missing fields" });
     }
 
-  
-        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, key);
+
+        var savetodb = await SectionCTRL.addCourseMaterial(title, instructions, source, type, ordering, sectionId, awskey);
         console.log("DB results", savetodb);
         if (savetodb) {
             res.status(200);

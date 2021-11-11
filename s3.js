@@ -41,13 +41,14 @@ function uploadFile(file, extension) {
     var filekey = file.filename + extension;
 
     var specifiedContentType="";
-
+    
+    
     if(extension==".pdf"){
         specifiedContentType="application/pdf";
-    }else if(extension==".docx" || extension==".doc"){
-        specifiedContentType="text/plain"
+    }else if(extension==".docx"){
+        specifiedContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     }
-    else if(extension=="iamge"){
+    else if(extension=="image"){
         specifiedContentType="image/jpeg"
     }
     else{
