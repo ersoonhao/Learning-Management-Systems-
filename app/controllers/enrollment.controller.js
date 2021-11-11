@@ -127,7 +127,7 @@ exports.getMyEnrollmentByCourse = (req, res) => {
 
 //==== POST: /findEnrollmentbyId
 exports.findEnrollmentbyId = (req, res) => {
-    const permissions = []
+    const permissions = [AccountController.PERM_ADMIN]
     AccountController.validAuthNAccess(req, res, permissions).then(session => {
         //Access control
         if (session) {
@@ -317,7 +317,7 @@ exports.applyCourseClass = (req, res) => {
             //Access control
             //TODO: Get permissions
             enroll = {
-                isSelfEnrollment: false
+                isSelfEnrollment: true
             }
             const enrollment = Enrollment.createEnrollment(
                 enroll,
@@ -391,8 +391,7 @@ exports.enrollLearner = (req, res) => {
                 }
                 if (session.isAdmin) {
                     body.enrollment = {
-                        isSelfEnrollment: false,
-                        coursePassed: false
+                        isSelfEnrollment: false
                     }
                     const enrollment = Enrollment.createEnrollment(
                         body.enrollment,
@@ -517,7 +516,7 @@ exports.deleteEnrollment = (req, res) => {
                 .then(num => {
                     if (num == 1) {
                         res.send({
-                            message: 'Course was deleted successfully!'
+                            message: 'Enrollment was deleted successfully!'
                         })
                     } else {
                         res.send({
