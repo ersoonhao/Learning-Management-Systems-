@@ -29,7 +29,7 @@
                     <m-div :menu="menu" title="Manage Course" subtitle="Overview">
                         <h1>LIST OF COURSES</h1>
                         <!-- <a href="/manage/course?courseId=1">Specific course</a> -->
-                        <a :href="'/manage/course/create'" class="btn btn-primary">Create Course</a>
+                        <a v-show="session.isAdmin=='true'" :href="'/manage/course/create'" class="btn btn-primary">Create Course</a>
                         <div class="form-outline">
                             <input type="search" id="form1" class="form-control" placeholder="Search by title or id"
                             aria-label="Search" v-model="search_term" v-on:input="searchIdName"/>
