@@ -103,18 +103,7 @@ describe('The courses route and controller', () => {
         )
     })
 
-    it('retrieves all course ids through get request', (done) => {
-        request(app).get('/api/course/allid').end(
-            (err, response) => {
-                // console.log(response.body)
-                console.log(response.body.length)
-                assert(response.body.length == 10)
-                assert(response.body[0] == 1)
-                done()
-            }
-        )
-    })
-
+    
     it('retrieves all course ids and titles through get request', (done) => {
         request(app).get('/api/course/allidtitle').end(
             (err, response) => {
@@ -127,6 +116,19 @@ describe('The courses route and controller', () => {
             }
         )
     })
+
+    it('retrieves all course ids through get request', (done) => {
+        request(app).get('/api/course/allid').end(
+            (err, response) => {
+                // console.log(response.body)
+                console.log(response.body.length)
+                assert(response.body.length == 10)
+                assert(response.body[0] == 1)
+                done()
+            }
+        )
+    })
+
 
     it('deletes one course through post request with courseId', (done) => {
         request(app).post('/api/course/delete').send({ session: dummy_reload.SESSION_ADMIN, "courseId": 1 }).end(
