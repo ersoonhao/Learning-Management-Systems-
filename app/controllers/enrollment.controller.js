@@ -5,10 +5,9 @@ const {
     Course,
     PrerequisiteSet,
     CoursePrerequisite
-} = require('../models');
+} = require('../models')
 
-const { Sequelize } = require('sequelize');
-const AccountController = require('./account.controller');
+const AccountController = require('./account.controller')
 
 //==== POST: /isEligibleForCourse
 exports.isEligibleForCourse = (req, res) => {
@@ -44,7 +43,6 @@ exports.isEligibleForCourse = (req, res) => {
                     }
                 })
                 .then(data => {
-
                     var prereqDict = {}
                     var eligible = false
                     if (data.CoursePrerequisites.length == 0) {
@@ -174,7 +172,13 @@ exports.getMyEnrolledClasses = (req, res) => {
             let stmt
             if (body.classId) {
                 if (body.type == 'ongoing') {
-                    stmt = { classId: body.classId, accountId: accountId, coursePassed: false, isWithdrawn: false, isEnrolled: true }
+                    stmt = {
+                        classId: body.classId,
+                        accountId: accountId,
+                        coursePassed: false,
+                        isWithdrawn: false,
+                        isEnrolled: true
+                    }
                 } else if (body.type == 'passed') {
                     stmt = {
                         classId: body.classId,
@@ -198,7 +202,12 @@ exports.getMyEnrolledClasses = (req, res) => {
                 }
             } else {
                 if (body.type == 'ongoing') {
-                    stmt = { accountId: accountId, coursePassed: false, isWithdrawn: false, isEnrolled: true }
+                    stmt = {
+                        accountId: accountId,
+                        coursePassed: false,
+                        isWithdrawn: false,
+                        isEnrolled: true
+                    }
                 } else if (body.type == 'passed') {
                     stmt = { accountId: accountId, coursePassed: true }
                 } else if (body.type == 'failed') {
@@ -226,15 +235,15 @@ exports.getMyEnrolledClasses = (req, res) => {
     })
 
     /* SAMPLE JSON BODY REQUEST
-        > localhost:8081/api/enrollment/getMyEnrolledClasses
-        {
-            "type": "ongoing",
-            "session": {
-                "username": "robin",
-                "sessionId": "0q8l8"
+            > localhost:8081/api/enrollment/getMyEnrolledClasses
+            {
+                "type": "ongoing",
+                "session": {
+                    "username": "robin",
+                    "sessionId": "0q8l8"
+                }
             }
-        }
-    */
+        */
 }
 
 //==== POST: /getAllClassEnrollments
@@ -272,15 +281,15 @@ exports.getAllClassEnrollments = (req, res) => {
             }
         })
         /* SAMPLE JSON BODY REQUEST
-                    > localhost:8081/api/enrollment/getAllClassEnrollments
-                        {
-                            "classId": 1,
-                            "session": {
-                                "username": "robin",
-                                "sessionId": "0q8l8"
-                            }
-                        }
-                    */
+                                > localhost:8081/api/enrollment/getAllClassEnrollments
+                                    {
+                                        "classId": 1,
+                                        "session": {
+                                            "username": "robin",
+                                            "sessionId": "0q8l8"
+                                        }
+                                    }
+                                */
 }
 
 //==== Get: /getAllPendingEnrollments
@@ -366,14 +375,14 @@ exports.applyCourseClass = (req, res) => {
     })
 
     /* SAMPLE JSON BODY REQUEST
-            {      
-                "classId": 1,
-                "session": {
-                    "username": "robin",
-                    "sessionId": "0q8l8"
+                {      
+                    "classId": 1,
+                    "session": {
+                        "username": "robin",
+                        "sessionId": "0q8l8"
+                    }
                 }
-            }
-        */
+            */
 }
 
 //==== POST: /enrollLearner
@@ -426,15 +435,15 @@ exports.enrollLearner = (req, res) => {
             }
         })
         /* SAMPLE JSON BODY REQUEST
-                    {
-                        "classId": 1,
-                        "accountId": 1,
-                        "session": {
-                            "username": "robin",
-                            "sessionId": "0q8l8"
-                        }
-                    }
-                */
+                                {
+                                    "classId": 1,
+                                    "accountId": 1,
+                                    "session": {
+                                        "username": "robin",
+                                        "sessionId": "0q8l8"
+                                    }
+                                }
+                            */
 }
 
 //==== POST: enrollment/respondApplication
@@ -451,15 +460,15 @@ exports.respondApplication = (req, res) => {
             }
         })
         /* SAMPLE JSON BODY REQUEST
-                        {
-                            "enrollmentId": 1,
-                            "isApproved": true,
-                            "session": true
-                                "username": "robin",
-                                "sessionId": "0q8l8"
-                            }
-                        }
-                    */
+                                    {
+                                        "enrollmentId": 1,
+                                        "isApproved": true,
+                                        "session": true
+                                            "username": "robin",
+                                            "sessionId": "0q8l8"
+                                        }
+                                    }
+                                */
 }
 
 function _updateEnrollment(body, res) {
@@ -533,10 +542,10 @@ exports.deleteEnrollment = (req, res) => {
     })
 
     /* SAMPLE JSON BODY REQUEST
-                  {      
-                      "enrollmentId": 1,
-                  }
-              */
+                      {      
+                          "enrollmentId": 1,
+                      }
+                  */
 }
 
 /* exports.template = (req, res) => {

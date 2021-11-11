@@ -64,7 +64,7 @@ exports.withdraw = (req, res) => {
 }
 
 exports.HRWithdraw = (req, res) => {
-    const permissions = []
+    const permissions = [AccountController.PERM_ADMIN]
     AccountController.validAuthNAccess(req, res, permissions).then(session => { //Access control
         if (session) {
             const enrollmentId = req.body.enrollmentId;
