@@ -28,7 +28,7 @@ const db = require("../models");
 // need to create an account table
 // const Section = db.Section; 
 const Op = db.Sequelize.Op;
-const { Section, CourseMaterial, Quiz } = require("../models");
+const { Section, CourseMaterial, Class, Quiz } = require("../models");
 // helper function to hash. Not used yet.Use if required.
 async function hash(password) {
     return await bcrypt.hash(password, 10);
@@ -233,41 +233,58 @@ exports.getLearnersSectionPackage = (req, res) => {
                 })
                 return
             }
-            CourseAccessController.isLearnerForClass(res, session, classId).then(pkg => {
-                if(pkg){
-                    let courseId = pkg.Class.Course.courseId;
-                    if(!courseId){
-                        res.status(400).send({
-                            message: "Unable to get course"
-                        })
+            if(session.isAdmin || session.isTrainer){
+                Class.findOne({
+                    where: { classId: classId }
+                }).then(data => {
+                    if(!data){
+                        res.status(400).send({  message: "Unable to find class" })
+                        return
                     }
-                    Section.findAll({
-                        where: { classId: classId },
-                        include: [{ model: db.CourseMaterial }, { model: db.Quiz }]
-        
-                    }).then(sections => {
-                        Quiz.findOne({
-                            where: { courseId: courseId, type: Quiz.QUIZ_TYPES_GRADED }
-                        }).then(gQuiz => {
-                            res.send({ "sections": sections, "gQuiz": gQuiz });
-                        }).catch(err => {
-                            res.status(500).send({
-                                message: err.message || "Some error occured obtaining data"
-                            })
-                        });
-                    }).catch(err => {
-                        res.status(500).send({
-                            message: err.message || "Some error occured obtaining data"
-                        })
-                    });
-                }
-            })
-            
-            
+                    _getLearnersSectionPackage(res, data.courseId, classId)
+                    
+                }).catch(err => {
+                    res.status(500).send({
+                        message: err.message + "HI1" || "Some error occured obtaining data"
+                    })
+                });
+            }else{
+                CourseAccessController.isLearnerForClass(res, session, classId).then(pkg => {
+                    if(pkg){
+                        let courseId = pkg.Class.Course.courseId;
+                        _getLearnersSectionPackage(res, courseId, classId)
+                    }
+                })
+            }
         }
     })
 }
+function _getLearnersSectionPackage(res, courseId, classId){
+    if(!courseId){
+        res.status(400).send({
+            message: "Unable to get course"
+        })
+    }
+    Section.findAll({
+        where: { classId: classId },
+        include: [{ model: db.CourseMaterial }, { model: db.Quiz }]
 
+    }).then(sections => {
+        Quiz.findOne({
+            where: { courseId: courseId, type: Quiz.QUIZ_TYPES_GRADED }
+        }).then(gQuiz => {
+            res.send({ "sections": sections, "gQuiz": gQuiz });
+        }).catch(err => {
+            res.status(500).send({
+                message: err.message + "HI2" || "Some error occured obtaining data"
+            })
+        });
+    }).catch(err => {
+        res.status(500).send({
+            message: err.message + "HI3" || "Some error occured obtaining data"
+        })
+    });
+}
 
 
 

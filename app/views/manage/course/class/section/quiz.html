@@ -23,7 +23,7 @@
                             <p>Quiz ID: <span v-text="quiz.quizId"></span></p>
                         </div>
                         <div v-show="!quiz.quizId">
-                            <h4 class="lms-font-semibold">Create Graded Quiz</h4>
+                            <h4 class="lms-font-semibold">Create Quiz</h4>
                         </div>
                         <q-input v-for="q in formQList" :qn="q"></q-input>
                         <button v-show="formQList.length > 0" class="btn bg-highlight text-white my-3 px-3" @click="submitQuiz" v-text="quiz.quizId?'Save quiz':'Create quiz'"></button>

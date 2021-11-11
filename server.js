@@ -281,7 +281,7 @@ app.post('/pdf', upload.single('pdf'), async(req, res) => {
     // if(file.originalname){
     //     title=file.originalname;
     // }else{ title="Course Document"}
- 
+
     var instructions;
 
     if (req.body.instructions) {
@@ -300,7 +300,7 @@ app.post('/pdf', upload.single('pdf'), async(req, res) => {
         sectionId = 1;
     }
 
-   
+
     var type = file.fieldname;
     if (type.toLowerCase() != "pdf"){
         res.status(400).send({ message: "Only PDFs are allowed" });
