@@ -48,9 +48,9 @@
                   <td>-</td>
                   <td>{{ e.coursePassed }}</td>
                   <td>
-                    <button v-show="e.isEnrolled==null&&session.isAdmin" class="btn btn-primary" @click="respondApplication(e.enrollmentId, true)">Accept</button>
-                    <button v-show="e.isEnrolled==null&&session.isAdmin" class="btn btn-danger" @click="respondApplication(e.enrollmentId, false)">Decline</button>
-                    <button v-show="e.isEnrolled==true&&e.isWithdrawn==false&&session.isAdmin" class="btn btn-danger" @click="withdrawLearner(e.enrollmentId)">Withdraw</button>
+                    <button v-show="e.isEnrolled==null&&session.isAdmin=='true'" class="btn btn-primary" @click="respondApplication(e.enrollmentId, true)">Accept</button>
+                    <button v-show="e.isEnrolled==null&&session.isAdmin=='true'" class="btn btn-danger" @click="respondApplication(e.enrollmentId, false)">Decline</button>
+                    <button v-show="e.isEnrolled==true&&e.isWithdrawn==false&&session.isAdmin=='true'" class="btn btn-danger" @click="withdrawLearner(e.enrollmentId)">Withdraw</button>
                   </td>
                 </tr>
               </tbody>

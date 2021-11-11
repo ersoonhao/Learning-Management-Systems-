@@ -127,7 +127,7 @@ describe('UNGRADED Quiz creation', () => { //CREATE
     });
     
     it('Create invalid UNGRADED quiz', () => {
-        for(let i = 0; i < 7; i++){
+        for(let i = 0; i < 6; i++){
             let q = Object.assign({}, quiz);
             let cId = courseId;
             let sId = sectionId;
@@ -136,9 +136,8 @@ describe('UNGRADED Quiz creation', () => { //CREATE
             else if(i == 1){ q.type = "?-TYPE" }
             else if (i == 2){ q.title = null }
             else if (i == 3){ q.durationInMins = null }
-            else if (i == 4){ cId = null }
-            else if (i == 5){ sId = null }
-            else if (i == 6){ q.passScoreRequirement = 1 }
+            else if (i == 4){ sId = null }
+            else if (i == 5){ q.passScoreRequirement = 1 }
 
             const result = Quiz.createQuiz(q, cId, sId);
             if(result != null){

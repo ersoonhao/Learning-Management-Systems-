@@ -611,6 +611,9 @@ function formatUIQuestion(data, editor=false){ //editor: null = learner
     }else{
         return null;
     }
+    if(data.QuestionOptions == null){
+        data.QuestionOptions = []
+    }
 
     //Correct Ans
     let correctAns = "";
@@ -623,10 +626,8 @@ function formatUIQuestion(data, editor=false){ //editor: null = learner
     }
     //Editor
     if(editor){
-        if(data.QuestionOptions != null){
-            for(let o of data.QuestionOptions){
-                o.editing = false;
-            }
+        for(let o of data.QuestionOptions){
+            o.editing = false;
         }
     }
     return {
