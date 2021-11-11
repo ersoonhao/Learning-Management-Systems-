@@ -33,7 +33,8 @@ module.exports.load = () => {
         (2, 'Biology', 'This course is about Biology', true, 'https://i.picsum.photos/id/427/800/800.jpg?hmac=C9qE9ogOx2qI05D2zGZ362KkduRWpt7xDT4DXcfcSDk'),
         (3, 'Chemistry', 'This course is about Chemistry', false,  'https://i.picsum.photos/id/66/800/800.jpg?hmac=QwjZxiyFrWQI9G4d8F44wFqjxZ66zIPLlzeRRiiYrpk'),
         (4, 'Mathematics', 'This course is about Mathematics', false,'https://i.picsum.photos/id/882/800/800.jpg?hmac=No5hTPTge2_1GgssUGsE2qrhWTzL_mJRIhmQxKj6zUE'),
-        (5, 'Econometrics', 'This course is about Econometrics', true,'https://i.picsum.photos/id/67/800/800.jpg?hmac=5EQTN86WBRMFbDXFqpQPIMgprmj49nXxKKReaPFR6NY');
+        (5, 'Econometrics', 'This course is about Econometrics', true,'https://i.picsum.photos/id/67/800/800.jpg?hmac=5EQTN86WBRMFbDXFqpQPIMgprmj49nXxKKReaPFR6NY'),
+        (6, 'Software Project Management', 'This course is about Software Project Management', true,'https://i.picsum.photos/id/979/800/800.jpg?hmac=CcFLLmbee_yrrgnHxR1nmwrtA_khaZ1jd_XnPsKLNS0');
 
         INSERT INTO Classes(classId, selfEnrollStartDateTime, selfEnrollEndDateTime, classStartDateTime, classEndDateTime, maxCapacity, courseId, trnAccountId, adminAccountId) VALUES
         (1, '2021-07-01', '2021-08-30', '2021-09-01', '2022-01-01', 50, 1, 6, 1),
@@ -43,7 +44,8 @@ module.exports.load = () => {
         (5, '2021-10-01', '2021-11-30', '2021-12-01', '2022-04-01', 50, 4, 5, 1),
         (6, '2021-11-21', '2021-12-02', '2021-11-01', '2021-11-13', 50, 4, 3, 1),
         (7, '2021-11-3', '2021-11-30', '2021-11-02', '2021-11-13', 50, 5, 4, 1),
-        (8, '2021-11-3', '2021-11-30', '2021-11-02', '2021-11-13', 50, 4, 4, 1);
+        (8, '2021-11-3', '2021-11-30', '2021-11-02', '2021-11-13', 50, 4, 4, 1),
+        (9, '2021-07-01', '2021-08-30', '2021-09-01', '2022-01-01', 50, 6, 4, 1);
 
         INSERT INTO enrollments(enrollmentId, isSelfEnrollment, isEnrolled, dateCreated, enrolledDate, coursePassed, isWithdrawn, accountId, classId) VALUES
         (1, 1, 0, '2021-07-01', NULL, 0, 0, 7, 1),
@@ -61,7 +63,8 @@ module.exports.load = () => {
         (13, 1, 0, '2021-07-01', NULL, 0, 0, 7, 4),
         (14, 1, NULL, '2021-07-01', NULL, 0, 0, 8, 4),
         (15, 1, NULL, '2021-07-01', NULL, 0, 0, 9, 4),
-        (16, 0, 1, '2021-07-01', NULL, 0, 0, 10, 4);
+        (16, 0, 1, '2021-07-01', NULL, 0, 0, 10, 4),
+        (17, 0, 1, '2021-07-01', NULL, 1, 0, 10, 9);
         
         INSERT INTO Sections(sectionId, title, subtitle, ordering, classId) VALUES
         (1,"Introduction" , "Computers", 1, 1),
