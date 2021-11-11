@@ -293,20 +293,20 @@ exports.getAllClassEnrollments = (req, res) => {
 }
 
 //==== Get: /getAllPendingEnrollments
-exports.getPendingEnrollments = (req, res) => {
-    Enrollment.findAll({
-            where: { enrolledDate: null },
-            include: [{ model: Account }]
-        })
-        .then(data => {
-            res.send({ enrollment: data })
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || 'Some error occured obtaining data'
-            })
-        })
-}
+// exports.getPendingEnrollments = (req, res) => {
+//     Enrollment.findAll({
+//             where: { enrolledDate: null },
+//             include: [{ model: Account }]
+//         })
+//         .then(data => {
+//             res.send({ enrollment: data })
+//         })
+//         .catch(err => {
+//             res.status(500).send({
+//                 message: err.message || 'Some error occured obtaining data'
+//             })
+//         })
+// }
 
 //==== POST: /applyCourseClass
 exports.applyCourseClass = (req, res) => {

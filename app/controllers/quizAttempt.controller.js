@@ -19,8 +19,6 @@ exports.getMyQuizAttempts = (req, res) => {
                 })
                 return
             }
-            
-            //TODO: Check if learner has completed previous sections
             CourseAccessController.isLearnerForQuiz(res, session, quizId).then(pkg => {
                 if(pkg){
                     console.log(`EnrollmentId: ${pkg.enrollment.enrollmentId}`);
@@ -116,8 +114,6 @@ exports.startQuizAttempt = (req, res) => {
                 })
                 return
             }
-            
-            //TODO: Check if learner has completed previous sections
             CourseAccessController.isLearnerForQuiz(res, session, quizId).then(pkg => { //Ensure learner is enrolled
                 if(pkg){
                     console.log(`EnrollmentId: ${pkg.enrollment.enrollmentId}`);
