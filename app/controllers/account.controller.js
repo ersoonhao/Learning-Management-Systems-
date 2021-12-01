@@ -8,7 +8,7 @@ const Op = db.Sequelize.Op;
 
 exports.PERM_ADMIN = "A";
 exports.PERM_TRAINER = "T";
-
+// something
 //Used interally
 exports.validAuthNAccess = (req, res, requiredPerms) => {
     const failed = "Auth and access failed";
